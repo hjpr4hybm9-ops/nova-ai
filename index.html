@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#071020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Nova AI" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>Nova AI</title>
+  <style>
+    :root{
+      --bg:#071020;
+      --card:#0d1a2f;
+      --card2:#12243d;
+      --line:#203553;
+      --text:#f8fbff;
+      --muted:#91a4bd;
+      --green:#22c55e;
+      --cyan:#38bdf8;
+      --yellow:#facc15;
+      --danger:#fb7185;
+      --shadow:0 18px 60px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+    body{min-height:100dvh;overflow:hidden;background:
+      radial-gradient(circle at 15% 0%, rgba(56,189,248,.16), transparent 30%),
+      radial-gradient(circle at 95% 20%, rgba(34,197,94,.12), transparent 27%),
+      var(--bg);}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+    .app{height:100dvh;display:flex;flex-direction:column;max-width:820px;margin:0 auto}
+    header{
+      padding:max(16px, env(safe-area-inset-top)) 16px 12px;
+      display:flex;align-items:center;justify-content:space-between;
+      background:linear-gradient(180deg,rgba(7,16,32,.98),rgba(7,16,32,.88));
+      backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06);z-index:5
+    }
+    .brand{display:flex;gap:11px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:14px;box-shadow:var(--shadow)}
+    h1{margin:0;font-size:21px;letter-spacing:-.4px}
+    .subtitle{color:var(--muted);font-size:12px;margin-top:3px}
+    .icon-btn{
+      width:42px;height:42px;border-radius:14px;border:1px solid var(--line);
+      background:var(--card);color:var(--text);font-size:18px
+    }
+    .hero{padding:14px 16px 10px}
+    .welcome{
+      background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(34,197,94,.10));
+      border:1px solid rgba(125,211,252,.18);border-radius:22px;padding:15px 16px
+    }
+    .welcome b{font-size:17px}
+    .welcome p{margin:6px 0 0;color:#c6d4e5;font-size:13px;line-height:1.45}
+    .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+    .quick button{
+      border:1px solid var(--line);background:rgba(13,26,47,.92);color:var(--text);
+      border-radius:16px;padding:10px 6px;min-height:64px;font-size:11px;font-weight:700
+    }
+    .quick .emoji{font-size:22px;display:block;margin-bottom:5px}
+    .chat{
+      flex:1;overflow:auto;padding:8px 14px 126px;scroll-behavior:smooth;
+      overscroll-behavior:contain
+    }
+    .row{display:flex;margin:8px 0}
+    .row.user{justify-content:flex-end}
+    .bubble{
+      max-width:86%;padding:11px 13px;border-radius:18px;line-height:1.48;
+      white-space:pre-wrap;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.12)
+    }
+    .row.ai .bubble{background:var(--card2);border:1px solid rgba(255,255,255,.05);border-bottom-left-radius:6px}
+    .row.user .bubble{background:linear-gradient(135deg,#0284c7,#0ea5e9);border-bottom-right-radius:6px}
+    .meta{font-size:10px;color:var(--muted);margin-top:4px;padding:0 5px}
+    .composer-wrap{
+      position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(820px,100%);
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg,rgba(7,16,32,0),rgba(7,16,32,.93) 20%,rgba(7,16,32,.99));
+      z-index:10
+    }
+    .composer{
+      display:flex;gap:8px;background:rgba(13,26,47,.98);border:1px solid var(--line);
+      border-radius:20px;padding:7px;box-shadow:var(--shadow)
+    }
+    .composer input{
+      flex:1;min-width:0;background:transparent;border:0;color:var(--text);outline:0;
+      padding:11px 10px;font-size:16px
+    }
+    .composer input::placeholder{color:#6f829b}
+    .send{
+      width:48px;border:0;border-radius:15px;background:linear-gradient(135deg,var(--green),#16a34a);
+      color:#04230f;font-weight:900;font-size:19px
+    }
+    .sheet-backdrop,.lock{
+      position:fixed;inset:0;background:rgba(2,6,23,.76);backdrop-filter:blur(10px);z-index:50;
+      display:flex;align-items:flex-end;justify-content:center;padding:16px
+    }
+    .sheet{
+      width:min(520px,100%);background:#0b1729;border:1px solid var(--line);border-radius:24px;
+      padding:18px;box-shadow:var(--shadow);margin-bottom:max(0px,env(safe-area-inset-bottom))
+    }
+    .sheet h2{margin:0 0 6px;font-size:20px}
+    .sheet p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+    .sheet input{
+      width:100%;background:#081221;border:1px solid var(--line);color:white;border-radius:16px;
+      padding:14px;font-size:18px;outline:0
+    }
+    .sheet-actions{display:flex;gap:8px;margin-top:10px}
+    .primary,.secondary,.danger{
+      flex:1;border:0;border-radius:15px;padding:13px;font-weight:800
+    }
+    .primary{background:var(--green);color:#052e16}
+    .secondary{background:#1a2c46;color:white}
+    .danger{background:#3b1720;color:#fecdd3}
+    .status{min-height:18px;color:#fda4af;font-size:12px;margin-top:8px}
+    .menu-list{display:grid;gap:8px;margin-top:12px}
+    .menu-list button{
+      text-align:left;border:1px solid var(--line);border-radius:15px;background:#10203a;color:white;padding:13px
+    }
+    .small-note{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
+    @media (max-width:420px){
+      .quick{grid-template-columns:repeat(2,1fr)}
+      .quick button{min-height:58px}
+      .hero{padding-bottom:6px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <img class="logo" src="icon-192.png" alt="Nova AI">
+      <div>
+        <h1>Nova AI</h1>
+        <div class="subtitle">Kişisel asistan • Futbol modu ⚽</div>
+      </div>
+    </div>
+    <button class="icon-btn" id="menuBtn" aria-label="Menü">⚙️</button>
+  </header>
+
+  <section class="hero">
+    <div class="welcome">
+      <b>Selam Ömer 😄</b>
+      <p>Ne yapıyoruz kral? Antrenman, günlük plan, ders yardımı ya da serbest sohbet.</p>
+    </div>
+    <div class="quick">
+      <button data-prompt="Bana futbol antrenmanı ver"><span class="emoji">⚽</span>Antrenman</button>
+      <button data-prompt="Bugün için günlük plan yap"><span class="emoji">📅</span>Günlük plan</button>
+      <button data-prompt="Ders yardımı istiyorum"><span class="emoji">📚</span>Ders yardımı</button>
+      <button data-prompt="Sıkıldım, bana bir görev ver"><span class="emoji">🎯</span>Görev ver</button>
+    </div>
+  </section>
+
+  <main class="chat" id="chat" aria-live="polite"></main>
+
+  <div class="composer-wrap">
+    <div class="composer">
+      <input id="messageInput" autocomplete="off" placeholder="Nova AI'ya yaz..." />
+      <button class="send" id="sendBtn" aria-label="Gönder">➤</button>
+    </div>
+  </div>
+</div>
+
+<div class="lock" id="lockScreen">
+  <div class="sheet">
+    <h2>🔒 Nova AI Kilidi</h2>
+    <p id="lockText">İlk kullanımda 4–8 haneli bir PIN oluştur. Bu PIN cihazında saklanır.</p>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" />
+    <div class="sheet-actions">
+      <button class="primary" id="pinBtn">Devam</button>
+    </div>
+    <div class="status" id="pinStatus"></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop hidden" id="menuSheet">
+  <div class="sheet">
+    <h2>⚙️ Ayarlar</h2>
+    <p>Nova AI cihazında çalışan kişisel bir asistan prototipidir.</p>
+    <div class="menu-list">
+      <button id="clearChatBtn">🗑️ Sohbet geçmişini sil</button>
+      <button id="changePinBtn">🔐 PIN'i değiştir</button>
+      <button id="installHelpBtn">📲 iPhone'a uygulama gibi ekleme</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="secondary" id="closeMenuBtn">Kapat</button>
+    </div>
+    <div class="small-note">Sohbet ve PIN bilgileri tarayıcının cihaz içi depolamasında tutulur.</div>
+  </div>
+</div>
+
+<div class="sheet-backdrop hidden" id="infoSheet">
+  <div class="sheet">
+    <h2 id="infoTitle">Bilgi</h2>
+    <p id="infoText"></p>
+    <div class="sheet-actions">
+      <button class="primary" id="closeInfoBtn">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_MESSAGES = "nova_ai_messages";
+  const STORAGE_PIN = "nova_ai_pin";
+
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const lockScreen = document.getElementById("lockScreen");
+  const pinInput = document.getElementById("pinInput");
+  const pinBtn = document.getElementById("pinBtn");
+  const pinStatus = document.getElementById("pinStatus");
+  const lockText = document.getElementById("lockText");
+  const menuSheet = document.getElementById("menuSheet");
+  const infoSheet = document.getElementById("infoSheet");
+  const infoTitle = document.getElementById("infoTitle");
+  const infoText = document.getElementById("infoText");
+
+  let messages = readJson(STORAGE_MESSAGES, []);
+  let savedPin = localStorage.getItem(STORAGE_PIN);
+
+  function readJson(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function saveMessages() {
+    localStorage.setItem(STORAGE_MESSAGES, JSON.stringify(messages));
+  }
+
+  function timeString(ts) {
+    try {
+      return new Date(ts).toLocaleTimeString("tr-TR", {hour:"2-digit", minute:"2-digit"});
+    } catch {
+      return "";
+    }
+  }
+
+  function renderMessages() {
+    chat.innerHTML = "";
+    messages.forEach(m => {
+      const row = document.createElement("div");
+      row.className = "row " + (m.role === "user" ? "user" : "ai");
+
+      const wrap = document.createElement("div");
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = m.text;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = timeString(m.time);
+
+      wrap.appendChild(bubble);
+      wrap.appendChild(meta);
+      row.appendChild(wrap);
+      chat.appendChild(row);
+    });
+    requestAnimationFrame(() => chat.scrollTop = chat.scrollHeight);
+  }
+
+  function addMessage(role, text) {
+    messages.push({ role, text, time: Date.now() });
+    saveMessages();
+    renderMessages();
+  }
+
+  function localAnswer(text) {
+    const x = text.toLocaleLowerCase("tr-TR");
+
+    if (x.includes("selam") || x.includes("merhaba") || x === "hey") {
+      return "Selam Ömer 😄 Bugün gol mü atıyoruz, plan mı yapıyoruz, ders mi çözüyoruz? ⚽🤖";
+    }
+
+    if (x.includes("antrenman") || x.includes("futbol")) {
+      return [
+        "⚽ 35 dakikalık Nova AI antrenmanı",
+        "",
+        "1) 5 dk hafif top sürme ve yön değiştirme",
+        "2) 8 dk sağ-sol ayak kontrolü",
+        "3) 8 dk slalom + kısa hızlanmalar",
+        "4) 8 dk hedefe pas veya şut",
+        "5) 6 dk soğuma ve su molası",
+        "",
+        "Kural: Keskin ağrı olursa dur. Az ama temiz tekrar, gelişimin kralıdır 👑"
+      ].join("\n");
+    }
+
+    if (x.includes("plan") || x.includes("bugün ne yapayım")) {
+      return [
+        "📅 Örnek günlük plan",
+        "",
+        "09:00 Kahvaltı ve hazırlanma",
+        "10:00 Açık hava / yürüyüş",
+        "11:00 Futbol veya oyun",
+        "13:00 Öğle yemeği",
+        "15:00 Eğlence / arkadaşlar",
+        "17:00 Kısa antrenman",
+        "19:00 Akşam yemeği",
+        "21:00 Sakinleşme",
+        "22:00 Uyku hazırlığı 😴"
+      ].join("\n");
+    }
+
+    if (x.includes("ders") || x.includes("ödev") || x.includes("matematik") || x.includes("ingilizce") || x.includes("türkçe")) {
+      return "📚 Sorunu bana aynen yaz. Nova AI şu anda temel prototip olduğu için serbest soruları tam çözemeyebilir ama ders modunu geliştirmeye hazırız.";
+    }
+
+    if (x.includes("sıkıldım") || x.includes("görev ver")) {
+      return "🎯 Sıkıntıya kırmızı kart! 10 dakikalık görev: 20 kontrollü top dokunuşu, 10 isabetli duvar pası, 30 saniye plank ve sonra mini mola 😄";
+    }
+
+    if (x.includes("adın ne") || x.includes("kimsin")) {
+      return "Ben Nova AI 🤖📱 Senin kişisel futbol, plan ve ders asistanı prototipinim.";
+    }
+
+    if (x.includes("ronaldo")) {
+      return "SIUUU 😄🐐 Ronaldo modu açıldı! Disiplin, tekrar ve özgüven; ama antrenmanda aşırıya kaçmadan, doğru teknikle.";
+    }
+
+    return "Bunu henüz tam anlayamadım 😅 Şimdilik “futbol antrenmanı”, “günlük plan”, “ders yardımı”, “sıkıldım” veya “selam” yazabilirsin.";
+  }
+
+  function send(textOverride) {
+    const text = (textOverride ?? input.value).trim();
+    if (!text) return;
+    addMessage("user", text);
+    input.value = "";
+
+    setTimeout(() => {
+      addMessage("ai", localAnswer(text));
+    }, 180);
+  }
+
+  sendBtn.addEventListener("click", () => send());
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") send();
+  });
+
+  document.querySelectorAll("[data-prompt]").forEach(btn => {
+    btn.addEventListener("click", () => send(btn.dataset.prompt));
+  });
+
+  function unlock() {
+    const p = pinInput.value.trim();
+    pinStatus.textContent = "";
+
+    if (!savedPin) {
+      if (!/^\d{4,8}$/.test(p)) {
+        pinStatus.textContent = "PIN 4–8 rakamdan oluşmalı.";
+        return;
+      }
+      localStorage.setItem(STORAGE_PIN, p);
+      savedPin = p;
+      lockScreen.classList.add("hidden");
+      pinInput.value = "";
+      return;
+    }
+
+    if (p === savedPin) {
+      lockScreen.classList.add("hidden");
+      pinInput.value = "";
+    } else {
+      pinStatus.textContent = "PIN yanlış. Tekrar dene.";
+    }
+  }
+
+  pinBtn.addEventListener("click", unlock);
+  pinInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") unlock();
+  });
+
+  if (savedPin) lockText.textContent = "Nova AI'ya girmek için PIN'ini yaz.";
+
+  if (messages.length === 0) {
+    messages = [{
+      role: "ai",
+      text: "Selam Ömer! 😄 Ben Nova AI. Futbol antrenmanı, günlük plan, ders yardımı veya serbest sohbet için buradayım. ⚽🤖",
+      time: Date.now()
+    }];
+    saveMessages();
+  }
+  renderMessages();
+
+  // Settings menu
+  document.getElementById("menuBtn").addEventListener("click", () => menuSheet.classList.remove("hidden"));
+  document.getElementById("closeMenuBtn").addEventListener("click", () => menuSheet.classList.add("hidden"));
+
+  document.getElementById("clearChatBtn").addEventListener("click", () => {
+    messages = [{
+      role: "ai",
+      text: "Sohbet geçmişi temizlendi. Yepyeni sayfa, yepyeni goller 😄⚽",
+      time: Date.now()
+    }];
+    saveMessages();
+    renderMessages();
+    menuSheet.classList.add("hidden");
+  });
+
+  document.getElementById("changePinBtn").addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_PIN);
+    savedPin = null;
+    menuSheet.classList.add("hidden");
+    lockText.textContent = "Yeni 4–8 haneli PIN'ini oluştur.";
+    pinStatus.textContent = "";
+    lockScreen.classList.remove("hidden");
+    pinInput.focus();
+  });
+
+  function showInfo(title, text) {
+    infoTitle.textContent = title;
+    infoText.textContent = text;
+    infoSheet.classList.remove("hidden");
+  }
+
+  document.getElementById("installHelpBtn").addEventListener("click", () => {
+    menuSheet.classList.add("hidden");
+    showInfo(
+      "📲 iPhone'a ekleme",
+      "Uygulama bir HTTPS adresinde yayınlandıktan sonra Safari'de aç. Paylaş düğmesine bas → Ana Ekrana Ekle → Ekle. Böylece Nova AI kendi ikonu ve tam ekran görünümüyle uygulama gibi açılır."
+    );
+  });
+
+  document.getElementById("closeInfoBtn").addEventListener("click", () => infoSheet.classList.add("hidden"));
+
+  // PWA offline support
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>
