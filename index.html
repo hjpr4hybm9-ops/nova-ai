@@ -271,7 +271,7 @@
     requestAnimationFrame(() => chat.scrollTop = chat.scrollHeight);
   }
 
-  function addMessage(role, text) {
+  function add(...) {
     messages.push({ role, text, time: Date.now() });
     saveMessages();
     renderMessages();
@@ -306,15 +306,42 @@ async function gercekYapayZekaCevabiAl() {
 
   return response.message.content;
 }
-  function send(textOverride) {
-    const text = (textOverride ?? input.value).trim();
-    if (!text) return;
-    addMessage("user", text);
-    input.value = "";
+  async function send(textOverride) {
+  const text = String(textOverride ?? input.value).trim();
 
-    setTimeout(() => {
-      addMessage("ai", localAnswer(text));
-    }, 180);
+  if (!text) return;
+
+  addMessage("user", text);
+
+  input.value = "";
+  sendBtn.disabled = true;
+  input.disabled = true;
+
+  addMessage("ai", "Nova düşünüyor... ✨");
+
+  try {
+    const cevap = await gercekYapayZekaCevabiAl();
+
+    messages.pop();
+
+    addMessage("ai", cevap);
+
+  } catch (error) {
+    messages.pop();
+
+    addMessage(
+      "ai",
+      "Bağlantıda bir sorun oldu kral 😅 İnternetini kontrol edip tekrar dene."
+    );
+
+    console.error(error);
+
+  } finally {
+    sendBtn.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+}
   }
 
   sendBtn.addEventListener("click", () => send());
