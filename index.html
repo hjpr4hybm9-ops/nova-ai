@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="tr">
 <head>
+<script src="https://js.puter.com/v2/"></script>
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#071020" />
@@ -275,62 +277,35 @@
     renderMessages();
   }
 
-  function localAnswer(text) {
-    const x = text.toLocaleLowerCase("tr-TR");
+  const SYSTEM_PROMPT = `
+Sen Nova AI'sın.
+Kullanıcının adı Ömer.
+Türkçe konuş.
+Samimi, eğlenceli ve anlaşılır ol.
+Gerektiğinde hafif espri yap.
+Önceki konuşmaları dikkate al.
+Aynı cevabı tekrar tekrar verme.
+Futbol, okul, günlük plan ve genel sorularda yardımcı ol.
+Yanıtlarını açık ve doğal tut.
+`;
 
-    if (x.includes("selam") || x.includes("merhaba") || x === "hey") {
-      return "Selam Ömer 😄 Bugün gol mü atıyoruz, plan mı yapıyoruz, ders mi çözüyoruz? ⚽🤖";
-    }
+async function gercekYapayZekaCevabiAl() {
+  const conversationHistory = [
+    {
+      role: "system",
+      content: SYSTEM_PROMPT
+    },
 
-    if (x.includes("antrenman") || x.includes("futbol")) {
-      return [
-        "⚽ 35 dakikalık Nova AI antrenmanı",
-        "",
-        "1) 5 dk hafif top sürme ve yön değiştirme",
-        "2) 8 dk sağ-sol ayak kontrolü",
-        "3) 8 dk slalom + kısa hızlanmalar",
-        "4) 8 dk hedefe pas veya şut",
-        "5) 6 dk soğuma ve su molası",
-        "",
-        "Kural: Keskin ağrı olursa dur. Az ama temiz tekrar, gelişimin kralıdır 👑"
-      ].join("\n");
-    }
+    ...messages.slice(-20).map(message => ({
+      role: message.role === "ai" ? "assistant" : "user",
+      content: message.text
+    }))
+  ];
 
-    if (x.includes("plan") || x.includes("bugün ne yapayım")) {
-      return [
-        "📅 Örnek günlük plan",
-        "",
-        "09:00 Kahvaltı ve hazırlanma",
-        "10:00 Açık hava / yürüyüş",
-        "11:00 Futbol veya oyun",
-        "13:00 Öğle yemeği",
-        "15:00 Eğlence / arkadaşlar",
-        "17:00 Kısa antrenman",
-        "19:00 Akşam yemeği",
-        "21:00 Sakinleşme",
-        "22:00 Uyku hazırlığı 😴"
-      ].join("\n");
-    }
+  const response = await puter.ai.chat(conversationHistory);
 
-    if (x.includes("ders") || x.includes("ödev") || x.includes("matematik") || x.includes("ingilizce") || x.includes("türkçe")) {
-      return "📚 Sorunu bana aynen yaz. Nova AI şu anda temel prototip olduğu için serbest soruları tam çözemeyebilir ama ders modunu geliştirmeye hazırız.";
-    }
-
-    if (x.includes("sıkıldım") || x.includes("görev ver")) {
-      return "🎯 Sıkıntıya kırmızı kart! 10 dakikalık görev: 20 kontrollü top dokunuşu, 10 isabetli duvar pası, 30 saniye plank ve sonra mini mola 😄";
-    }
-
-    if (x.includes("adın ne") || x.includes("kimsin")) {
-      return "Ben Nova AI 🤖📱 Senin kişisel futbol, plan ve ders asistanı prototipinim.";
-    }
-
-    if (x.includes("ronaldo")) {
-      return "SIUUU 😄🐐 Ronaldo modu açıldı! Disiplin, tekrar ve özgüven; ama antrenmanda aşırıya kaçmadan, doğru teknikle.";
-    }
-
-    return "Bunu henüz tam anlayamadım 😅 Şimdilik “futbol antrenmanı”, “günlük plan”, “ders yardımı”, “sıkıldım” veya “selam” yazabilirsin.";
-  }
-
+  return response.message.content;
+}
   function send(textOverride) {
     const text = (textOverride ?? input.value).trim();
     if (!text) return;
