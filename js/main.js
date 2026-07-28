@@ -121,7 +121,9 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       throw new Error("AI motoru yüklenemedi.");
     }
 
-    const prompt = userText || "Bu fotoğrafta ne görüyorsun? Kısaca açıkla.";
+    const instruction = "Fotoğrafta bir soru, problem, alıştırma veya ödev varsa onu çöz ve adım adım, anlaşılır şekilde açıkla; sadece sonucu söyleyip geçme. Fotoğrafta soru yoksa ne olduğunu kısaca anlat.";
+    const prompt = userText ? `${userText}\n\n${instruction}` : instruction;
+
     const response = await puter.ai.chat(prompt, imageDataURL);
     const reply = extractText(response).trim();
     if (!reply) throw new Error("Boş yanıt geldi.");
