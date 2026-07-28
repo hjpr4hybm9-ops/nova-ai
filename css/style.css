@@ -29,6 +29,7 @@ body{
     var(--bg);
 }
 a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
 ul{margin:0;padding:0;list-style:none}
 img{max-width:100%;display:block}
 button{font:inherit;cursor:pointer}
@@ -165,12 +166,42 @@ button{font:inherit;cursor:pointer}
   flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);
   color:var(--text);padding:11px 14px;font-size:14px;outline:0;
 }
-.demo-composer button{
+.demo-composer #demoSend{
   padding:11px 20px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--mint),var(--cyan));
   color:#06101f;font-weight:800;
 }
 .demo-composer button:disabled{opacity:.5}
 .demo-hint{text-align:center;font-size:12px;color:var(--muted);padding:0 16px 16px}
+
+.demo-toolbar{display:flex;justify-content:flex-end;padding:10px 12px 0}
+.tool-btn{
+  border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+  border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;
+}
+.tool-btn[aria-pressed="true"]{color:var(--mint);border-color:var(--mint)}
+
+.icon-btn{
+  flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(255,255,255,.03);font-size:18px;display:grid;place-items:center;
+}
+.icon-btn.active{background:linear-gradient(135deg,var(--violet),var(--cyan));border-color:transparent}
+.icon-btn.active{animation:pulseMic 1.2s infinite}
+@keyframes pulseMic{0%,100%{box-shadow:0 0 0 0 rgba(34,211,238,.35)}50%{box-shadow:0 0 0 8px rgba(34,211,238,0)}}
+
+.demo-bubble img{max-width:100%;border-radius:12px;display:block;margin-bottom:6px}
+
+/* Camera overlay */
+.camera-overlay{
+  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:rgba(2,6,23,.85);backdrop-filter:blur(10px);padding:20px;
+}
+.camera-sheet{
+  width:min(480px,100%);background:#0b1026;border:1px solid var(--line);border-radius:24px;
+  padding:16px;display:flex;flex-direction:column;gap:14px;
+}
+.camera-sheet video{width:100%;border-radius:16px;background:#000;max-height:60vh;object-fit:cover}
+.camera-actions{display:flex;gap:10px}
+.camera-actions .btn{flex:1}
 
 /* Pricing */
 .price-card{display:flex;flex-direction:column;position:relative;text-align:center}

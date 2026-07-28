@@ -143,16 +143,23 @@
       <div class="section-head">
         <span class="eyebrow">Canlı Demo</span>
         <h2>Nova AI'yı hemen deneyin</h2>
-        <p>Aşağıya bir mesaj yazın, canlı yapay zekâ size gerçek zamanlı yanıt versin.</p>
+        <p>Yazın, sesle konuşun ya da kamerayla fotoğraf gösterin — Nova AI gerçek zamanlı yanıt versin.</p>
       </div>
 
       <div class="demo-panel">
+        <div class="demo-toolbar">
+          <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="false">🔊 Sesli yanıt: Kapalı</button>
+        </div>
+
         <div class="demo-chat" id="demoChat">
           <div class="demo-row demo-ai">
-            <div class="demo-bubble">Merhaba! Ben Nova AI 👋 Sana nasıl yardımcı olabilirim?</div>
+            <div class="demo-bubble">Merhaba! Ben Nova AI 👋 Yazabilir, mikrofonla konuşabilir ya da kamerayla fotoğraf gösterebilirsin.</div>
           </div>
         </div>
+
         <form class="demo-composer" id="demoForm">
+          <button type="button" class="icon-btn" id="cameraBtn" title="Fotoğraf çek">📷</button>
+          <button type="button" class="icon-btn" id="micBtn" title="Sesle konuş">🎙️</button>
           <input id="demoInput" type="text" maxlength="600" autocomplete="off" placeholder="Bir şey sor...">
           <button type="submit" id="demoSend">Gönder</button>
         </form>
@@ -160,6 +167,17 @@
       </div>
     </div>
   </section>
+
+  <div class="camera-overlay hidden" id="cameraOverlay">
+    <div class="camera-sheet">
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <canvas id="cameraCanvas" class="hidden"></canvas>
+      <div class="camera-actions">
+        <button type="button" class="btn btn-outline" id="cameraCancelBtn">İptal</button>
+        <button type="button" class="btn btn-primary" id="captureBtn">📸 Çek</button>
+      </div>
+    </div>
+  </div>
 
   <section class="section alt" id="fiyatlandirma">
     <div class="wrap">
