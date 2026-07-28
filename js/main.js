@@ -35,35 +35,20 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   const cameraCanvas = document.getElementById("cameraCanvas");
   const captureBtn = document.getElementById("captureBtn");
   const cameraCancelBtn = document.getElementById("cameraCancelBtn");
-  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+  const deleteChatBtn = document.getElementById("deleteChatBtn");
+  const chatsBtn = document.getElementById("chatsBtn");
+  const chatsOverlay = document.getElementById("chatsOverlay");
+  const chatsList = document.getElementById("chatsList");
+  const newChatBtn = document.getElementById("newChatBtn");
+  const closeChatsBtn = document.getElementById("closeChatsBtn");
   const toast = document.getElementById("toast");
 
   const GREETING = "Merhaba! Ben Nova AI 👋 Yazabilir, mikrofonla konuşabilir ya da kamerayla fotoğraf gösterebilirsin.";
-  const STORAGE_KEY = "nova_ai_chat_v1";
+  const STORE_KEY = "nova_ai_chats_v1";
+  const OLD_STORAGE_KEY = "nova_ai_chat_v1";
 
   let isThinking = false;
   let toastTimer = null;
-
-  // ---- Persistence ----
-  function loadMessages() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const parsed = raw ? JSON.parse(raw) : null;
-      return Array.isArray(parsed) && parsed.length ? parsed : null;
-    } catch {
-      return null;
-    }
-  }
-
-  function saveMessages() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-40)));
-    } catch {
-      /* depolama dolu ya da kullanılamıyor, sessizce geç */
-    }
-  }
-
-  let messages = loadMessages();
 
   function showToast(message, duration = 3000) {
     clearTimeout(toastTimer);
@@ -75,6 +60,68 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       setTimeout(() => toast.classList.add("hidden"), 200);
     }, duration);
   }
+
+  // ---- Multi-chat persistence ----
+  function makeId() {
+    return "chat_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  }
+
+  function makeChat(initialMessages) {
+    return {
+      id: makeId(),
+      title: "",
+      messages: initialMessages || [{ role: "ai", text: GREETING }],
+      updatedAt: Date.now()
+    };
+  }
+
+  function loadStore() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (parsed && Array.isArray(parsed.chats) && parsed.chats.length) return parsed;
+    } catch {
+      /* bozuk veri, yok say */
+    }
+
+    // Önceki tek-sohbet formatından geçiş
+    try {
+      const oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
+      const oldMessages = oldRaw ? JSON.parse(oldRaw) : null;
+      if (Array.isArray(oldMessages) && oldMessages.length) {
+        const firstUser = oldMessages.find(m => m.role === "user");
+        const chat = makeChat(oldMessages);
+        chat.title = firstUser ? firstUser.text.slice(0, 40) : "";
+        localStorage.removeItem(OLD_STORAGE_KEY);
+        return { activeId: chat.id, chats: [chat] };
+      }
+    } catch {
+      /* bozuk veri, yok say */
+    }
+
+    return null;
+  }
+
+  function saveStore() {
+    try {
+      store.chats.sort((a, b) => b.updatedAt - a.updatedAt);
+      if (store.chats.length > 20) store.chats = store.chats.slice(0, 20);
+      localStorage.setItem(STORE_KEY, JSON.stringify(store));
+    } catch {
+      /* depolama dolu ya da kullanılamıyor, sessizce geç */
+    }
+  }
+
+  function getActiveChat() {
+    return store.chats.find(c => c.id === store.activeId) || store.chats[0];
+  }
+
+  let store = loadStore();
+  if (!store) {
+    const chat = makeChat();
+    store = { activeId: chat.id, chats: [chat] };
+  }
+  let activeChat = getActiveChat();
 
   function addBubble(role, text, imageDataURL) {
     const row = document.createElement("div");
@@ -101,6 +148,11 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     return bubble;
   }
 
+  function renderActiveChat() {
+    demoChat.innerHTML = "";
+    activeChat.messages.forEach(m => addBubble(m.role, m.text));
+  }
+
   function pushMessage(role, displayText, imageDataURL) {
     addBubble(role, displayText, imageDataURL);
 
@@ -108,13 +160,19 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       ? `[📷 Fotoğraf gönderildi] ${displayText || ""}`.trim()
       : displayText;
 
-    messages.push({ role, text: storedText });
-    if (messages.length > 40) messages = messages.slice(-40);
-    saveMessages();
+    activeChat.messages.push({ role, text: storedText });
+    if (activeChat.messages.length > 40) activeChat.messages = activeChat.messages.slice(-40);
+
+    if (!activeChat.title && role === "user" && storedText) {
+      activeChat.title = storedText.length > 40 ? storedText.slice(0, 40) + "…" : storedText;
+    }
+
+    activeChat.updatedAt = Date.now();
+    saveStore();
   }
 
   function buildApiHistory() {
-    return messages
+    return activeChat.messages
       .filter(m => m.role === "user" || m.role === "ai")
       .slice(-20)
       .map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }));
@@ -364,24 +422,118 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     ask(text, null);
   });
 
-  clearHistoryBtn.addEventListener("click", () => {
+  // ---- Delete current chat ----
+  function switchToChat(id) {
+    store.activeId = id;
+    activeChat = getActiveChat();
+    renderActiveChat();
+  }
+
+  deleteChatBtn.addEventListener("click", () => {
     if (isThinking) {
-      showToast("Nova düşünürken geçmiş silinemez, biraz bekle.");
+      showToast("Nova düşünürken sohbet silinemez, biraz bekle.");
       return;
     }
 
-    messages = [];
-    demoChat.innerHTML = "";
-    pushMessage("ai", GREETING);
-    showToast("🗑️ Sohbet geçmişi silindi");
+    store.chats = store.chats.filter(c => c.id !== activeChat.id);
+
+    if (store.chats.length === 0) {
+      const chat = makeChat();
+      store.chats.push(chat);
+      store.activeId = chat.id;
+    } else {
+      store.chats.sort((a, b) => b.updatedAt - a.updatedAt);
+      store.activeId = store.chats[0].id;
+    }
+
+    activeChat = getActiveChat();
+    saveStore();
+    renderActiveChat();
+    showToast("🗑️ Sohbet silindi");
   });
 
-  // ---- Init: restore previous conversation, or start with the greeting ----
-  if (messages && messages.length) {
-    demoChat.innerHTML = "";
-    messages.forEach(m => addBubble(m.role, m.text));
-  } else {
-    messages = [];
-    pushMessage("ai", GREETING);
+  // ---- Past chats browser ----
+  function formatChatTime(ts) {
+    return new Date(ts).toLocaleString("tr-TR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
   }
+
+  function renderChatsList() {
+    chatsList.innerHTML = "";
+
+    const sorted = [...store.chats].sort((a, b) => b.updatedAt - a.updatedAt);
+
+    sorted.forEach(chat => {
+      const row = document.createElement("div");
+      row.className = "chat-row" + (chat.id === activeChat.id ? " active" : "");
+
+      const main = document.createElement("div");
+      main.className = "chat-row-main";
+
+      const title = document.createElement("div");
+      title.className = "chat-row-title";
+      title.textContent = chat.title || "Yeni Sohbet";
+
+      const time = document.createElement("div");
+      time.className = "chat-row-time";
+      time.textContent = formatChatTime(chat.updatedAt);
+
+      main.appendChild(title);
+      main.appendChild(time);
+      main.addEventListener("click", () => {
+        switchToChat(chat.id);
+        chatsOverlay.classList.add("hidden");
+      });
+
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "chat-row-delete";
+      del.title = "Bu sohbeti sil";
+      del.textContent = "✕";
+      del.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        store.chats = store.chats.filter(c => c.id !== chat.id);
+
+        if (store.chats.length === 0) {
+          const fresh = makeChat();
+          store.chats.push(fresh);
+          store.activeId = fresh.id;
+        } else if (chat.id === activeChat.id) {
+          store.chats.sort((a, b) => b.updatedAt - a.updatedAt);
+          store.activeId = store.chats[0].id;
+        }
+
+        activeChat = getActiveChat();
+        saveStore();
+        renderActiveChat();
+        renderChatsList();
+      });
+
+      row.appendChild(main);
+      row.appendChild(del);
+      chatsList.appendChild(row);
+    });
+  }
+
+  chatsBtn.addEventListener("click", () => {
+    renderChatsList();
+    chatsOverlay.classList.remove("hidden");
+  });
+
+  closeChatsBtn.addEventListener("click", () => {
+    chatsOverlay.classList.add("hidden");
+  });
+
+  newChatBtn.addEventListener("click", () => {
+    const chat = makeChat();
+    store.chats.push(chat);
+    switchToChat(chat.id);
+    saveStore();
+    chatsOverlay.classList.add("hidden");
+    showToast("🆕 Yeni sohbet başlatıldı");
+  });
+
+  // ---- Init ----
+  renderActiveChat();
+  saveStore();
 })();
