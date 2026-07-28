@@ -4,23 +4,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0f1420">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("transfer212.theme");
+      if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  })();
+</script>
 <meta name="description" content="TRANSFER 212 — gelir-gider takibi, kredi/faiz hesaplayıcı, bütçe planlayıcı ve hesap makinesi bir arada.">
 <title>TRANSFER 212 — Gelir-Gider Takibi ve Hesap Araçları</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<header class="site-header">
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">
+    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 7H17M17 7L13 3M17 7L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17 17H7M7 17L11 21M7 17L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <p class="loading-text">TRANSFER 212 yükleniyor…</p>
+</div>
+
+<header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <div class="brand">
-      <span class="logo">₺</span>
+      <span class="logo">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 7H17M17 7L13 3M17 7L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 17H7M7 17L11 21M7 17L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
       <span class="brand-name">TRANSFER 212</span>
     </div>
     <nav class="tabs" id="tabs">
       <button class="tab-btn active" data-tab="ozet">Genel Bakış</button>
       <button class="tab-btn" data-tab="islemler">İşlemler</button>
+      <button class="tab-btn" data-tab="notlar">Notlar</button>
       <button class="tab-btn" data-tab="araclar">Hesap Araçları</button>
     </nav>
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline btn-sm" id="puterBtn" data-state="out">Puter ile Giriş Yap</button>
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -60,8 +97,9 @@
   <!-- İŞLEMLER -->
   <section class="panel" id="panel-islemler">
     <div class="box">
-      <h3>Yeni İşlem Ekle</h3>
+      <h3 id="txFormTitle">Yeni İşlem Ekle</h3>
       <form id="txForm" class="tx-form">
+        <input type="hidden" id="txEditId" value="">
         <div class="field-row">
           <label>
             Tür
@@ -89,7 +127,10 @@
             <input type="text" id="txDesc" placeholder="Not ekle...">
           </label>
         </div>
-        <button type="submit" class="btn btn-primary">İşlemi Kaydet</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="txSubmitBtn">İşlemi Kaydet</button>
+          <button type="button" class="btn btn-ghost" id="txCancelEdit" style="display:none;">İptal</button>
+        </div>
       </form>
     </div>
 
@@ -123,6 +164,29 @@
         </table>
       </div>
       <p class="empty-hint" id="txEmptyHint">Henüz işlem eklenmedi.</p>
+    </div>
+  </section>
+
+  <!-- NOTLAR -->
+  <section class="panel" id="panel-notlar">
+    <div class="box">
+      <h3>Yeni Not Ekle</h3>
+      <form id="noteForm" class="tx-form">
+        <label>
+          Başlık (opsiyonel)
+          <input type="text" id="noteTitle" placeholder="Örn. Vergi ödeme tarihleri">
+        </label>
+        <label>
+          Not
+          <textarea id="noteText" rows="4" placeholder="Notunuzu yazın..." required></textarea>
+        </label>
+        <button type="submit" class="btn btn-primary">Notu Kaydet</button>
+      </form>
+    </div>
+    <div class="box">
+      <h3>Notlarım</h3>
+      <div class="notes-grid" id="notesGrid"></div>
+      <p class="empty-hint" id="notesEmptyHint">Henüz not eklenmedi.</p>
     </div>
   </section>
 
@@ -202,10 +266,11 @@
 
 <footer class="site-footer">
   <div class="wrap">
-    <p>TRANSFER 212 — verileriniz yalnızca bu tarayıcıda saklanır, hiçbir sunucuya gönderilmez.</p>
+    <p>TRANSFER 212 — verileriniz bu tarayıcıda saklanır; Puter ile giriş yaptığınızda hesabınıza yedeklenir.</p>
   </div>
 </footer>
 
+<script src="https://js.puter.com/v2/"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

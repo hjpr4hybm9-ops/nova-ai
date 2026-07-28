@@ -2,6 +2,9 @@
   "use strict";
 
   const STORAGE_KEY = "hesapDefterim.transactions.v1";
+  const NOTES_KEY = "transfer212.notes.v1";
+  const THEME_KEY = "transfer212.theme";
+  const PUTER_KEY = "transfer212_data";
 
   const fmtTRY = (n) =>
     new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(n || 0);
@@ -10,6 +13,12 @@
     const d = new Date(isoDate + "T00:00:00");
     return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
   };
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
   // ---------- Storage ----------
   function loadTx() {
@@ -23,9 +32,40 @@
 
   function saveTx(list) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    pushToPuter();
+  }
+
+  function loadNotes() {
+    try {
+      const raw = localStorage.getItem(NOTES_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveNotes(list) {
+    localStorage.setItem(NOTES_KEY, JSON.stringify(list));
+    pushToPuter();
   }
 
   let transactions = loadTx();
+  let notes = loadNotes();
+
+  // ---------- Theme ----------
+  const themeToggle = document.getElementById("themeToggle");
+
+  function currentTheme() {
+    return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+  }
+
+  themeToggle.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch {}
+  });
 
   // ---------- Tabs ----------
   const tabButtons = document.querySelectorAll(".tab-btn");
@@ -44,7 +84,18 @@
   // ---------- Transaction form ----------
   const txForm = document.getElementById("txForm");
   const txDate = document.getElementById("txDate");
+  const txEditId = document.getElementById("txEditId");
+  const txSubmitBtn = document.getElementById("txSubmitBtn");
+  const txCancelEdit = document.getElementById("txCancelEdit");
+  const txFormTitle = document.getElementById("txFormTitle");
   txDate.valueAsDate = new Date();
+
+  function exitEditMode() {
+    txEditId.value = "";
+    txSubmitBtn.textContent = "İşlemi Kaydet";
+    txFormTitle.textContent = "Yeni İşlem Ekle";
+    txCancelEdit.style.display = "none";
+  }
 
   txForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -56,19 +107,34 @@
 
     if (!amount || amount <= 0 || !date || !category) return;
 
-    transactions.push({
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      type,
-      amount,
-      date,
-      category,
-      desc,
-    });
+    const editId = txEditId.value;
+    if (editId) {
+      const idx = transactions.findIndex((t) => t.id === editId);
+      if (idx !== -1) {
+        transactions[idx] = { ...transactions[idx], type, amount, date, category, desc };
+      }
+      exitEditMode();
+    } else {
+      transactions.push({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        type,
+        amount,
+        date,
+        category,
+        desc,
+      });
+    }
     saveTx(transactions);
     txForm.reset();
     txDate.valueAsDate = new Date();
 
     renderAll();
+  });
+
+  txCancelEdit.addEventListener("click", () => {
+    txForm.reset();
+    txDate.valueAsDate = new Date();
+    exitEditMode();
   });
 
   // ---------- Filters ----------
@@ -117,9 +183,30 @@
         <td>${escapeHtml(t.category)}</td>
         <td>${escapeHtml(t.desc || "—")}</td>
         <td class="amount-${t.type}">${t.type === "gider" ? "-" : "+"}${fmtTRY(t.amount)}</td>
-        <td><button class="del-btn" data-id="${t.id}" title="Sil">✕</button></td>
+        <td>
+          <button class="edit-btn" data-id="${t.id}" title="Düzenle">✎</button>
+          <button class="del-btn" data-id="${t.id}" title="Sil">✕</button>
+        </td>
       `;
       txTableBody.appendChild(tr);
+    });
+
+    txTableBody.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const t = transactions.find((tx) => tx.id === btn.dataset.id);
+        if (!t) return;
+        document.getElementById("txType").value = t.type;
+        document.getElementById("txAmount").value = t.amount;
+        document.getElementById("txDate").value = t.date;
+        document.getElementById("txCategory").value = t.category;
+        document.getElementById("txDesc").value = t.desc || "";
+        txEditId.value = t.id;
+        txSubmitBtn.textContent = "Güncelle";
+        txFormTitle.textContent = "İşlemi Düzenle";
+        txCancelEdit.style.display = "inline-flex";
+        document.querySelector('.tab-btn[data-tab="islemler"]').click();
+        txForm.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     });
 
     txTableBody.querySelectorAll(".del-btn").forEach((btn) => {
@@ -129,12 +216,6 @@
         renderAll();
       });
     });
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   // ---------- Overview ----------
@@ -200,6 +281,55 @@
     populateMonthFilter();
     renderTxTable();
     renderOverview();
+  }
+
+  // ---------- Notes ----------
+  const noteForm = document.getElementById("noteForm");
+  const notesGrid = document.getElementById("notesGrid");
+  const notesEmptyHint = document.getElementById("notesEmptyHint");
+
+  noteForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("noteTitle").value.trim();
+    const text = document.getElementById("noteText").value.trim();
+    if (!text) return;
+
+    notes.unshift({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      title,
+      text,
+      date: new Date().toISOString().slice(0, 10),
+    });
+    saveNotes(notes);
+    noteForm.reset();
+    renderNotes();
+  });
+
+  function renderNotes() {
+    notesGrid.innerHTML = "";
+    notesEmptyHint.style.display = notes.length ? "none" : "block";
+
+    notes.forEach((n) => {
+      const card = document.createElement("div");
+      card.className = "note-card";
+      card.innerHTML = `
+        ${n.title ? `<h4>${escapeHtml(n.title)}</h4>` : ""}
+        <p>${escapeHtml(n.text).replace(/\n/g, "<br>")}</p>
+        <div class="note-footer">
+          <span class="recent-meta">${fmtDateTR(n.date)}</span>
+          <button class="del-btn" data-id="${n.id}" title="Sil">✕</button>
+        </div>
+      `;
+      notesGrid.appendChild(card);
+    });
+
+    notesGrid.querySelectorAll(".del-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        notes = notes.filter((n) => n.id !== btn.dataset.id);
+        saveNotes(notes);
+        renderNotes();
+      });
+    });
   }
 
   // ---------- Loan calculator ----------
@@ -287,6 +417,102 @@
     calcRender();
   });
 
+  // ---------- Puter (giriş yap + bulut yedekleme) ----------
+  const puterBtn = document.getElementById("puterBtn");
+  let puterSignedIn = false;
+
+  function updatePuterButton(user) {
+    puterSignedIn = !!user;
+    if (user) {
+      puterBtn.textContent = (user.username || "Kullanıcı") + " · Çıkış Yap";
+      puterBtn.dataset.state = "in";
+    } else {
+      puterBtn.textContent = "Puter ile Giriş Yap";
+      puterBtn.dataset.state = "out";
+    }
+  }
+
+  async function pushToPuter() {
+    if (!puterSignedIn || typeof puter === "undefined" || !puter.kv) return;
+    try {
+      await puter.kv.set(PUTER_KEY, JSON.stringify({ transactions, notes }));
+    } catch {
+      // sessizce yut, yerel veriler zaten kaydedildi
+    }
+  }
+
+  async function syncFromPuter() {
+    if (typeof puter === "undefined" || !puter.kv) return;
+    try {
+      const remote = await puter.kv.get(PUTER_KEY);
+      if (remote) {
+        const data = JSON.parse(remote);
+        transactions = Array.isArray(data.transactions) ? data.transactions : transactions;
+        notes = Array.isArray(data.notes) ? data.notes : notes;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+      } else {
+        await pushToPuter();
+      }
+      renderAll();
+      renderNotes();
+    } catch {
+      // bağlantı yoksa yerel veriyle devam et
+    }
+  }
+
+  async function initPuter() {
+    if (typeof puter === "undefined" || !puter.auth) {
+      puterBtn.style.display = "none";
+      return;
+    }
+    try {
+      const signedIn = await puter.auth.isSignedIn();
+      if (signedIn) {
+        const user = await puter.auth.getUser();
+        updatePuterButton(user);
+        await syncFromPuter();
+      } else {
+        updatePuterButton(null);
+      }
+    } catch {
+      updatePuterButton(null);
+    }
+  }
+
+  puterBtn.addEventListener("click", async () => {
+    if (typeof puter === "undefined") return;
+    if (puterBtn.dataset.state === "in") {
+      try {
+        await puter.auth.signOut();
+      } catch {}
+      updatePuterButton(null);
+      return;
+    }
+    try {
+      await puter.auth.signIn();
+      const user = await puter.auth.getUser();
+      updatePuterButton(user);
+      await syncFromPuter();
+    } catch {
+      // kullanıcı girişi iptal etti veya bir hata oluştu
+    }
+  });
+
+  // ---------- Loading screen ----------
+  function hideLoadingScreen() {
+    const el = document.getElementById("loadingScreen");
+    if (!el) return;
+    el.classList.add("hide");
+    setTimeout(() => el.remove(), 400);
+  }
+
+  function timeout(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   // ---------- Init ----------
   renderAll();
+  renderNotes();
+  Promise.race([initPuter(), timeout(3000)]).then(hideLoadingScreen);
 })();
