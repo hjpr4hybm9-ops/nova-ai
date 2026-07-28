@@ -96,7 +96,11 @@
       m.awayGoals = res.awayGoals;
       m.scorers = res.scorers;
       const isUser = m.home === state.userClubId || m.away === state.userClubId;
-      results.push({ home: home.name, away: away.name, homeGoals: res.homeGoals, awayGoals: res.awayGoals, isUser });
+      const timeline = isUser ? FK.sim.buildMatchTimeline(home, away, res) : null;
+      results.push({
+        home: home.name, away: away.name, homeGoals: res.homeGoals, awayGoals: res.awayGoals, isUser,
+        homeId: m.home, awayId: m.away, timeline
+      });
 
       if (isUser) {
         const opponent = m.home === state.userClubId ? away : home;
