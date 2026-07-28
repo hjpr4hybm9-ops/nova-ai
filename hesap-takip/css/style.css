@@ -81,18 +81,10 @@ body {
 }
 
 .logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--brand), var(--accent));
-  color: #06111d;
-  font-weight: 800;
+  display: block;
+  height: 30px;
+  width: auto;
 }
-
-.logo svg { display: block; }
 
 .header-actions {
   display: flex;
@@ -718,15 +710,13 @@ input:focus, select:focus, textarea:focus {
 }
 
 .loading-logo {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--brand), var(--accent));
-  color: #06111d;
   animation: logo-pulse 1.4s ease-in-out infinite;
+}
+
+.loading-logo img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 
 .loading-text {
