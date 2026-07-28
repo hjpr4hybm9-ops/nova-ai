@@ -39,10 +39,31 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   const toast = document.getElementById("toast");
 
   const GREETING = "Merhaba! Ben Nova AI 👋 Yazabilir, mikrofonla konuşabilir ya da kamerayla fotoğraf gösterebilirsin.";
+  const STORAGE_KEY = "nova_ai_chat_v1";
 
-  let history = [];
   let isThinking = false;
   let toastTimer = null;
+
+  // ---- Persistence ----
+  function loadMessages() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      return Array.isArray(parsed) && parsed.length ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveMessages() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-40)));
+    } catch {
+      /* depolama dolu ya da kullanılamıyor, sessizce geç */
+    }
+  }
+
+  let messages = loadMessages();
 
   function showToast(message, duration = 3000) {
     clearTimeout(toastTimer);
@@ -80,6 +101,25 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     return bubble;
   }
 
+  function pushMessage(role, displayText, imageDataURL) {
+    addBubble(role, displayText, imageDataURL);
+
+    const storedText = imageDataURL
+      ? `[📷 Fotoğraf gönderildi] ${displayText || ""}`.trim()
+      : displayText;
+
+    messages.push({ role, text: storedText });
+    if (messages.length > 40) messages = messages.slice(-40);
+    saveMessages();
+  }
+
+  function buildApiHistory() {
+    return messages
+      .filter(m => m.role === "user" || m.role === "ai")
+      .slice(-20)
+      .map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }));
+  }
+
   function addTyping() {
     const row = document.createElement("div");
     row.className = "demo-row demo-ai";
@@ -102,18 +142,17 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     return String(response);
   }
 
-  async function getReply(userText) {
+  async function getReply() {
     if (typeof puter === "undefined" || !puter.ai || typeof puter.ai.chat !== "function") {
       throw new Error("AI motoru yüklenemedi.");
     }
 
-    const messages = [
+    const apiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
-      ...history,
-      { role: "user", content: userText }
+      ...buildApiHistory()
     ];
 
-    const response = await puter.ai.chat(messages);
+    const response = await puter.ai.chat(apiMessages);
     const reply = extractText(response).trim();
     if (!reply) throw new Error("Boş yanıt geldi.");
     return reply;
@@ -287,7 +326,7 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     if (isThinking) return;
     if (!text && !imageDataURL) return;
 
-    addBubble("user", text, imageDataURL);
+    pushMessage("user", text, imageDataURL);
     isThinking = true;
     demoSend.disabled = true;
     demoInput.disabled = true;
@@ -298,20 +337,16 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     try {
       const reply = imageDataURL
         ? await getVisionReply(text, imageDataURL)
-        : await getReply(text);
-
-      history.push({ role: "user", content: imageDataURL ? `[Bir fotoğraf gönderildi] ${text}`.trim() : text });
-      history.push({ role: "assistant", content: reply });
-      if (history.length > 20) history = history.slice(-20);
+        : await getReply();
 
       typingRow.remove();
-      addBubble("ai", reply);
+      pushMessage("ai", reply);
       speak(reply);
       demoHint.textContent = "Bu demo, tarayıcınızda çalışan canlı bir yapay zekâ modelini kullanır.";
     } catch (error) {
       console.error(error);
       typingRow.remove();
-      addBubble("ai", "Şu anda bağlanırken bir sorun oluştu. Lütfen tekrar deneyin.");
+      pushMessage("ai", "Şu anda bağlanırken bir sorun oluştu. Lütfen tekrar deneyin.");
       demoHint.textContent = "Bağlantı sorunu yaşandı, tekrar deneyebilirsiniz.";
     } finally {
       isThinking = false;
@@ -335,9 +370,18 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       return;
     }
 
-    history = [];
+    messages = [];
     demoChat.innerHTML = "";
-    addBubble("ai", GREETING);
+    pushMessage("ai", GREETING);
     showToast("🗑️ Sohbet geçmişi silindi");
   });
+
+  // ---- Init: restore previous conversation, or start with the greeting ----
+  if (messages && messages.length) {
+    demoChat.innerHTML = "";
+    messages.forEach(m => addBubble(m.role, m.text));
+  } else {
+    messages = [];
+    pushMessage("ai", GREETING);
+  }
 })();
