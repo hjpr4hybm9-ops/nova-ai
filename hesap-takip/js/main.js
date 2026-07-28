@@ -54,20 +54,30 @@
 
   // ---------- Theme ----------
   const themeToggle = document.getElementById("themeToggle");
+  const darkModeSwitch = document.getElementById("darkModeSwitch");
 
   function currentTheme() {
     return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
   }
 
-  themeToggle.addEventListener("click", () => {
-    const next = currentTheme() === "dark" ? "light" : "dark";
+  function applyTheme(next) {
     document.documentElement.setAttribute("data-theme", next);
     try {
       localStorage.setItem(THEME_KEY, next);
     } catch {}
+    darkModeSwitch.checked = next === "dark";
     // Category chart colors are theme-dependent; refresh them.
     renderDonut();
     renderBarChart();
+  }
+
+  themeToggle.addEventListener("click", () => {
+    applyTheme(currentTheme() === "dark" ? "light" : "dark");
+  });
+
+  darkModeSwitch.checked = currentTheme() === "dark";
+  darkModeSwitch.addEventListener("change", () => {
+    applyTheme(darkModeSwitch.checked ? "dark" : "light");
   });
 
   // ---------- Tabs ----------
@@ -798,16 +808,24 @@
 
   // ---------- Puter (giriş yap + bulut yedekleme) ----------
   const puterBtn = document.getElementById("puterBtn");
+  const settingsPuterBtn = document.getElementById("settingsPuterBtn");
+  const settingsPuterStatus = document.getElementById("settingsPuterStatus");
   let puterSignedIn = false;
 
   function updatePuterButton(user) {
     puterSignedIn = !!user;
-    if (user) {
-      puterBtn.textContent = (user.username || "Kullanıcı") + " · Çıkış Yap";
-      puterBtn.dataset.state = "in";
-    } else {
-      puterBtn.textContent = "Puter ile Giriş Yap";
-      puterBtn.dataset.state = "out";
+    [puterBtn, settingsPuterBtn].forEach((btn) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = (user.username || "Kullanıcı") + " · Çıkış Yap";
+        btn.dataset.state = "in";
+      } else {
+        btn.textContent = "Puter ile Giriş Yap";
+        btn.dataset.state = "out";
+      }
+    });
+    if (settingsPuterStatus) {
+      settingsPuterStatus.textContent = user ? "Bağlı: " + (user.username || "Kullanıcı") : "Bağlı değil";
     }
   }
 
@@ -843,6 +861,8 @@
   async function initPuter() {
     if (typeof puter === "undefined" || !puter.auth) {
       puterBtn.style.display = "none";
+      if (settingsPuterBtn) settingsPuterBtn.style.display = "none";
+      if (settingsPuterStatus) settingsPuterStatus.textContent = "Puter kullanılamıyor";
       return;
     }
     try {
@@ -859,9 +879,9 @@
     }
   }
 
-  puterBtn.addEventListener("click", async () => {
+  async function handlePuterClick(btn) {
     if (typeof puter === "undefined") return;
-    if (puterBtn.dataset.state === "in") {
+    if (btn.dataset.state === "in") {
       try {
         await puter.auth.signOut();
       } catch {}
@@ -876,6 +896,152 @@
     } catch {
       // kullanıcı girişi iptal etti veya bir hata oluştu
     }
+  }
+
+  puterBtn.addEventListener("click", () => handlePuterClick(puterBtn));
+  if (settingsPuterBtn) settingsPuterBtn.addEventListener("click", () => handlePuterClick(settingsPuterBtn));
+
+  // ---------- Display name ----------
+  const DISPLAY_NAME_KEY = "transfer212.displayName";
+  const displayNameInput = document.getElementById("displayNameInput");
+  const headerGreeting = document.getElementById("headerGreeting");
+
+  function updateGreeting() {
+    const name = localStorage.getItem(DISPLAY_NAME_KEY);
+    if (name) {
+      headerGreeting.textContent = "Merhaba, " + name;
+      headerGreeting.style.display = "inline";
+    } else {
+      headerGreeting.style.display = "none";
+    }
+  }
+
+  displayNameInput.value = localStorage.getItem(DISPLAY_NAME_KEY) || "";
+  document.getElementById("displayNameSave").addEventListener("click", () => {
+    const name = displayNameInput.value.trim();
+    if (name) localStorage.setItem(DISPLAY_NAME_KEY, name);
+    else localStorage.removeItem(DISPLAY_NAME_KEY);
+    updateGreeting();
+  });
+  updateGreeting();
+
+  // ---------- App lock (PIN) ----------
+  const APPLOCK_KEY = "transfer212.applock";
+  const PIN_KEY = "transfer212.pin";
+  const appLockSwitch = document.getElementById("appLockSwitch");
+  const setPinPanel = document.getElementById("setPinPanel");
+  const newPinInput = document.getElementById("newPinInput");
+  const confirmPinInput = document.getElementById("confirmPinInput");
+  const pinError = document.getElementById("pinError");
+
+  appLockSwitch.checked = localStorage.getItem(APPLOCK_KEY) === "1";
+
+  appLockSwitch.addEventListener("change", () => {
+    if (appLockSwitch.checked) {
+      setPinPanel.style.display = "block";
+    } else {
+      localStorage.removeItem(APPLOCK_KEY);
+      localStorage.removeItem(PIN_KEY);
+      setPinPanel.style.display = "none";
+    }
+  });
+
+  document.getElementById("savePinBtn").addEventListener("click", () => {
+    const pin = newPinInput.value.trim();
+    const confirmPin = confirmPinInput.value.trim();
+    pinError.style.display = "none";
+
+    if (!/^\d{4,6}$/.test(pin)) {
+      pinError.textContent = "PIN 4-6 haneli rakamlardan oluşmalı.";
+      pinError.style.display = "block";
+      return;
+    }
+    if (pin !== confirmPin) {
+      pinError.textContent = "PIN'ler eşleşmiyor.";
+      pinError.style.display = "block";
+      return;
+    }
+
+    localStorage.setItem(PIN_KEY, pin);
+    localStorage.setItem(APPLOCK_KEY, "1");
+    setPinPanel.style.display = "none";
+    newPinInput.value = "";
+    confirmPinInput.value = "";
+  });
+
+  const lockScreen = document.getElementById("lockScreen");
+  const lockPinInput = document.getElementById("lockPinInput");
+  const lockError = document.getElementById("lockError");
+
+  function checkAppLock() {
+    if (localStorage.getItem(APPLOCK_KEY) === "1" && localStorage.getItem(PIN_KEY)) {
+      lockScreen.classList.add("show");
+      lockPinInput.focus();
+    }
+  }
+
+  function tryUnlock() {
+    const storedPin = localStorage.getItem(PIN_KEY);
+    if (lockPinInput.value === storedPin) {
+      lockScreen.classList.remove("show");
+      lockPinInput.value = "";
+      lockError.style.display = "none";
+    } else {
+      lockError.style.display = "block";
+      lockPinInput.value = "";
+    }
+  }
+
+  document.getElementById("lockUnlockBtn").addEventListener("click", tryUnlock);
+  lockPinInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") tryUnlock();
+  });
+
+  // ---------- Data management ----------
+  document.getElementById("exportDataBtn").addEventListener("click", () => {
+    const data = { transactions, notes, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "transfer212-yedek-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  const importDataInput = document.getElementById("importDataInput");
+  document.getElementById("importDataBtn").addEventListener("click", () => importDataInput.click());
+
+  importDataInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (Array.isArray(data.transactions)) transactions = data.transactions;
+        if (Array.isArray(data.notes)) notes = data.notes;
+        saveTx(transactions);
+        saveNotes(notes);
+        renderAll();
+        renderNotes();
+        window.alert("Veriler başarıyla içe aktarıldı.");
+      } catch {
+        window.alert("Dosya okunamadı. Geçerli bir yedek dosyası seçin.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  document.getElementById("clearDataBtn").addEventListener("click", () => {
+    if (!window.confirm("Tüm işlemler ve notlar silinecek. Emin misiniz?")) return;
+    transactions = [];
+    notes = [];
+    saveTx(transactions);
+    saveNotes(notes);
+    renderAll();
+    renderNotes();
   });
 
   // ---------- Loading screen ----------
@@ -893,5 +1059,8 @@
   // ---------- Init ----------
   renderAll();
   renderNotes();
-  Promise.race([initPuter(), timeout(3000)]).then(hideLoadingScreen);
+  Promise.race([initPuter(), timeout(3000)]).then(() => {
+    hideLoadingScreen();
+    checkAppLock();
+  });
 })();
