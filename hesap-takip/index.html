@@ -69,7 +69,7 @@
 <main class="wrap">
 
   <!-- GENEL BAKIŞ -->
-  <section class="panel active" id="panel-ozet">
+  <section class="panel active viz-root" id="panel-ozet">
     <div class="cards">
       <div class="card income">
         <span class="card-label">Toplam Gelir</span>
@@ -87,9 +87,18 @@
 
     <div class="grid-2">
       <div class="box">
-        <h3>Kategoriye Göre Gider Dağılımı</h3>
-        <div id="categoryBars" class="bars"></div>
-        <p class="empty-hint" id="categoryEmptyHint">Henüz gider kaydı yok.</p>
+        <div class="box-header">
+          <h3>Kategoriye Göre Gider Dağılımı</h3>
+          <select id="donutMonth"></select>
+        </div>
+        <div class="donut-wrap" id="donutWrap">
+          <div class="donut-center" id="donutCenter">
+            <span class="donut-center-label" id="donutCenterLabel"></span>
+            <span class="donut-center-value" id="donutCenterValue">₺0,00</span>
+          </div>
+        </div>
+        <div class="chart-legend" id="donutLegend"></div>
+        <p class="empty-hint" id="donutEmptyHint">Bu ay için gider kaydı yok.</p>
       </div>
       <div class="box">
         <h3>Son İşlemler</h3>
@@ -97,7 +106,21 @@
         <p class="empty-hint" id="recentEmptyHint">Henüz işlem eklenmedi.</p>
       </div>
     </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h3>Aylık Gelir-Gider Karşılaştırması</h3>
+        <select id="barYear"></select>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-swatch swatch-income"></span>Gelir</span>
+        <span class="legend-item"><span class="legend-swatch swatch-expense"></span>Gider</span>
+      </div>
+      <div class="bar-chart-wrap" id="barChartWrap"></div>
+    </div>
   </section>
+
+  <div class="chart-tooltip" id="chartTooltip"></div>
 
   <!-- İŞLEMLER -->
   <section class="panel" id="panel-islemler">

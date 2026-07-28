@@ -65,6 +65,9 @@
     try {
       localStorage.setItem(THEME_KEY, next);
     } catch {}
+    // Category chart colors are theme-dependent; refresh them.
+    renderDonut();
+    renderBarChart();
   });
 
   // ---------- Tabs ----------
@@ -222,8 +225,6 @@
   const sumIncomeEl = document.getElementById("sumIncome");
   const sumExpenseEl = document.getElementById("sumExpense");
   const sumBalanceEl = document.getElementById("sumBalance");
-  const categoryBars = document.getElementById("categoryBars");
-  const categoryEmptyHint = document.getElementById("categoryEmptyHint");
   const recentList = document.getElementById("recentList");
   const recentEmptyHint = document.getElementById("recentEmptyHint");
 
@@ -234,30 +235,6 @@
     sumIncomeEl.textContent = fmtTRY(totalIncome);
     sumExpenseEl.textContent = fmtTRY(totalExpense);
     sumBalanceEl.textContent = fmtTRY(totalIncome - totalExpense);
-
-    // Category bars (expenses only)
-    const byCategory = {};
-    transactions
-      .filter((t) => t.type === "gider")
-      .forEach((t) => {
-        byCategory[t.category] = (byCategory[t.category] || 0) + t.amount;
-      });
-
-    const entries = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
-    categoryBars.innerHTML = "";
-    categoryEmptyHint.style.display = entries.length ? "none" : "block";
-    const maxVal = entries.length ? entries[0][1] : 1;
-
-    entries.forEach(([cat, val]) => {
-      const row = document.createElement("div");
-      row.className = "bar-row";
-      row.innerHTML = `
-        <span>${escapeHtml(cat)}</span>
-        <span class="bar-track"><span class="bar-fill" style="width:${(val / maxVal) * 100}%"></span></span>
-        <span>${fmtTRY(val)}</span>
-      `;
-      categoryBars.appendChild(row);
-    });
 
     // Recent transactions
     const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
@@ -277,10 +254,316 @@
     });
   }
 
+  // ---------- Chart tooltip ----------
+  const chartTooltip = document.getElementById("chartTooltip");
+
+  function showTooltip(x, y, labelText, valueText) {
+    chartTooltip.innerHTML = "";
+    const labelEl = document.createElement("div");
+    labelEl.className = "tt-label";
+    labelEl.textContent = labelText;
+    const valueEl = document.createElement("div");
+    valueEl.className = "tt-value";
+    valueEl.textContent = valueText;
+    chartTooltip.appendChild(labelEl);
+    chartTooltip.appendChild(valueEl);
+    chartTooltip.classList.add("show");
+
+    const pad = 14;
+    let left = x + pad;
+    let top = y + pad;
+    const rect = chartTooltip.getBoundingClientRect();
+    if (left + rect.width > window.innerWidth - 8) left = x - rect.width - pad;
+    if (top + rect.height > window.innerHeight - 8) top = y - rect.height - pad;
+    chartTooltip.style.left = Math.max(8, left) + "px";
+    chartTooltip.style.top = Math.max(8, top) + "px";
+  }
+
+  function hideTooltip() {
+    chartTooltip.classList.remove("show");
+  }
+
+  // ---------- Category donut chart ----------
+  const MONTHS_TR_SHORT = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+  const MONTHS_TR_FULL = [
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
+  ];
+
+  const donutMonthSelect = document.getElementById("donutMonth");
+  const donutWrap = document.getElementById("donutWrap");
+  const donutCenterLabel = document.getElementById("donutCenterLabel");
+  const donutCenterValue = document.getElementById("donutCenterValue");
+  const donutLegend = document.getElementById("donutLegend");
+  const donutEmptyHint = document.getElementById("donutEmptyHint");
+
+  donutMonthSelect.addEventListener("change", renderDonut);
+
+  function todayYM() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  }
+
+  function populateDonutMonths() {
+    const months = new Set(transactions.map((t) => t.date.slice(0, 7)));
+    months.add(todayYM());
+    const sorted = Array.from(months).sort().reverse();
+    const current = donutMonthSelect.value;
+    donutMonthSelect.innerHTML = "";
+    sorted.forEach((m) => {
+      const [y, mo] = m.split("-");
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = MONTHS_TR_FULL[parseInt(mo, 10) - 1] + " " + y;
+      donutMonthSelect.appendChild(opt);
+    });
+    if (sorted.includes(current)) donutMonthSelect.value = current;
+    else if (sorted.includes(todayYM())) donutMonthSelect.value = todayYM();
+  }
+
+  function renderDonut() {
+    const month = donutMonthSelect.value;
+    const byCategory = {};
+    transactions
+      .filter((t) => t.type === "gider" && t.date.slice(0, 7) === month)
+      .forEach((t) => {
+        byCategory[t.category] = (byCategory[t.category] || 0) + t.amount;
+      });
+
+    const entries = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((s, [, v]) => s + v, 0);
+
+    const catColors = ["var(--cat-1)", "var(--cat-2)", "var(--cat-3)", "var(--cat-4)", "var(--cat-5)"];
+    const shown = entries.slice(0, 5).map(([name, value], i) => ({ name, value, color: catColors[i] }));
+    if (entries.length > 5) {
+      const otherTotal = entries.slice(5).reduce((s, [, v]) => s + v, 0);
+      shown.push({ name: "Diğer", value: otherTotal, color: "var(--cat-other)" });
+    }
+
+    const [y, mo] = month.split("-");
+    donutCenterLabel.textContent = MONTHS_TR_FULL[parseInt(mo, 10) - 1] + " Gider";
+    donutCenterValue.textContent = fmtTRY(total);
+
+    donutEmptyHint.style.display = shown.length ? "none" : "block";
+    donutWrap.querySelectorAll("svg").forEach((el) => el.remove());
+    donutLegend.innerHTML = "";
+    if (!shown.length) return;
+
+    const size = 200;
+    const strokeWidth = 30;
+    const gap = 3;
+    const r = (size - strokeWidth) / 2;
+    const c = 2 * Math.PI * r;
+    const cx = size / 2;
+    const cy = size / 2;
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+    svg.setAttribute("width", size);
+    svg.setAttribute("height", size);
+
+    let offset = 0;
+    shown.forEach((seg) => {
+      const frac = seg.value / total;
+      const len = frac * c;
+      const drawLen = Math.max(len - gap, 0.001);
+      const circle = document.createElementNS(svgNS, "circle");
+      circle.setAttribute("cx", cx);
+      circle.setAttribute("cy", cy);
+      circle.setAttribute("r", r);
+      circle.setAttribute("fill", "none");
+      circle.setAttribute("stroke", seg.color);
+      circle.setAttribute("stroke-width", strokeWidth);
+      circle.setAttribute("stroke-linecap", "round");
+      circle.setAttribute("stroke-dasharray", `${drawLen} ${c - drawLen}`);
+      circle.setAttribute("stroke-dashoffset", String(-(offset + gap / 2)));
+      circle.setAttribute("transform", `rotate(-90 ${cx} ${cy})`);
+      circle.setAttribute("class", "donut-seg");
+      circle.setAttribute("tabindex", "0");
+
+      const pct = (frac * 100).toFixed(1).replace(".", ",");
+      const onHover = (e) => showTooltip(e.clientX, e.clientY, seg.name, `${fmtTRY(seg.value)} · %${pct}`);
+      circle.addEventListener("pointermove", onHover);
+      circle.addEventListener("pointerenter", onHover);
+      circle.addEventListener("pointerleave", hideTooltip);
+      circle.addEventListener("focus", () => {
+        const rc = circle.getBoundingClientRect();
+        showTooltip(rc.left + rc.width / 2, rc.top + rc.height / 2, seg.name, `${fmtTRY(seg.value)} · %${pct}`);
+      });
+      circle.addEventListener("blur", hideTooltip);
+
+      svg.appendChild(circle);
+      offset += len;
+    });
+
+    donutWrap.appendChild(svg);
+
+    shown.forEach((seg) => {
+      const item = document.createElement("span");
+      item.className = "legend-item";
+      const swatch = document.createElement("span");
+      swatch.className = "legend-swatch";
+      swatch.style.background = seg.color;
+      item.appendChild(swatch);
+      item.appendChild(document.createTextNode(seg.name + " "));
+      const strong = document.createElement("strong");
+      strong.textContent = fmtTRY(seg.value);
+      item.appendChild(strong);
+      donutLegend.appendChild(item);
+    });
+  }
+
+  // ---------- Yearly income/expense bar chart ----------
+  const barYearSelect = document.getElementById("barYear");
+  const barChartWrap = document.getElementById("barChartWrap");
+
+  barYearSelect.addEventListener("change", renderBarChart);
+
+  function populateBarYears() {
+    const years = new Set(transactions.map((t) => t.date.slice(0, 4)));
+    years.add(String(new Date().getFullYear()));
+    const sorted = Array.from(years).sort().reverse();
+    const current = barYearSelect.value;
+    barYearSelect.innerHTML = "";
+    sorted.forEach((yr) => {
+      const opt = document.createElement("option");
+      opt.value = yr;
+      opt.textContent = yr;
+      barYearSelect.appendChild(opt);
+    });
+    barYearSelect.value = sorted.includes(current) ? current : sorted[0];
+  }
+
+  function niceStep(max) {
+    const rough = max / 4;
+    const mag = Math.pow(10, Math.floor(Math.log10(rough || 1)));
+    const norm = rough / mag;
+    let step;
+    if (norm < 1.5) step = 1;
+    else if (norm < 3) step = 2;
+    else if (norm < 7) step = 5;
+    else step = 10;
+    return step * mag;
+  }
+
+  function fmtAxisNum(n) {
+    return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(n);
+  }
+
+  function renderBarChart() {
+    const year = barYearSelect.value;
+    const monthlyIncome = new Array(12).fill(0);
+    const monthlyExpense = new Array(12).fill(0);
+
+    transactions.forEach((t) => {
+      if (t.date.slice(0, 4) !== year) return;
+      const idx = parseInt(t.date.slice(5, 7), 10) - 1;
+      if (idx < 0 || idx > 11) return;
+      if (t.type === "gelir") monthlyIncome[idx] += t.amount;
+      else monthlyExpense[idx] += t.amount;
+    });
+
+    const maxVal = Math.max(1, ...monthlyIncome, ...monthlyExpense);
+    const step = niceStep(maxVal);
+    const chartMax = step * Math.ceil(maxVal / step);
+    const gridValues = [];
+    for (let v = 0; v <= chartMax; v += step) gridValues.push(v);
+
+    const width = 760;
+    const height = 260;
+    const padLeft = 60;
+    const padRight = 12;
+    const padTop = 16;
+    const padBottom = 30;
+    const plotW = width - padLeft - padRight;
+    const plotH = height - padTop - padBottom;
+    const groupW = plotW / 12;
+    const barW = Math.min(24, groupW * 0.32);
+    const gap = 3;
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", height);
+    svg.style.minWidth = "600px";
+
+    gridValues.forEach((v) => {
+      const y = padTop + plotH - (chartMax ? (v / chartMax) * plotH : 0);
+      const line = document.createElementNS(svgNS, "line");
+      line.setAttribute("x1", padLeft);
+      line.setAttribute("x2", width - padRight);
+      line.setAttribute("y1", y);
+      line.setAttribute("y2", y);
+      line.setAttribute("stroke", "var(--border)");
+      line.setAttribute("stroke-width", "1");
+      svg.appendChild(line);
+
+      const label = document.createElementNS(svgNS, "text");
+      label.setAttribute("x", padLeft - 8);
+      label.setAttribute("y", y + 4);
+      label.setAttribute("text-anchor", "end");
+      label.setAttribute("class", "chart-axis-label");
+      label.textContent = fmtAxisNum(v);
+      svg.appendChild(label);
+    });
+
+    MONTHS_TR_SHORT.forEach((monthLabel, i) => {
+      const groupX = padLeft + i * groupW;
+      const centerX = groupX + groupW / 2;
+
+      const text = document.createElementNS(svgNS, "text");
+      text.setAttribute("x", centerX);
+      text.setAttribute("y", height - padBottom + 18);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("class", "chart-axis-label");
+      text.textContent = monthLabel;
+      svg.appendChild(text);
+
+      const bars = [
+        { x: centerX - gap / 2 - barW, val: monthlyIncome[i], color: "var(--income)", label: "Gelir" },
+        { x: centerX + gap / 2, val: monthlyExpense[i], color: "var(--expense)", label: "Gider" },
+      ];
+
+      bars.forEach((bar) => {
+        const h = chartMax ? (bar.val / chartMax) * plotH : 0;
+        const rect = document.createElementNS(svgNS, "rect");
+        rect.setAttribute("x", bar.x);
+        rect.setAttribute("y", padTop + plotH - h);
+        rect.setAttribute("width", barW);
+        rect.setAttribute("height", Math.max(h, 0));
+        rect.setAttribute("rx", 4);
+        rect.setAttribute("fill", bar.color);
+        rect.setAttribute("class", "bar-rect");
+        rect.setAttribute("tabindex", "0");
+
+        const onHover = (e) =>
+          showTooltip(e.clientX, e.clientY, `${monthLabel} ${year}`, `${bar.label}: ${fmtTRY(bar.val)}`);
+        rect.addEventListener("pointermove", onHover);
+        rect.addEventListener("pointerenter", onHover);
+        rect.addEventListener("pointerleave", hideTooltip);
+        rect.addEventListener("focus", () => {
+          const rc = rect.getBoundingClientRect();
+          showTooltip(rc.left + rc.width / 2, rc.top, `${monthLabel} ${year}`, `${bar.label}: ${fmtTRY(bar.val)}`);
+        });
+        rect.addEventListener("blur", hideTooltip);
+
+        svg.appendChild(rect);
+      });
+    });
+
+    barChartWrap.innerHTML = "";
+    barChartWrap.appendChild(svg);
+  }
+
   function renderAll() {
     populateMonthFilter();
     renderTxTable();
     renderOverview();
+    populateDonutMonths();
+    renderDonut();
+    populateBarYears();
+    renderBarChart();
   }
 
   // ---------- Notes ----------
