@@ -37,6 +37,47 @@
   }
   function closeModal() { $("modalOverlay").classList.add("hidden"); }
 
+  const ATTR_LABELS = { pace: "Hız", shooting: "Şut", passing: "Pas", defending: "Defans", physical: "Fizik", reflex: "Refleks", handling: "Elle Oynama", kicking: "Vuruş" };
+
+  function attrBarHtml(label, value) {
+    return `
+      <div class="attr-row">
+        <span class="attr-label">${label}</span>
+        <div class="attr-bar"><i style="width:${value}%"></i></div>
+        <span class="attr-value">${value}</span>
+      </div>
+    `;
+  }
+
+  function openPlayerDetail(playerId, clubLabel) {
+    const found = G.findPlayerOwner(playerId);
+    if (!found || !found.player) return;
+    const p = found.player;
+    const attrEntries = Object.entries(p.attrs || {});
+    openModal(`
+      <div class="player-card-head">
+        <div>
+          <h3 style="margin:0 0 4px;">${p.flag || ""} ${p.name}</h3>
+          <span style="color:var(--text-dim);font-size:13px;">${p.nation || ""} · ${D.POSITION_LABELS[p.position]} (${p.role}) · #${p.number ?? "-"}</span>
+        </div>
+      </div>
+      <div class="player-attrs">
+        <div><span>Yaş</span><span>${p.age}</span></div>
+        <div><span>Ayak</span><span>${p.foot}</span></div>
+        <div><span>Güç</span><span>${p.overall}</span></div>
+        <div><span>Potansiyel</span><span>${p.potential}</span></div>
+        <div><span>Değer</span><span>${G.fmtMoney(p.value)}</span></div>
+        <div><span>Maaş</span><span>${G.fmtMoney(p.wage)}/hafta</span></div>
+        <div><span>Sezon Golü</span><span>${p.seasonGoals}</span></div>
+        <div><span>Durum</span><span>${p.injuredWeeks > 0 ? "🩹 Sakat (" + p.injuredWeeks + " hafta)" : "Sağlıklı"}</span></div>
+      </div>
+      <div class="attr-list">
+        ${attrEntries.map(([k, v]) => attrBarHtml(ATTR_LABELS[k] || k, v)).join("")}
+      </div>
+      ${clubLabel ? `<p style="color:var(--text-dim);font-size:12.5px;margin-top:12px;">${clubLabel}</p>` : ""}
+    `);
+  }
+
   function openConfirm(text, onOk) {
     $("confirmText").textContent = text;
     $("confirmOverlay").classList.remove("hidden");
@@ -85,6 +126,7 @@
       card.innerHTML = `
         <div class="club-crest" style="background:${c.primary};color:${c.secondary}">${c.short}</div>
         <div class="club-name">${c.name}</div>
+        <div class="club-sub">"${c.nickname}" · ${c.city} · ${c.formation}</div>
         <div class="club-meta"><span class="tier-stars">${stars}</span><span>${G.fmtMoney(c.budget)}</span></div>
       `;
       card.addEventListener("click", () => {
@@ -169,7 +211,7 @@
 
     $("topbarClub").innerHTML = `
       <span class="club-crest" style="background:${club.primary};color:${club.secondary};width:30px;height:30px;font-size:11px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;">${club.short}</span>
-      <span>${club.name}</span>
+      <span>${club.name}<br><small style="font-weight:500;color:var(--text-dim);">"${club.nickname}" · ${club.city}</small></span>
     `;
     $("statSeason").textContent = s.season;
     $("statWeek").textContent = `${Math.min(s.week, G.totalWeeks())} / ${G.totalWeeks()}`;
@@ -201,7 +243,8 @@
           <div class="team">${home.name}</div>
           <div class="vs">HAFTA ${nextFx.week}<br>vs</div>
           <div class="team">${away.name}</div>
-        </div>`;
+        </div>
+        <p style="text-align:center;color:var(--text-dim);font-size:12.5px;margin:4px 0 0;">📍 ${home.stadium} · ${home.city}</p>`;
     }
 
     const formBadges = (myRow ? myRow.form.slice(-5) : []).map((f) => `<span class="badge badge-${f}">${f}</span>`).join("");
@@ -225,11 +268,24 @@
           <div class="form-badges">${formBadges || '<span class="empty-hint">Henüz maç oynanmadı.</span>'}</div>
         </div>
       </div>
-      <div class="panel">
-        <h3>Bildirimler</h3>
-        <ul class="notif-list">
-          ${s.notifications.slice(0, 6).map((n) => `<li>${n}</li>`).join("") || '<li>Henüz bildirim yok.</li>'}
-        </ul>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Bildirimler</h3>
+          <ul class="notif-list">
+            ${s.notifications.slice(0, 6).map((n) => `<li>${n}</li>`).join("") || '<li>Henüz bildirim yok.</li>'}
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Kulüp Kimliği</h3>
+          <div class="player-attrs" style="margin-top:0;">
+            <div><span>Takma Ad</span><span>${club.nickname}</span></div>
+            <div><span>Şehir</span><span>${club.city}</span></div>
+            <div><span>Stadyum</span><span>${club.stadium}</span></div>
+            <div><span>Kapasite</span><span>${club.capacity.toLocaleString("tr-TR")}</span></div>
+            <div><span>Kuruluş</span><span>${club.founded}</span></div>
+            <div><span>Diziliş</span><span>${club.formation}</span></div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -237,9 +293,11 @@
   /* ---------------- Kadro ---------------- */
 
   function playerRowHtml(p, opts) {
-    const injured = p.injuredWeeks > 0 ? `<span title="Sakat" style="color:var(--bad);">🩹</span>` : "";
+    const injured = p.injuredWeeks > 0 ? `<span title="Sakat">🩹</span>` : "";
     return `
       <tr data-player-id="${p.id}">
+        <td>${p.number ?? "-"}</td>
+        <td title="${p.nation || ""}">${p.flag || ""}</td>
         <td><input class="name-input" value="${p.name}" data-rename="${p.id}" ${opts.editable ? "" : "disabled"}></td>
         <td><span class="pos-chip pos-${p.position}">${D.POSITION_LABELS[p.position]}</span></td>
         <td>${p.age}</td>
@@ -247,7 +305,8 @@
         <td>${p.potential}</td>
         <td>${p.seasonGoals}</td>
         <td>${G.fmtMoney(p.value)}</td>
-        <td>${injured}${opts.action ? opts.action(p) : ""}</td>
+        <td>${injured}</td>
+        <td><button class="btn btn-outline btn-sm" data-detail="${p.id}">Detay</button>${opts.action ? opts.action(p) : ""}</td>
       </tr>
     `;
   }
@@ -278,7 +337,7 @@
         </div>
         <div class="table-wrap">
           <table class="data-table">
-            <thead><tr><th>İsim</th><th>Mevki</th><th>Yaş</th><th>Güç</th><th>Potansiyel</th><th>Gol</th><th>Değer</th><th>Sat</th></tr></thead>
+            <thead><tr><th>No</th><th>Uy.</th><th>İsim</th><th>Mevki</th><th>Yaş</th><th>Güç</th><th>Potansiyel</th><th>Gol</th><th>Değer</th><th></th><th></th></tr></thead>
             <tbody>
               ${sorted.map((p) => playerRowHtml(p, {
                 editable: true,
@@ -292,6 +351,10 @@
 
     $("squadFilterSelect").value = squadFilter;
     $("squadFilterSelect").addEventListener("change", (e) => { squadFilter = e.target.value; renderSquad(); });
+
+    pane.querySelectorAll("[data-detail]").forEach((btn) => {
+      btn.addEventListener("click", () => openPlayerDetail(btn.dataset.detail, `${club.name} kadrosunda.`));
+    });
 
     pane.querySelectorAll("[data-rename]").forEach((input) => {
       input.addEventListener("change", (e) => {
@@ -389,16 +452,18 @@
 
     wrap.innerHTML = `
       <table class="data-table">
-        <thead><tr><th>İsim</th><th>Kulüp</th><th>Mevki</th><th>Yaş</th><th>Güç</th><th>Değer</th><th></th></tr></thead>
+        <thead><tr><th>Uy.</th><th>İsim</th><th>Kulüp</th><th>Mevki</th><th>Yaş</th><th>Güç</th><th>Değer</th><th></th><th></th></tr></thead>
         <tbody>
           ${list.map(({ p, source }) => `
             <tr>
+              <td title="${p.nation || ""}">${p.flag || ""}</td>
               <td>${p.name}</td>
               <td>${source}</td>
               <td><span class="pos-chip pos-${p.position}">${D.POSITION_LABELS[p.position]}</span></td>
               <td>${p.age}</td>
               <td><span class="ovr-pill">${p.overall}</span></td>
               <td>${G.fmtMoney(p.value)}</td>
+              <td><button class="btn btn-outline btn-sm" data-detail="${p.id}">Detay</button></td>
               <td><button class="btn btn-primary btn-sm" data-buy="${p.id}" ${(!open || club.budget < p.value) ? "disabled" : ""}>Al</button></td>
             </tr>
           `).join("")}
@@ -413,6 +478,9 @@
         if (res.ok) { toast(`${res.player.name} transfer edildi!`, "success"); renderAll(); }
         else toast(res.reason || "Transfer başarısız.", "error");
       });
+    });
+    wrap.querySelectorAll("[data-detail]").forEach((btn) => {
+      btn.addEventListener("click", () => openPlayerDetail(btn.dataset.detail));
     });
   }
 

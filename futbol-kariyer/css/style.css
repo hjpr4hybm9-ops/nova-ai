@@ -13,6 +13,7 @@
   --bad: #f87171;
   --radius: 14px;
   font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", Roboto, Arial, sans-serif;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -46,13 +47,14 @@ body {
 .btn-danger { background: linear-gradient(135deg, #f87171, #dc2626); color: #fff; }
 .btn-lg { padding: 14px 22px; font-size: 16px; width: 100%; }
 .btn-sm { padding: 6px 10px; font-size: 12px; }
+.btn:focus-visible, .tab-btn:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- Kurulum Ekranı ---------- */
 .setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
 .setup-wrap { max-width: 860px; width: 100%; }
 .setup-head { text-align: center; margin-bottom: 28px; }
 .eyebrow { display: inline-block; color: var(--accent); font-weight: 700; letter-spacing: .04em; margin-bottom: 10px; }
-.setup-head h1 { font-size: clamp(24px, 4vw, 38px); margin: 6px 0 14px; line-height: 1.2; }
+.setup-head h1 { font-size: clamp(24px, 4vw, 38px); margin: 6px 0 14px; line-height: 1.2; text-wrap: balance; }
 .setup-head p { color: var(--text-dim); max-width: 640px; margin: 0 auto; line-height: 1.6; }
 
 .continue-box {
@@ -80,7 +82,8 @@ body {
 .club-card:hover { transform: translateY(-2px); }
 .club-card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .club-crest { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; margin-bottom: 8px; }
-.club-card .club-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.club-card .club-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.club-card .club-sub { color: var(--text-dim); font-size: 11.5px; margin-bottom: 6px; }
 .club-card .club-meta { color: var(--text-dim); font-size: 12px; display: flex; justify-content: space-between; }
 .tier-stars { color: var(--warn); letter-spacing: 1px; }
 
@@ -94,7 +97,7 @@ body {
 .topbar-club { display: flex; align-items: center; gap: 10px; font-weight: 700; }
 .topbar-mid { display: flex; gap: 22px; flex-wrap: wrap; }
 .topbar-stat { display: flex; flex-direction: column; font-size: 12px; color: var(--text-dim); }
-.topbar-stat strong { color: var(--text); font-size: 15px; }
+.topbar-stat strong { color: var(--text); font-size: 15px; font-variant-numeric: tabular-nums; }
 .topbar-actions { display: flex; gap: 10px; }
 
 .tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 16px; padding-bottom: 4px; }
@@ -108,6 +111,10 @@ body {
 .tab-pane { display: none; animation: fadeIn .18s ease; }
 .tab-pane.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .tab-pane { animation: none; }
+  .club-card, .btn { transition: none; }
+}
 
 .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; }
 .panel h2, .panel h3 { margin-top: 0; }
@@ -127,7 +134,7 @@ body {
 .notif-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .notif-list li { background: var(--panel-soft); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; color: var(--text-dim); }
 
-table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
 table.data-table th { text-align: left; color: var(--text-dim); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--panel); }
 table.data-table td { padding: 8px 10px; border-bottom: 1px solid #1d2942; }
 table.data-table tr.me td { background: rgba(79,124,255,.12); }
@@ -156,7 +163,7 @@ table.data-table tr:hover td { background: rgba(255,255,255,.02); }
 .market-toolbar input { min-width: 180px; }
 
 .pill-stat { background: var(--panel-soft); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--text-dim); }
-.pill-stat strong { color: var(--text); display: block; font-size: 16px; }
+.pill-stat strong { color: var(--text); display: block; font-size: 16px; font-variant-numeric: tabular-nums; }
 .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
 
 .market-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -167,7 +174,7 @@ table.data-table tr:hover td { background: rgba(255,255,255,.02); }
 .fixture-week h4 { margin: 0 0 8px; color: var(--text-dim); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; }
 .fixture-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; }
 .fixture-row.me { background: rgba(79,124,255,.12); }
-.fixture-row .score { font-weight: 800; min-width: 56px; text-align: center; }
+.fixture-row .score { font-weight: 800; min-width: 56px; text-align: center; font-variant-numeric: tabular-nums; }
 .fixture-row .pending { color: var(--text-dim); font-size: 12px; }
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(4,7,16,.65); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
@@ -182,6 +189,13 @@ table.data-table tr:hover td { background: rgba(255,255,255,.02); }
 .player-attrs div span:last-child { font-weight: 700; }
 .modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; }
 .modal-sheet { position: relative; }
+
+.attr-list { display: flex; flex-direction: column; gap: 8px; }
+.attr-row { display: grid; grid-template-columns: 90px 1fr 30px; align-items: center; gap: 8px; font-size: 12.5px; }
+.attr-label { color: var(--text-dim); }
+.attr-bar { background: var(--bg-alt); border-radius: 999px; height: 8px; overflow: hidden; }
+.attr-bar i { display: block; height: 100%; background: linear-gradient(90deg, #4f7cff, #34d399); border-radius: 999px; }
+.attr-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 
 .toast {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);

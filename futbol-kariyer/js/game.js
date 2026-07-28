@@ -6,6 +6,22 @@
   const MIN_SQUAD = 16;
   const PLAN_SIZE = 21;
 
+  const WIN_QUOTES = [
+    "Bugün sahada koyduğumuz her şeyi gördüm, {opp} karşısında hak eden taraf bizdik.",
+    "{opp} karşısında disiplinli bir oyun sergiledik, bu galibiyet emeğin karşılığı.",
+    "Takımın mücadelesinden gurur duyuyorum, {opp} maçı planladığımız gibi gitti."
+  ];
+  const DRAW_QUOTES = [
+    "{opp} karşısında iki puanı sahada bıraktık ama emeğe saygısızlık etmeyelim.",
+    "Berabere kaldık ama {opp} karşısında ortaya konan mücadele gurur verici.",
+    "{opp} maçında şanssızdık, üç puanı hak ediyorduk ama futbol böyle bir şey."
+  ];
+  const LOSS_QUOTES = [
+    "{opp} karşısında beklediğimiz futbolu sahaya yansıtamadık, üzerine kafa yoracağız.",
+    "Bu sonuç bizi üzdü, {opp} maçındaki hataları haftaya çalışacağız.",
+    "{opp} karşısında istediğimiz sonucu alamadık ama bu takımın kalitesine güveniyorum."
+  ];
+
   let state = null;
 
   function totalWeeks() { return state.fixtures.length; }
@@ -30,7 +46,6 @@
   }
 
   function newCareer(managerName, clubId, prebuiltClubs) {
-    idResetGuard();
     const clubs = prebuiltClubs || FK.data.generateLeague();
     const chosen = clubId ? clubs.find((c) => c.id === clubId) : clubs[0];
     state = {
@@ -49,8 +64,6 @@
     save();
     return state;
   }
-
-  function idResetGuard() {}
 
   function currentRoundMatches() {
     if (state.week >= totalWeeks()) return [];
@@ -71,6 +84,9 @@
 
     const round = state.fixtures[state.week];
     const results = [];
+    const userClub = getUserClub();
+    const previouslyInjured = new Set(userClub.players.filter((p) => p.injuredWeeks > 0).map((p) => p.id));
+
     round.forEach((m) => {
       const home = getClub(m.home);
       const away = getClub(m.away);
@@ -79,7 +95,29 @@
       m.homeGoals = res.homeGoals;
       m.awayGoals = res.awayGoals;
       m.scorers = res.scorers;
-      results.push({ home: home.name, away: away.name, homeGoals: res.homeGoals, awayGoals: res.awayGoals, isUser: m.home === state.userClubId || m.away === state.userClubId });
+      const isUser = m.home === state.userClubId || m.away === state.userClubId;
+      results.push({ home: home.name, away: away.name, homeGoals: res.homeGoals, awayGoals: res.awayGoals, isUser });
+
+      if (isUser) {
+        const opponent = m.home === state.userClubId ? away : home;
+        const userGoals = m.home === state.userClubId ? res.homeGoals : res.awayGoals;
+        const oppGoals = m.home === state.userClubId ? res.awayGoals : res.homeGoals;
+        const quoteSet = userGoals > oppGoals ? WIN_QUOTES : userGoals < oppGoals ? LOSS_QUOTES : DRAW_QUOTES;
+        state.notifications.unshift(FK.data.pick(quoteSet).replace("{opp}", opponent.name));
+
+        const tallies = {};
+        res.scorers.forEach((s) => {
+          if (s.club !== state.userClubId) return;
+          tallies[s.playerId] = (tallies[s.playerId] || 0) + 1;
+        });
+        Object.entries(tallies).forEach(([playerId, goals]) => {
+          if (goals < 2) return;
+          const scorer = userClub.players.find((p) => p.id === playerId);
+          if (!scorer) return;
+          const label = goals >= 3 ? "hat-trick yaptı" : "çift gol attı";
+          state.notifications.unshift(`⚽ ${scorer.name} bu maçta ${label}! (${goals} gol)`);
+        });
+      }
     });
 
     // hafif form/sakatlık güncellemesi
@@ -88,6 +126,13 @@
       if (p.injuredWeeks > 0) p.injuredWeeks--;
       else if (Math.random() < 0.012) p.injuredWeeks = FK.data.randInt(1, 4);
     }));
+
+    userClub.players.forEach((p) => {
+      if (p.injuredWeeks > 0 && !previouslyInjured.has(p.id)) {
+        state.notifications.unshift(`🩹 ${p.name} sakatlandı, ${p.injuredWeeks} hafta forma giyemeyecek.`);
+      }
+    });
+    state.notifications = state.notifications.slice(0, 30);
 
     state.week++;
     if (state.week >= totalWeeks()) state.seasonOver = true;
@@ -136,6 +181,7 @@
         replacements.push(FK.data.generatePlayer(needed, club.tier, usedNames));
         club.players.push(replacements[replacements.length - 1]);
       }
+      FK.data.assignSquadNumbers(club.players);
     });
 
     state.freeAgents = FK.data.generateFreeAgents(14);
@@ -178,6 +224,12 @@
       sellerClub.players = sellerClub.players.filter((p) => p.id !== playerId);
     } else {
       state.freeAgents = state.freeAgents.filter((p) => p.id !== playerId);
+    }
+    if (userClub.players.some((p) => p.number === player.number)) {
+      const taken = new Set(userClub.players.map((p) => p.number));
+      let n = 2;
+      while (taken.has(n) && n <= 99) n++;
+      player.number = n <= 99 ? n : null;
     }
     userClub.players.push(player);
     state.transferLog.unshift({
