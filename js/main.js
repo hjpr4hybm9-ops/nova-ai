@@ -35,7 +35,10 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   const cameraCanvas = document.getElementById("cameraCanvas");
   const captureBtn = document.getElementById("captureBtn");
   const cameraCancelBtn = document.getElementById("cameraCancelBtn");
+  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
   const toast = document.getElementById("toast");
+
+  const GREETING = "Merhaba! Ben Nova AI 👋 Yazabilir, mikrofonla konuşabilir ya da kamerayla fotoğraf gösterebilirsin.";
 
   let history = [];
   let isThinking = false;
@@ -324,5 +327,17 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     if (!text) return;
     demoInput.value = "";
     ask(text, null);
+  });
+
+  clearHistoryBtn.addEventListener("click", () => {
+    if (isThinking) {
+      showToast("Nova düşünürken geçmiş silinemez, biraz bekle.");
+      return;
+    }
+
+    history = [];
+    demoChat.innerHTML = "";
+    addBubble("ai", GREETING);
+    showToast("🗑️ Sohbet geçmişi silindi");
   });
 })();
