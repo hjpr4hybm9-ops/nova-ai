@@ -287,6 +287,29 @@
   const noteForm = document.getElementById("noteForm");
   const notesGrid = document.getElementById("notesGrid");
   const notesEmptyHint = document.getElementById("notesEmptyHint");
+  const noteEditId = document.getElementById("noteEditId");
+  const noteSubmitBtn = document.getElementById("noteSubmitBtn");
+  const noteCancelEdit = document.getElementById("noteCancelEdit");
+  const noteFormTitle = document.getElementById("noteFormTitle");
+
+  function exitNoteEditMode() {
+    noteEditId.value = "";
+    noteSubmitBtn.textContent = "Notu Kaydet";
+    noteFormTitle.textContent = "Yeni Not Ekle";
+    noteCancelEdit.style.display = "none";
+  }
+
+  function enterNoteEditMode(note) {
+    document.getElementById("noteTitle").value = note.title || "";
+    document.getElementById("noteText").value = note.text;
+    noteEditId.value = note.id;
+    noteSubmitBtn.textContent = "Notu Güncelle";
+    noteFormTitle.textContent = "Notu Düzenle";
+    noteCancelEdit.style.display = "inline-flex";
+    closeNoteModal();
+    document.querySelector('.tab-btn[data-tab="notlar"]').click();
+    noteForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   noteForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -294,15 +317,29 @@
     const text = document.getElementById("noteText").value.trim();
     if (!text) return;
 
-    notes.unshift({
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      title,
-      text,
-      date: new Date().toISOString().slice(0, 10),
-    });
+    const editId = noteEditId.value;
+    if (editId) {
+      const idx = notes.findIndex((n) => n.id === editId);
+      if (idx !== -1) {
+        notes[idx] = { ...notes[idx], title, text };
+      }
+      exitNoteEditMode();
+    } else {
+      notes.unshift({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        title,
+        text,
+        date: new Date().toISOString().slice(0, 10),
+      });
+    }
     saveNotes(notes);
     noteForm.reset();
     renderNotes();
+  });
+
+  noteCancelEdit.addEventListener("click", () => {
+    noteForm.reset();
+    exitNoteEditMode();
   });
 
   function renderNotes() {
@@ -312,25 +349,84 @@
     notes.forEach((n) => {
       const card = document.createElement("div");
       card.className = "note-card";
+      card.dataset.id = n.id;
       card.innerHTML = `
         ${n.title ? `<h4>${escapeHtml(n.title)}</h4>` : ""}
-        <p>${escapeHtml(n.text).replace(/\n/g, "<br>")}</p>
+        <p>${escapeHtml(n.text)}</p>
         <div class="note-footer">
           <span class="recent-meta">${fmtDateTR(n.date)}</span>
-          <button class="del-btn" data-id="${n.id}" title="Sil">✕</button>
+          <div class="note-footer-actions">
+            <button class="edit-btn" data-id="${n.id}" title="Düzenle">✎</button>
+            <button class="del-btn" data-id="${n.id}" title="Sil">✕</button>
+          </div>
         </div>
       `;
+      card.addEventListener("click", () => openNoteModal(n.id));
       notesGrid.appendChild(card);
     });
 
+    notesGrid.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const n = notes.find((note) => note.id === btn.dataset.id);
+        if (n) enterNoteEditMode(n);
+      });
+    });
+
     notesGrid.querySelectorAll(".del-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        notes = notes.filter((n) => n.id !== btn.dataset.id);
-        saveNotes(notes);
-        renderNotes();
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteNote(btn.dataset.id);
       });
     });
   }
+
+  function deleteNote(id) {
+    notes = notes.filter((n) => n.id !== id);
+    saveNotes(notes);
+    renderNotes();
+  }
+
+  // ---------- Full-page note viewer ----------
+  const noteModal = document.getElementById("noteModal");
+  const noteModalTitle = document.getElementById("noteModalTitle");
+  const noteModalDate = document.getElementById("noteModalDate");
+  const noteModalText = document.getElementById("noteModalText");
+  const noteModalClose = document.getElementById("noteModalClose");
+  const noteModalEdit = document.getElementById("noteModalEdit");
+  const noteModalDelete = document.getElementById("noteModalDelete");
+  let openNoteId = null;
+
+  function openNoteModal(id) {
+    const n = notes.find((note) => note.id === id);
+    if (!n) return;
+    openNoteId = id;
+    noteModalTitle.textContent = n.title || "Başlıksız Not";
+    noteModalDate.textContent = fmtDateTR(n.date);
+    noteModalText.textContent = n.text;
+    noteModal.classList.add("open");
+  }
+
+  function closeNoteModal() {
+    noteModal.classList.remove("open");
+    openNoteId = null;
+  }
+
+  noteModalClose.addEventListener("click", closeNoteModal);
+
+  noteModalEdit.addEventListener("click", () => {
+    const n = notes.find((note) => note.id === openNoteId);
+    if (n) enterNoteEditMode(n);
+  });
+
+  noteModalDelete.addEventListener("click", () => {
+    if (openNoteId) deleteNote(openNoteId);
+    closeNoteModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && noteModal.classList.contains("open")) closeNoteModal();
+  });
 
   // ---------- Loan calculator ----------
   document.getElementById("loanForm").addEventListener("submit", (e) => {

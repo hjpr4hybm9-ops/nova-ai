@@ -170,8 +170,9 @@
   <!-- NOTLAR -->
   <section class="panel" id="panel-notlar">
     <div class="box">
-      <h3>Yeni Not Ekle</h3>
+      <h3 id="noteFormTitle">Yeni Not Ekle</h3>
       <form id="noteForm" class="tx-form">
+        <input type="hidden" id="noteEditId" value="">
         <label>
           Başlık (opsiyonel)
           <input type="text" id="noteTitle" placeholder="Örn. Vergi ödeme tarihleri">
@@ -180,7 +181,10 @@
           Not
           <textarea id="noteText" rows="4" placeholder="Notunuzu yazın..." required></textarea>
         </label>
-        <button type="submit" class="btn btn-primary">Notu Kaydet</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="noteSubmitBtn">Notu Kaydet</button>
+          <button type="button" class="btn btn-ghost" id="noteCancelEdit" style="display:none;">İptal</button>
+        </div>
       </form>
     </div>
     <div class="box">
@@ -263,6 +267,21 @@
   </section>
 
 </main>
+
+<div class="note-modal" id="noteModal">
+  <div class="note-modal-header">
+    <button type="button" class="btn btn-ghost btn-sm" id="noteModalClose">← Geri</button>
+    <div class="note-modal-header-actions">
+      <button type="button" class="btn btn-outline btn-sm" id="noteModalEdit">Düzenle</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="noteModalDelete">Sil</button>
+    </div>
+  </div>
+  <div class="note-modal-body">
+    <p class="note-modal-date" id="noteModalDate"></p>
+    <h2 class="note-modal-title" id="noteModalTitle"></h2>
+    <div class="note-modal-text" id="noteModalText"></div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap">
