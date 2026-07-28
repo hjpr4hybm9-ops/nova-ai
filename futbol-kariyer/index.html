@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<meta name="description" content="Futbol Kariyer — kurgusal oyuncularla kulüp yönetip transfer yapabileceğin, tarayıcıda oynanan futbol kariyer simülasyonu.">
+<title>Futbol Kariyer — Transfer &amp; Menajerlik Simülasyonu</title>
+<link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- KURULUM EKRANI -->
+<section id="setupScreen" class="setup-screen">
+  <div class="setup-wrap">
+    <div class="setup-head">
+      <span class="eyebrow">⚽ Futbol Kariyer</span>
+      <h1>Kendi kulübünü yönet, transfer yap, şampiyon ol.</h1>
+      <p>Tüm oyuncu ve kulüpler kurgusaldır — istediğin ismi verebilirsin. Gerçek bir lig deneyimi: fikstür, puan durumu, transfer penceresi ve sezon sonu gelişim.</p>
+    </div>
+
+    <div id="continueBox" class="continue-box hidden">
+      <div>
+        <strong>Devam eden bir kariyerin var.</strong>
+        <span id="continueInfo"></span>
+      </div>
+      <div class="continue-actions">
+        <button id="continueBtn" class="btn btn-primary">Devam Et</button>
+        <button id="newCareerBtn" class="btn btn-outline">Yeni Kariyer Başlat</button>
+      </div>
+    </div>
+
+    <div id="newCareerForm" class="new-career-form">
+      <label class="field">
+        <span>Teknik Direktör Adın</span>
+        <input id="managerNameInput" type="text" maxlength="30" placeholder="Örn. Cem Yıldız">
+      </label>
+
+      <div class="field">
+        <span>Yöneteceğin Kulübü Seç</span>
+        <div id="clubPicker" class="club-picker"></div>
+      </div>
+
+      <button id="startCareerBtn" class="btn btn-primary btn-lg">Kariyere Başla</button>
+    </div>
+  </div>
+</section>
+
+<!-- OYUN EKRANI -->
+<section id="gameScreen" class="game-screen hidden">
+  <header class="topbar">
+    <div class="topbar-club" id="topbarClub"></div>
+    <div class="topbar-mid">
+      <div class="topbar-stat"><label>Sezon</label><strong id="statSeason">1</strong></div>
+      <div class="topbar-stat"><label>Hafta</label><strong id="statWeek">0 / 34</strong></div>
+      <div class="topbar-stat"><label>Bütçe</label><strong id="statBudget">₺0</strong></div>
+      <div class="topbar-stat" id="windowStat"><label>Transfer Penceresi</label><strong id="statWindow">Kapalı</strong></div>
+    </div>
+    <div class="topbar-actions">
+      <button id="nextWeekBtn" class="btn btn-primary">Sonraki Hafta ▶</button>
+      <button id="resetBtn" class="btn btn-ghost" title="Yeni kariyer başlat">Yeni Kariyer</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="dashboard">Genel Bakış</button>
+    <button class="tab-btn" data-tab="squad">Kadro</button>
+    <button class="tab-btn" data-tab="market">Transfer Piyasası</button>
+    <button class="tab-btn" data-tab="table">Puan Durumu</button>
+    <button class="tab-btn" data-tab="fixtures">Fikstür</button>
+    <button class="tab-btn" data-tab="scorers">Gol Kralları</button>
+  </nav>
+
+  <main class="tab-content">
+    <section id="tab-dashboard" class="tab-pane active"></section>
+    <section id="tab-squad" class="tab-pane"></section>
+    <section id="tab-market" class="tab-pane"></section>
+    <section id="tab-table" class="tab-pane"></section>
+    <section id="tab-fixtures" class="tab-pane"></section>
+    <section id="tab-scorers" class="tab-pane"></section>
+  </main>
+</section>
+
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal-sheet" id="modalSheet"></div>
+</div>
+
+<div id="confirmOverlay" class="modal-overlay hidden">
+  <div class="modal-sheet confirm-sheet">
+    <p id="confirmText"></p>
+    <div class="confirm-actions">
+      <button id="confirmCancel" class="btn btn-outline">Vazgeç</button>
+      <button id="confirmOk" class="btn btn-danger">Onayla</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js?v=1"></script>
+<script src="js/sim.js?v=1"></script>
+<script src="js/game.js?v=1"></script>
+<script src="js/ui.js?v=1"></script>
+</body>
+</html>
