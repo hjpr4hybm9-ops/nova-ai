@@ -740,6 +740,158 @@ input:focus, select:focus, textarea:focus {
   text-align: center;
 }
 
+/* Header greeting */
+.header-greeting {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* Settings */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-row:last-child { border-bottom: none; }
+
+.settings-value {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.settings-inline-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.settings-inline-form input {
+  max-width: 200px;
+}
+
+.btn-danger {
+  border-color: var(--expense);
+  color: var(--expense);
+}
+
+/* Toggle switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.switch-track::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+}
+
+.switch input:checked + .switch-track {
+  background: var(--brand);
+}
+
+.switch input:checked + .switch-track::before {
+  transform: translateX(18px);
+}
+
+.switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* PIN set panel */
+.set-pin-panel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.set-pin-panel .field-row label { min-width: 120px; }
+
+.pin-error {
+  color: var(--expense);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* App lock screen */
+.lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.lock-screen.show { display: flex; }
+
+.lock-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.lock-logo {
+  height: 44px;
+  width: auto;
+}
+
+.lock-box p {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin: 0;
+}
+
+.lock-pin-input {
+  width: 160px;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: .3em;
+}
+
+.lock-error {
+  color: var(--expense) !important;
+  font-size: 13px;
+}
+
 @media (max-width: 640px) {
   .header-inner { flex-direction: column; align-items: stretch; }
   .tabs { justify-content: center; flex-wrap: wrap; }

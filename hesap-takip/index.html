@@ -35,12 +35,14 @@
   <div class="wrap header-inner">
     <div class="brand">
       <img class="logo" src="icons/logo-full.png" alt="TRANSFER 212" width="150" height="30">
+      <span class="header-greeting" id="headerGreeting" style="display:none;"></span>
     </div>
     <nav class="tabs" id="tabs">
       <button class="tab-btn active" data-tab="ozet">Genel Bakış</button>
       <button class="tab-btn" data-tab="islemler">İşlemler</button>
       <button class="tab-btn" data-tab="notlar">Notlar</button>
       <button class="tab-btn" data-tab="araclar">Hesap Araçları</button>
+      <button class="tab-btn" data-tab="ayarlar">Ayarlar</button>
     </nav>
     <div class="header-actions">
       <button type="button" class="btn btn-outline btn-sm" id="puterBtn" data-state="out">Puter ile Giriş Yap</button>
@@ -285,7 +287,103 @@
     </div>
   </section>
 
+  <!-- AYARLAR -->
+  <section class="panel" id="panel-ayarlar">
+    <div class="box">
+      <h3>Puter Hesabı</h3>
+      <p class="hint-text">Kaybolma riskine karşı verilerinizi koruyun — Puter ile giriş yapın, işlemleriniz ve notlarınız hesabınıza yedeklensin.</p>
+      <div class="settings-row">
+        <span id="settingsPuterStatus">Bağlı değil</span>
+        <button type="button" class="btn btn-outline btn-sm" id="settingsPuterBtn" data-state="out">Puter ile Giriş Yap</button>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Kullanıcı Bilgileri</h3>
+      <div class="settings-row">
+        <span>Görünen İsim</span>
+        <div class="settings-inline-form">
+          <input type="text" id="displayNameInput" placeholder="Adınız">
+          <button type="button" class="btn btn-outline btn-sm" id="displayNameSave">Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Görünüm</h3>
+      <div class="settings-row">
+        <span>Koyu Mod</span>
+        <label class="switch">
+          <input type="checkbox" id="darkModeSwitch">
+          <span class="switch-track"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <span>Tercih Edilen Dil</span>
+        <span class="settings-value">Türkçe</span>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Uygulama Kilidi</h3>
+      <p class="hint-text">Uygulamayı bir PIN kodu ile koruyun. Sekmeyi her açtığınızda PIN sorulur.</p>
+      <div class="settings-row">
+        <span>PIN Kilidi</span>
+        <label class="switch">
+          <input type="checkbox" id="appLockSwitch">
+          <span class="switch-track"></span>
+        </label>
+      </div>
+      <div class="set-pin-panel" id="setPinPanel" style="display:none;">
+        <div class="field-row">
+          <label>
+            Yeni PIN
+            <input type="password" id="newPinInput" inputmode="numeric" maxlength="6" placeholder="4-6 hane">
+          </label>
+          <label>
+            PIN (Tekrar)
+            <input type="password" id="confirmPinInput" inputmode="numeric" maxlength="6" placeholder="4-6 hane">
+          </label>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="savePinBtn">PIN'i Kaydet</button>
+        <p class="pin-error" id="pinError" style="display:none;"></p>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Veri Yönetimi</h3>
+      <div class="settings-row">
+        <span>Verilerimi Dışa Aktar</span>
+        <button type="button" class="btn btn-outline btn-sm" id="exportDataBtn">Dışa Aktar (.json)</button>
+      </div>
+      <div class="settings-row">
+        <span>Verilerimi İçe Aktar</span>
+        <button type="button" class="btn btn-outline btn-sm" id="importDataBtn">Dosya Seç</button>
+        <input type="file" id="importDataInput" accept="application/json" style="display:none;">
+      </div>
+      <div class="settings-row">
+        <span>Tüm Verileri Sil</span>
+        <button type="button" class="btn btn-ghost btn-sm btn-danger" id="clearDataBtn">Tümünü Sil</button>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Hakkında</h3>
+      <p class="hint-text">TRANSFER 212 — sürüm 1.0. Verileriniz bu tarayıcıda saklanır; Puter ile giriş yaptığınızda hesabınıza yedeklenir.</p>
+    </div>
+  </section>
+
 </main>
+
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <img src="icons/logo-full.png" alt="TRANSFER 212" class="lock-logo">
+    <p>Devam etmek için PIN kodunu girin</p>
+    <input type="password" id="lockPinInput" inputmode="numeric" maxlength="6" class="lock-pin-input" placeholder="••••">
+    <button type="button" class="btn btn-primary" id="lockUnlockBtn">Kilidi Aç</button>
+    <p class="lock-error" id="lockError" style="display:none;">Yanlış PIN, tekrar deneyin.</p>
+  </div>
+</div>
 
 <div class="note-modal" id="noteModal">
   <div class="note-modal-header">
