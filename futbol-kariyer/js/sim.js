@@ -51,15 +51,35 @@
     return k - 1;
   }
 
+  function pickStartingXI(club) {
+    const available = club.players.filter((p) => p.injuredWeeks <= 0);
+    const slots = (FK.data.FORMATIONS && FK.data.FORMATIONS[club.formation]) || { GK: 1, DEF: 4, MID: 4, FWD: 2 };
+    const xi = [];
+    const used = new Set();
+    FK.data.POSITIONS.forEach((pos) => {
+      const need = slots[pos] || 0;
+      const candidates = available
+        .filter((p) => p.position === pos && !used.has(p.id))
+        .sort((a, b) => b.overall - a.overall)
+        .slice(0, need);
+      candidates.forEach((p) => used.add(p.id));
+      xi.push(...candidates);
+    });
+    if (xi.length < 11) {
+      const rest = available
+        .filter((p) => !used.has(p.id))
+        .sort((a, b) => b.overall - a.overall)
+        .slice(0, 11 - xi.length);
+      xi.push(...rest);
+    }
+    return xi;
+  }
+
   function teamStrength(club) {
-    const sorted = club.players
-      .filter((p) => p.injuredWeeks <= 0)
-      .slice()
-      .sort((a, b) => b.overall - a.overall);
-    const best = sorted.slice(0, 11);
-    if (best.length === 0) return 45;
-    const sum = best.reduce((acc, p) => acc + p.overall + p.form, 0);
-    return sum / best.length;
+    const xi = pickStartingXI(club);
+    if (xi.length === 0) return 45;
+    const sum = xi.reduce((acc, p) => acc + p.overall + p.form, 0);
+    return sum / xi.length;
   }
 
   function expectedGoals(strength, oppStrength, isHome) {
