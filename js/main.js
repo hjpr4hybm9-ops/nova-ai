@@ -35,9 +35,22 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   const cameraCanvas = document.getElementById("cameraCanvas");
   const captureBtn = document.getElementById("captureBtn");
   const cameraCancelBtn = document.getElementById("cameraCancelBtn");
+  const toast = document.getElementById("toast");
 
   let history = [];
   let isThinking = false;
+  let toastTimer = null;
+
+  function showToast(message, duration = 3000) {
+    clearTimeout(toastTimer);
+    toast.textContent = message;
+    toast.classList.remove("hidden");
+    requestAnimationFrame(() => toast.classList.add("show"));
+    toastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.classList.add("hidden"), 200);
+    }, duration);
+  }
 
   function addBubble(role, text, imageDataURL) {
     const row = document.createElement("div");
@@ -166,8 +179,12 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       }
     });
 
-    recognition.addEventListener("error", () => {
-      demoHint.textContent = "Ses algılanamadı, tekrar deneyebilirsin.";
+    recognition.addEventListener("error", (event) => {
+      if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+        showToast("🚫 Mikrofon izni verilmedi. Lütfen tarayıcı izinlerinden mikrofona izin ver.", 5000);
+      } else {
+        demoHint.textContent = "Ses algılanamadı, tekrar deneyebilirsin.";
+      }
     });
 
     recognition.addEventListener("end", () => {
@@ -175,21 +192,36 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       micBtn.classList.remove("active");
     });
 
-    micBtn.addEventListener("click", () => {
+    micBtn.addEventListener("click", async () => {
       if (isThinking) return;
       if (listening) {
         recognition.stop();
         return;
       }
+
+      showToast("🎙️ Mikrofon izni isteniyor, lütfen izin ver");
+
+      try {
+        if (navigator.permissions && navigator.permissions.query) {
+          const status = await navigator.permissions.query({ name: "microphone" });
+          if (status.state === "denied") {
+            showToast("🚫 Mikrofon izni engellenmiş. Tarayıcı ayarlarından bu site için mikrofona izin ver.", 5000);
+            return;
+          }
+        }
+      } catch {
+        /* Permissions API mikrofon adını desteklemiyor olabilir, devam et */
+      }
+
       try {
         recognition.start();
       } catch {
-        /* already running */
+        /* zaten dinliyor */
       }
     });
   } else {
     micBtn.addEventListener("click", () => {
-      addBubble("ai", "Bu tarayıcı sesli girişi desteklemiyor. Chrome veya Safari'nin güncel sürümünü dene.");
+      showToast("Bu tarayıcı sesli girişi desteklemiyor. Chrome veya güncel Safari'yi dene.", 4000);
     });
   }
 
@@ -198,9 +230,11 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
 
   async function openCamera() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      addBubble("ai", "Bu tarayıcı kamera erişimini desteklemiyor.");
+      showToast("Bu tarayıcı kamera erişimini desteklemiyor.", 4000);
       return;
     }
+
+    showToast("📷 Kamera izni isteniyor, lütfen izin ver");
 
     try {
       cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -210,7 +244,7 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       cameraVideo.srcObject = cameraStream;
       cameraOverlay.classList.remove("hidden");
     } catch {
-      addBubble("ai", "Kameraya erişilemedi. Lütfen tarayıcı ayarlarından kamera iznini kontrol et.");
+      showToast("🚫 Kameraya erişilemedi. Tarayıcı ayarlarından bu site için kamera iznini kontrol et.", 5000);
     }
   }
 
