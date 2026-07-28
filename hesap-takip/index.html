@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f1420">
+<meta name="description" content="TRANSFER 212 — gelir-gider takibi, kredi/faiz hesaplayıcı, bütçe planlayıcı ve hesap makinesi bir arada.">
+<title>TRANSFER 212 — Gelir-Gider Takibi ve Hesap Araçları</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <span class="logo">₺</span>
+      <span class="brand-name">TRANSFER 212</span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="ozet">Genel Bakış</button>
+      <button class="tab-btn" data-tab="islemler">İşlemler</button>
+      <button class="tab-btn" data-tab="araclar">Hesap Araçları</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- GENEL BAKIŞ -->
+  <section class="panel active" id="panel-ozet">
+    <div class="cards">
+      <div class="card income">
+        <span class="card-label">Toplam Gelir</span>
+        <span class="card-value" id="sumIncome">₺0,00</span>
+      </div>
+      <div class="card expense">
+        <span class="card-label">Toplam Gider</span>
+        <span class="card-value" id="sumExpense">₺0,00</span>
+      </div>
+      <div class="card balance">
+        <span class="card-label">Bakiye</span>
+        <span class="card-value" id="sumBalance">₺0,00</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="box">
+        <h3>Kategoriye Göre Gider Dağılımı</h3>
+        <div id="categoryBars" class="bars"></div>
+        <p class="empty-hint" id="categoryEmptyHint">Henüz gider kaydı yok.</p>
+      </div>
+      <div class="box">
+        <h3>Son İşlemler</h3>
+        <ul class="recent-list" id="recentList"></ul>
+        <p class="empty-hint" id="recentEmptyHint">Henüz işlem eklenmedi.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- İŞLEMLER -->
+  <section class="panel" id="panel-islemler">
+    <div class="box">
+      <h3>Yeni İşlem Ekle</h3>
+      <form id="txForm" class="tx-form">
+        <div class="field-row">
+          <label>
+            Tür
+            <select id="txType" required>
+              <option value="gelir">Gelir</option>
+              <option value="gider">Gider</option>
+            </select>
+          </label>
+          <label>
+            Tutar (₺)
+            <input type="number" id="txAmount" min="0" step="0.01" placeholder="0,00" required>
+          </label>
+          <label>
+            Tarih
+            <input type="date" id="txDate" required>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="grow">
+            Kategori
+            <input type="text" id="txCategory" placeholder="Örn. Market, Kira, Maaş" required>
+          </label>
+          <label class="grow">
+            Açıklama (opsiyonel)
+            <input type="text" id="txDesc" placeholder="Not ekle...">
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary">İşlemi Kaydet</button>
+      </form>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h3>Tüm İşlemler</h3>
+        <div class="filters">
+          <select id="filterMonth">
+            <option value="">Tüm Aylar</option>
+          </select>
+          <select id="filterType">
+            <option value="">Tüm Türler</option>
+            <option value="gelir">Gelir</option>
+            <option value="gider">Gider</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Tür</th>
+              <th>Kategori</th>
+              <th>Açıklama</th>
+              <th>Tutar</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="txTableBody"></tbody>
+        </table>
+      </div>
+      <p class="empty-hint" id="txEmptyHint">Henüz işlem eklenmedi.</p>
+    </div>
+  </section>
+
+  <!-- HESAP ARAÇLARI -->
+  <section class="panel" id="panel-araclar">
+    <div class="grid-3">
+
+      <div class="box">
+        <h3>Kredi / Faiz Hesaplayıcı</h3>
+        <form id="loanForm" class="tool-form">
+          <label>
+            Kredi Tutarı (₺)
+            <input type="number" id="loanAmount" min="0" step="0.01" required>
+          </label>
+          <label>
+            Yıllık Faiz Oranı (%)
+            <input type="number" id="loanRate" min="0" step="0.01" required>
+          </label>
+          <label>
+            Vade (ay)
+            <input type="number" id="loanMonths" min="1" step="1" required>
+          </label>
+          <button type="submit" class="btn btn-outline">Hesapla</button>
+        </form>
+        <div class="tool-result" id="loanResult"></div>
+      </div>
+
+      <div class="box">
+        <h3>Bütçe Planlayıcı (50/30/20)</h3>
+        <form id="budgetForm" class="tool-form">
+          <label>
+            Aylık Net Gelir (₺)
+            <input type="number" id="budgetIncome" min="0" step="0.01" required>
+          </label>
+          <button type="submit" class="btn btn-outline">Hesapla</button>
+        </form>
+        <div class="tool-result" id="budgetResult"></div>
+        <p class="hint-text">İhtiyaçlar %50, İstekler %30, Tasarruf/Borç Ödeme %20 kuralına göre önerilen dağılım.</p>
+      </div>
+
+      <div class="box">
+        <h3>Hesap Makinesi</h3>
+        <div class="calc">
+          <input type="text" id="calcDisplay" class="calc-display" readonly value="0">
+          <div class="calc-grid" id="calcGrid">
+            <button data-key="C" class="calc-btn calc-op">C</button>
+            <button data-key="⌫" class="calc-btn calc-op">⌫</button>
+            <button data-key="%" class="calc-btn calc-op">%</button>
+            <button data-key="/" class="calc-btn calc-op">÷</button>
+
+            <button data-key="7" class="calc-btn">7</button>
+            <button data-key="8" class="calc-btn">8</button>
+            <button data-key="9" class="calc-btn">9</button>
+            <button data-key="*" class="calc-btn calc-op">×</button>
+
+            <button data-key="4" class="calc-btn">4</button>
+            <button data-key="5" class="calc-btn">5</button>
+            <button data-key="6" class="calc-btn">6</button>
+            <button data-key="-" class="calc-btn calc-op">−</button>
+
+            <button data-key="1" class="calc-btn">1</button>
+            <button data-key="2" class="calc-btn">2</button>
+            <button data-key="3" class="calc-btn">3</button>
+            <button data-key="+" class="calc-btn calc-op">+</button>
+
+            <button data-key="0" class="calc-btn calc-zero">0</button>
+            <button data-key="." class="calc-btn">,</button>
+            <button data-key="=" class="calc-btn calc-eq">=</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>TRANSFER 212 — verileriniz yalnızca bu tarayıcıda saklanır, hiçbir sunucuya gönderilmez.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
