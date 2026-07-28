@@ -44,6 +44,7 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   const closeChatsBtn = document.getElementById("closeChatsBtn");
   const toast = document.getElementById("toast");
   const heroTryBtn = document.getElementById("heroTryBtn");
+  const authBtn = document.getElementById("authBtn");
 
   const GREETING = "Merhaba! Ben Nova AI 👋 Yazabilir, mikrofonla konuşabilir ya da kamerayla fotoğraf gösterebilirsin.";
   const STORE_KEY = "nova_ai_chats_v1";
@@ -553,6 +554,63 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
       });
     }
   }
+
+  // ---- Auth (Puter'ın hazır giriş sistemi) ----
+  const VISITED_KEY = "nova_visited";
+  const isReturningVisitor = localStorage.getItem(VISITED_KEY) === "1";
+  localStorage.setItem(VISITED_KEY, "1");
+
+  async function refreshAuthUI() {
+    if (typeof puter !== "undefined" && puter.auth && typeof puter.auth.isSignedIn === "function" && puter.auth.isSignedIn()) {
+      let label = "👤 Hesabım";
+      try {
+        const user = await puter.auth.getUser();
+        if (user && user.username) label = "👤 " + user.username;
+      } catch {
+        /* kullanıcı bilgisi alınamadı, varsayılan etiketi kullan */
+      }
+      authBtn.textContent = label;
+      authBtn.dataset.mode = "signed-in";
+      return;
+    }
+
+    if (isReturningVisitor) {
+      authBtn.textContent = "Giriş Yap";
+      authBtn.dataset.mode = "signin";
+    } else {
+      authBtn.textContent = "Kaydol";
+      authBtn.dataset.mode = "signup";
+    }
+  }
+
+  authBtn.addEventListener("click", async () => {
+    if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.signIn !== "function") {
+      showToast("Giriş sistemi yüklenemedi. Lütfen tekrar dene.", 4000);
+      return;
+    }
+
+    if (authBtn.dataset.mode === "signed-in") {
+      try {
+        await puter.auth.signOut();
+        showToast("Çıkış yapıldı.");
+      } catch {
+        /* yoksay */
+      }
+      refreshAuthUI();
+      return;
+    }
+
+    try {
+      await puter.auth.signIn();
+      showToast("🎉 Hoş geldin!");
+      refreshAuthUI();
+    } catch (error) {
+      console.error(error);
+      showToast("Giriş yapılamadı, tekrar dene.", 4000);
+    }
+  });
+
+  refreshAuthUI();
 
   // ---- Init ----
   renderActiveChat();
