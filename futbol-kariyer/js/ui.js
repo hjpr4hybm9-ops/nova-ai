@@ -94,6 +94,121 @@
     cancelBtn.addEventListener("click", onCancel);
   }
 
+  /* ---------------- Maç Merkezi ---------------- */
+
+  const ROW_Y_HOME = { GK: 92, DEF: 76, MID: 56, FWD: 38 };
+  const ROW_Y_AWAY = { GK: 8, DEF: 24, MID: 44, FWD: 62 };
+
+  function layoutTeam(club, rowYMap) {
+    const xi = FK.sim.pickStartingXI(club);
+    const byPos = { GK: [], DEF: [], MID: [], FWD: [] };
+    xi.forEach((p) => byPos[p.position].push(p));
+    const dots = [];
+    Object.entries(byPos).forEach(([pos, list]) => {
+      const y = rowYMap[pos];
+      list.forEach((p, i) => {
+        const x = ((i + 1) / (list.length + 1)) * 100;
+        dots.push({ p, x, y });
+      });
+    });
+    return dots;
+  }
+
+  function renderPitchHtml(home, away) {
+    const homeDots = layoutTeam(home, ROW_Y_HOME);
+    const awayDots = layoutTeam(away, ROW_Y_AWAY);
+    const dotHtml = (d, club) => `
+      <div class="pitch-dot" style="left:${d.x}%;top:${d.y}%;background:${club.primary};color:${club.secondary};" title="${d.p.flag || ""} ${d.p.name} (#${d.p.number ?? "-"})">${d.p.number ?? "?"}</div>
+    `;
+    return `
+      <div class="pitch">
+        ${homeDots.map((d) => dotHtml(d, home)).join("")}
+        ${awayDots.map((d) => dotHtml(d, away)).join("")}
+      </div>
+    `;
+  }
+
+  let mcTimer = null;
+
+  function stopMatchCenterTimer() {
+    if (mcTimer) { clearInterval(mcTimer); mcTimer = null; }
+  }
+
+  function openMatchCenter(mine, seasonOver) {
+    const home = G.getClub(mine.homeId);
+    const away = G.getClub(mine.awayId);
+    const timeline = mine.timeline;
+    let idx = 0;
+
+    $("matchCenterSheet").innerHTML = `
+      <div class="mc-header">
+        <div class="mc-team">${home.name}<br><small style="color:var(--text-dim);font-weight:500;">${home.formation}</small></div>
+        <div class="mc-score" id="mcScore">0 - 0</div>
+        <div class="mc-team">${away.name}<br><small style="color:var(--text-dim);font-weight:500;">${away.formation}</small></div>
+      </div>
+      <div class="mc-minute" id="mcMinute">Başlamadı</div>
+      ${renderPitchHtml(home, away)}
+      <div class="commentary-feed" id="mcFeed"></div>
+      <div class="mc-controls" id="mcControls">
+        <button class="btn btn-outline" id="mcPauseBtn">⏸ Duraklat</button>
+        <button class="btn btn-outline" id="mcSkipBtn">⏩ Sonuca Atla</button>
+      </div>
+    `;
+    $("matchCenterOverlay").classList.remove("hidden");
+
+    const feed = $("mcFeed");
+    const scoreEl = $("mcScore");
+    const minuteEl = $("mcMinute");
+
+    function pushEvent(e) {
+      scoreEl.textContent = `${e.hg} - ${e.ag}`;
+      minuteEl.textContent = e.type === "full" ? "MAÇ SONU" : `${e.minute}' canlı`;
+      minuteEl.classList.toggle("live", e.type !== "full");
+      const row = el("div", "ev " + e.type, `<span class="min">${e.minute}'</span>${e.text}`);
+      feed.appendChild(row);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function finish() {
+      stopMatchCenterTimer();
+      $("mcControls").innerHTML = `<button class="btn btn-primary" id="mcContinueBtn">Devam Et</button>`;
+      $("mcContinueBtn").addEventListener("click", () => {
+        $("matchCenterOverlay").classList.add("hidden");
+        if (seasonOver) toast("Sezon tamamlandı! Genel Bakış'tan yeni sezonu başlatabilirsin.", "success");
+        renderAll();
+      });
+    }
+
+    function tick() {
+      if (idx >= timeline.length) { finish(); return; }
+      pushEvent(timeline[idx]);
+      idx++;
+    }
+
+    function play() {
+      stopMatchCenterTimer();
+      mcTimer = setInterval(tick, 650);
+    }
+
+    play();
+
+    $("mcPauseBtn").addEventListener("click", () => {
+      if (mcTimer) {
+        stopMatchCenterTimer();
+        $("mcPauseBtn").textContent = "▶ Devam";
+      } else {
+        play();
+        $("mcPauseBtn").textContent = "⏸ Duraklat";
+      }
+    });
+
+    $("mcSkipBtn").addEventListener("click", () => {
+      stopMatchCenterTimer();
+      while (idx < timeline.length) { pushEvent(timeline[idx]); idx++; }
+      finish();
+    });
+  }
+
   /* ---------------- Kurulum ---------------- */
 
   function initSetup() {
@@ -173,9 +288,12 @@
       const result = G.simulateNextWeek();
       if (!result.ok) { toast(result.reason, "error"); return; }
       const mine = result.results.find((r) => r.isUser);
-      if (mine) toast(`${mine.home} ${mine.homeGoals} - ${mine.awayGoals} ${mine.away}`, "success");
-      if (result.seasonOver) toast("Sezon tamamlandı! Genel Bakış'tan yeni sezonu başlatabilirsin.", "success");
-      renderAll();
+      if (mine && mine.timeline) {
+        openMatchCenter(mine, result.seasonOver);
+      } else {
+        if (result.seasonOver) toast("Sezon tamamlandı! Genel Bakış'tan yeni sezonu başlatabilirsin.", "success");
+        renderAll();
+      }
     });
 
     $("resetBtn").addEventListener("click", () => {

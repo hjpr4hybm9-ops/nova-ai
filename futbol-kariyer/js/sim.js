@@ -122,6 +122,59 @@
     return { homeGoals, awayGoals, scorers };
   }
 
+  const CHANCE_HOME = [
+    "{team} ataktan geldi ama kaleci topu kornere çeldi.",
+    "{team} şutunu kaleci mükemmel bir refleksle çıkardı.",
+    "{team} net bir pozisyon buldu ama topu auta attı.",
+    "{team} direkten döndü!",
+    "{team} hızlı bir kontra atak geliştirdi ama son pas isabetsizdi.",
+    "{team} köşe vuruşundan gelen topu değerlendiremedi.",
+    "{team} baskı kurdu, rakip savunma güçlükle uzaklaştırdı."
+  ];
+  const CHANCE_AWAY = CHANCE_HOME;
+
+  function buildMatchTimeline(homeClub, awayClub, res) {
+    const hs = teamStrength(homeClub);
+    const as = teamStrength(awayClub);
+    const homeWeight = hs / (hs + as || 1);
+
+    const raw = [];
+    res.scorers.forEach((s) => {
+      raw.push({ minute: FK.data.randInt(1, 89), type: "goal", club: s.club, name: s.name });
+    });
+    const chanceCount = FK.data.randInt(6, 12);
+    for (let i = 0; i < chanceCount; i++) {
+      raw.push({ minute: FK.data.randInt(1, 89), type: "chance", isHome: Math.random() < homeWeight });
+    }
+    raw.sort((a, b) => a.minute - b.minute);
+
+    const events = [{ minute: 0, type: "kickoff", text: `⏱️ Maç başladı: ${homeClub.name} - ${awayClub.name}`, hg: 0, ag: 0 }];
+    let hg = 0, ag = 0, halfInserted = false;
+
+    raw.forEach((e) => {
+      if (!halfInserted && e.minute > 45) {
+        events.push({ minute: 45, type: "half", text: `⏸️ İlk yarı sona erdi: ${homeClub.short} ${hg}-${ag} ${awayClub.short}`, hg, ag });
+        halfInserted = true;
+      }
+      if (e.type === "goal") {
+        if (e.club === homeClub.id) hg++; else ag++;
+        const teamName = e.club === homeClub.id ? homeClub.name : awayClub.name;
+        events.push({ minute: e.minute, type: "goal", text: `⚽ GOL! ${e.name} (${teamName}) — ${homeClub.short} ${hg}-${ag} ${awayClub.short}`, hg, ag });
+      } else {
+        const text = e.isHome
+          ? FK.data.pick(CHANCE_HOME).replace("{team}", homeClub.name)
+          : FK.data.pick(CHANCE_AWAY).replace("{team}", awayClub.name);
+        events.push({ minute: e.minute, type: "chance", text, hg, ag });
+      }
+    });
+    if (!halfInserted) {
+      events.push({ minute: 45, type: "half", text: `⏸️ İlk yarı sona erdi: ${homeClub.short} ${hg}-${ag} ${awayClub.short}`, hg, ag });
+    }
+    events.push({ minute: 90, type: "full", text: `🏁 Maç bitti: ${homeClub.short} ${res.homeGoals}-${res.awayGoals} ${awayClub.short}`, hg: res.homeGoals, ag: res.awayGoals });
+
+    return events;
+  }
+
   function computeTable(clubs, fixtures) {
     const table = {};
     clubs.forEach((c) => {
@@ -158,6 +211,8 @@
   FK.sim = {
     generateDoubleRoundRobin,
     simulateMatch,
+    buildMatchTimeline,
+    pickStartingXI,
     teamStrength,
     computeTable,
     topScorers,
