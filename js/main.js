@@ -557,6 +557,9 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
 
     const pricingNavLink = document.querySelector('a[href="#fiyatlandirma"]');
     if (pricingNavLink) pricingNavLink.classList.add("hidden");
+
+    const ctaBand = document.getElementById("iletisim");
+    if (ctaBand) ctaBand.classList.add("hidden");
   }
 
   // ---- Auth (Puter'ın hazır giriş sistemi) ----
