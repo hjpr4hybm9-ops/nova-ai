@@ -173,8 +173,10 @@ button{font:inherit;cursor:pointer}
 .demo-hint{text-align:center;font-size:12px;color:var(--muted);padding:0 16px 16px}
 
 /* Pricing */
-.pricing .price-card{display:flex;flex-direction:column;position:relative;text-align:center}
+.price-card{display:flex;flex-direction:column;position:relative;text-align:center}
 .price-card.featured{border-color:var(--cyan);background:linear-gradient(180deg,rgba(139,92,246,.12),rgba(34,211,238,.05))}
+.free-panel{display:flex;justify-content:center}
+.free-panel .price-card{max-width:380px;width:100%}
 .badge{
   position:absolute;top:-13px;left:50%;transform:translateX(-50%);
   background:linear-gradient(135deg,var(--violet),var(--cyan));color:#06101f;
