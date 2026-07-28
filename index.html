@@ -7,7 +7,7 @@
 <meta name="description" content="Nova AI — hızlı, güvenli ve her cihazda çalışan yapay zekâ asistanı. Ücretsiz deneyin.">
 <title>Nova AI — Yapay Zekâ Asistanınız</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -148,7 +148,8 @@
 
       <div class="demo-panel">
         <div class="demo-toolbar">
-          <button type="button" class="tool-btn" id="clearHistoryBtn">🗑️ Geçmişi sil</button>
+          <button type="button" class="tool-btn" id="chatsBtn">📜 Sohbetler</button>
+          <button type="button" class="tool-btn" id="deleteChatBtn">🗑️ Sohbeti sil</button>
           <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="false">🔊 Sesli yanıt: Kapalı</button>
         </div>
 
@@ -177,6 +178,17 @@
         <button type="button" class="btn btn-outline" id="cameraCancelBtn">İptal</button>
         <button type="button" class="btn btn-primary" id="captureBtn">📸 Çek</button>
       </div>
+    </div>
+  </div>
+
+  <div class="chats-overlay hidden" id="chatsOverlay">
+    <div class="chats-sheet">
+      <div class="chats-header">
+        <h3>Sohbetlerim</h3>
+        <button type="button" class="btn btn-outline" id="newChatBtn">➕ Yeni Sohbet</button>
+      </div>
+      <div class="chats-list" id="chatsList"></div>
+      <button type="button" class="btn btn-outline full" id="closeChatsBtn">Kapat</button>
     </div>
   </div>
 
@@ -256,6 +268,6 @@
 </footer>
 
 <script src="https://js.puter.com/v2/"></script>
-<script src="js/main.js?v=7"></script>
+<script src="js/main.js?v=8"></script>
 </body>
 </html>
