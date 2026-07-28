@@ -544,15 +544,19 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   newChatBtn.addEventListener("click", startNewChat);
   newChatQuickBtn.addEventListener("click", startNewChat);
 
-  // ---- Hero "Ücretsiz Deneyin" only shows before the first try ----
-  if (heroTryBtn) {
-    if (localStorage.getItem("nova_tried_free") === "1") {
-      heroTryBtn.classList.add("hidden");
-    } else {
-      heroTryBtn.addEventListener("click", () => {
-        localStorage.setItem("nova_tried_free", "1");
-      });
-    }
+  // ---- Hide the free-trial CTA and pricing section from the 2nd visit onward ----
+  const VISIT_COUNT_KEY = "nova_visit_count";
+  const visitCount = parseInt(localStorage.getItem(VISIT_COUNT_KEY) || "0", 10) + 1;
+  localStorage.setItem(VISIT_COUNT_KEY, String(visitCount));
+
+  if (visitCount >= 2) {
+    if (heroTryBtn) heroTryBtn.classList.add("hidden");
+
+    const pricingSection = document.getElementById("fiyatlandirma");
+    if (pricingSection) pricingSection.classList.add("hidden");
+
+    const pricingNavLink = document.querySelector('a[href="#fiyatlandirma"]');
+    if (pricingNavLink) pricingNavLink.classList.add("hidden");
   }
 
   // ---- Auth (Puter'ın hazır giriş sistemi) ----
