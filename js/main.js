@@ -19,24 +19,44 @@
   });
 
   const SYSTEM_PROMPT = `Sen Nova AI'sın, herkese açık bir yapay zekâ asistanısın.
-Türkçe konuş. Sıcak, samimi ve anlaşılır ol. Kısa ve net cevaplar ver, gerektiğinde ayrıntı ekle.`;
+Türkçe konuş. Sıcak, samimi ve anlaşılır ol. Kısa ve net cevaplar ver, gerektiğinde ayrıntı ekle.
+Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve sorusuna göre yorum yap.`;
 
   const demoChat = document.getElementById("demoChat");
   const demoForm = document.getElementById("demoForm");
   const demoInput = document.getElementById("demoInput");
   const demoSend = document.getElementById("demoSend");
   const demoHint = document.getElementById("demoHint");
+  const voiceToggle = document.getElementById("voiceToggle");
+  const micBtn = document.getElementById("micBtn");
+  const cameraBtn = document.getElementById("cameraBtn");
+  const cameraOverlay = document.getElementById("cameraOverlay");
+  const cameraVideo = document.getElementById("cameraVideo");
+  const cameraCanvas = document.getElementById("cameraCanvas");
+  const captureBtn = document.getElementById("captureBtn");
+  const cameraCancelBtn = document.getElementById("cameraCancelBtn");
 
   let history = [];
   let isThinking = false;
 
-  function addBubble(role, text) {
+  function addBubble(role, text, imageDataURL) {
     const row = document.createElement("div");
     row.className = "demo-row demo-" + role;
 
     const bubble = document.createElement("div");
     bubble.className = "demo-bubble";
-    bubble.textContent = text;
+
+    if (imageDataURL) {
+      const img = document.createElement("img");
+      img.src = imageDataURL;
+      bubble.appendChild(img);
+    }
+
+    if (text) {
+      const span = document.createElement("span");
+      span.textContent = text;
+      bubble.appendChild(span);
+    }
 
     row.appendChild(bubble);
     demoChat.appendChild(row);
@@ -83,15 +103,152 @@ Türkçe konuş. Sıcak, samimi ve anlaşılır ol. Kısa ve net cevaplar ver, g
     return reply;
   }
 
-  demoForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (isThinking) return;
+  async function getVisionReply(userText, imageDataURL) {
+    if (typeof puter === "undefined" || !puter.ai || typeof puter.ai.chat !== "function") {
+      throw new Error("AI motoru yüklenemedi.");
+    }
 
-    const text = demoInput.value.trim();
-    if (!text) return;
+    const prompt = userText || "Bu fotoğrafta ne görüyorsun? Kısaca açıkla.";
+    const response = await puter.ai.chat(prompt, imageDataURL);
+    const reply = extractText(response).trim();
+    if (!reply) throw new Error("Boş yanıt geldi.");
+    return reply;
+  }
 
-    addBubble("user", text);
+  // ---- Text-to-speech ----
+  let voiceEnabled = localStorage.getItem("nova_voice_enabled") === "1";
+
+  function updateVoiceToggleUI() {
+    voiceToggle.setAttribute("aria-pressed", String(voiceEnabled));
+    voiceToggle.textContent = voiceEnabled ? "🔊 Sesli yanıt: Açık" : "🔊 Sesli yanıt: Kapalı";
+  }
+  updateVoiceToggleUI();
+
+  voiceToggle.addEventListener("click", () => {
+    voiceEnabled = !voiceEnabled;
+    localStorage.setItem("nova_voice_enabled", voiceEnabled ? "1" : "0");
+    updateVoiceToggleUI();
+    if (!voiceEnabled && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  });
+
+  function speak(text) {
+    if (!voiceEnabled || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "tr-TR";
+    window.speechSynthesis.speak(utter);
+  }
+
+  // ---- Speech-to-text ----
+  const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let listening = false;
+
+  if (SpeechRecognitionImpl) {
+    recognition = new SpeechRecognitionImpl();
+    recognition.lang = "tr-TR";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.addEventListener("start", () => {
+      listening = true;
+      micBtn.classList.add("active");
+      demoHint.textContent = "Dinliyorum...";
+    });
+
+    recognition.addEventListener("result", (event) => {
+      const said = event.results[0][0].transcript.trim();
+      if (said) {
+        demoInput.value = said;
+        demoForm.requestSubmit();
+      }
+    });
+
+    recognition.addEventListener("error", () => {
+      demoHint.textContent = "Ses algılanamadı, tekrar deneyebilirsin.";
+    });
+
+    recognition.addEventListener("end", () => {
+      listening = false;
+      micBtn.classList.remove("active");
+    });
+
+    micBtn.addEventListener("click", () => {
+      if (isThinking) return;
+      if (listening) {
+        recognition.stop();
+        return;
+      }
+      try {
+        recognition.start();
+      } catch {
+        /* already running */
+      }
+    });
+  } else {
+    micBtn.addEventListener("click", () => {
+      addBubble("ai", "Bu tarayıcı sesli girişi desteklemiyor. Chrome veya Safari'nin güncel sürümünü dene.");
+    });
+  }
+
+  // ---- Camera capture ----
+  let cameraStream = null;
+
+  async function openCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      addBubble("ai", "Bu tarayıcı kamera erişimini desteklemiyor.");
+      return;
+    }
+
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      });
+      cameraVideo.srcObject = cameraStream;
+      cameraOverlay.classList.remove("hidden");
+    } catch {
+      addBubble("ai", "Kameraya erişilemedi. Lütfen tarayıcı ayarlarından kamera iznini kontrol et.");
+    }
+  }
+
+  function closeCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      cameraStream = null;
+    }
+    cameraVideo.srcObject = null;
+    cameraOverlay.classList.add("hidden");
+  }
+
+  cameraBtn.addEventListener("click", openCamera);
+  cameraCancelBtn.addEventListener("click", closeCamera);
+
+  captureBtn.addEventListener("click", async () => {
+    const width = cameraVideo.videoWidth || 640;
+    const height = cameraVideo.videoHeight || 480;
+    cameraCanvas.width = width;
+    cameraCanvas.height = height;
+
+    const ctx = cameraCanvas.getContext("2d");
+    ctx.drawImage(cameraVideo, 0, 0, width, height);
+    const dataURL = cameraCanvas.toDataURL("image/jpeg", 0.85);
+
+    const caption = demoInput.value.trim();
     demoInput.value = "";
+    closeCamera();
+
+    await ask(caption, dataURL);
+  });
+
+  // ---- Core exchange ----
+  async function ask(text, imageDataURL) {
+    if (isThinking) return;
+    if (!text && !imageDataURL) return;
+
+    addBubble("user", text, imageDataURL);
     isThinking = true;
     demoSend.disabled = true;
     demoInput.disabled = true;
@@ -100,13 +257,17 @@ Türkçe konuş. Sıcak, samimi ve anlaşılır ol. Kısa ve net cevaplar ver, g
     const typingRow = addTyping();
 
     try {
-      const reply = await getReply(text);
-      history.push({ role: "user", content: text });
+      const reply = imageDataURL
+        ? await getVisionReply(text, imageDataURL)
+        : await getReply(text);
+
+      history.push({ role: "user", content: imageDataURL ? `[Bir fotoğraf gönderildi] ${text}`.trim() : text });
       history.push({ role: "assistant", content: reply });
       if (history.length > 20) history = history.slice(-20);
 
       typingRow.remove();
       addBubble("ai", reply);
+      speak(reply);
       demoHint.textContent = "Bu demo, tarayıcınızda çalışan canlı bir yapay zekâ modelini kullanır.";
     } catch (error) {
       console.error(error);
@@ -119,5 +280,13 @@ Türkçe konuş. Sıcak, samimi ve anlaşılır ol. Kısa ve net cevaplar ver, g
       demoInput.disabled = false;
       demoInput.focus();
     }
+  }
+
+  demoForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = demoInput.value.trim();
+    if (!text) return;
+    demoInput.value = "";
+    ask(text, null);
   });
 })();
