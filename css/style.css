@@ -190,6 +190,17 @@ button{font:inherit;cursor:pointer}
 
 .demo-bubble img{max-width:100%;border-radius:12px;display:block;margin-bottom:6px}
 
+/* Toast */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);
+  max-width:min(360px,86vw);text-align:center;
+  background:#111833;border:1px solid var(--line);color:var(--text);
+  padding:12px 18px;border-radius:14px;font-size:13.5px;font-weight:600;line-height:1.4;
+  box-shadow:0 14px 30px rgba(0,0,0,.4);z-index:300;
+  opacity:0;transition:opacity .2s ease, transform .2s ease;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 /* Camera overlay */
 .camera-overlay{
   position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
