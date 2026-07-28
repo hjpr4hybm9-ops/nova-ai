@@ -6,48 +6,48 @@
   const NATIONS = [
     {
       country: "Türkiye", flag: "🇹🇷", weight: 5,
-      first: ["Kaan","Emre","Berkay","Deniz","Arda","Ozan","Mert","Burak","Serkan","Uğur","Onur","Barış","Yusuf","Eren","Kerem","Cem","Tolga","Volkan","Furkan","Alp","Efe","Toprak","Sinan","Doruk","Kağan","Umut","Bora","Aras","Yiğit","Çınar"],
-      last: ["Yıldız","Kaya","Demir","Şahin","Çelik","Aydın","Arslan","Doğan","Kurt","Özdemir","Aksoy","Yavuz","Polat","Erdoğan","Koç","Bulut","Aslan","Güneş","Karaca","Tunç"]
+      first: ["Kaan","Emre","Berkay","Deniz","Arda","Ozan","Mert","Burak","Serkan","Uğur","Onur","Barış","Yusuf","Eren","Kerem","Cem","Tolga","Volkan","Furkan","Alp","Efe","Toprak","Sinan","Doruk","Kağan","Umut","Bora","Aras","Yiğit","Çınar","Batuhan","Emirhan","Görkem","Halil","İbrahim","Mustafa","Oğuzhan","Recep","Salih","Taner","Ahmet","Caner","Erdem","Gökhan","Hakan"],
+      last: ["Yıldız","Kaya","Demir","Şahin","Çelik","Aydın","Arslan","Doğan","Kurt","Özdemir","Aksoy","Yavuz","Polat","Öztürk","Koç","Bulut","Aslan","Güneş","Karaca","Tunç","Yıldırım","Korkmaz","Aydemir","Turan","Sarı","Uçar","Acar","Kaplan","Er","Aktaş"]
     },
     {
       country: "Brezilya", flag: "🇧🇷", weight: 2,
-      first: ["Lucas","Mateo","Diego","Bruno","Rafael","Tiago","Nico","Marco","Luca","Adrian"],
-      last: ["Silva","Santos","Pereira","Costa","Ferreira","Almeida","Rocha","Ramos","Torres","Nunes"]
+      first: ["Lucas","Mateo","Diego","Bruno","Rafael","Tiago","Nico","Marco","Luca","Adrian","Gabriel","Matheus","Vinicius","Gustavo","Felipe"],
+      last: ["Silva","Santos","Pereira","Costa","Ferreira","Almeida","Rocha","Ramos","Torres","Nunes","Carvalho","Barbosa","Cardoso","Teixeira"]
     },
     {
       country: "Hırvatistan", flag: "🇭🇷", weight: 2,
-      first: ["Kevin","Dennis","Erik","Viktor","Milan","Ivan","Stefan","Dario","Aleks","Petar"],
-      last: ["Novak","Horvat","Kovač","Petrov","Ivanov","Popov","Dragić","Sokol","Vidal","Zoran"]
+      first: ["Kevin","Dennis","Erik","Viktor","Milan","Ivan","Stefan","Dario","Aleks","Petar","Marko","Josip","Ante","Luka"],
+      last: ["Novak","Horvat","Kovač","Petrov","Ivanov","Popov","Dragić","Sokol","Vidal","Zoran","Babić","Jurić","Perić","Matić"]
     },
     {
       country: "Fildişi Sahili", flag: "🇨🇮", weight: 2,
-      first: ["Jamal","Idris","Malik","Samir","Karim","Omar","Amine","Rachid","Bakari","Yusuf"],
-      last: ["Diallo","Traoré","Konaté","N'Dour","Camara","Bakayoko","Sanogo","Keita","Toure","Sissoko"]
+      first: ["Jamal","Idris","Malik","Samir","Karim","Omar","Amine","Rachid","Bakari","Yusuf","Aboubakar","Moussa","Yaya","Didier"],
+      last: ["Diallo","Traoré","Konaté","N'Dour","Camara","Bakayoko","Sanogo","Keita","Toure","Sissoko","Coulibaly","Ouattara","Diabaté"]
     },
     {
       country: "Fransa", flag: "🇫🇷", weight: 2,
-      first: ["Hugo","Mathis","Louis","Nathan","Kylian","Theo","Enzo","Ilias","Mathieu","Julien"],
-      last: ["Martin","Bernard","Petit","Girard","Lambert","Fontaine","Moreau","Simon","Faure","Blanc"]
+      first: ["Hugo","Mathis","Louis","Nathan","Kylian","Theo","Enzo","Ilias","Mathieu","Julien","Antoine","Baptiste","Gabin","Noah"],
+      last: ["Martin","Bernard","Petit","Girard","Lambert","Fontaine","Moreau","Simon","Faure","Blanc","Dubois","Lefevre","Renard","Roux"]
     },
     {
       country: "Almanya", flag: "🇩🇪", weight: 2,
-      first: ["Lukas","Finn","Jonas","Maximilian","Paul","Elias","Niklas","Tim","Felix","Moritz"],
-      last: ["Weber","Fischer","Wagner","Becker","Hofmann","Schulz","Meyer","Klein","Wolf","Braun"]
+      first: ["Lukas","Finn","Jonas","Maximilian","Paul","Elias","Niklas","Tim","Felix","Moritz","Julian","Leon","Noah","Anton"],
+      last: ["Weber","Fischer","Wagner","Becker","Hofmann","Schulz","Meyer","Klein","Wolf","Braun","Krüger","Zimmermann","Neumann"]
     },
     {
       country: "Japonya", flag: "🇯🇵", weight: 1,
-      first: ["Kenji","Ryo","Haruto","Taro","Sora","Yuto"],
-      last: ["Nakamura","Tanaka","Suzuki","Watanabe"]
+      first: ["Kenji","Ryo","Haruto","Taro","Sora","Yuto","Kaito","Riku"],
+      last: ["Nakamura","Tanaka","Suzuki","Watanabe","Kobayashi","Yamamoto","Ito"]
     },
     {
       country: "Güney Kore", flag: "🇰🇷", weight: 1,
-      first: ["Sung","Min","Hyun","Jun"],
-      last: ["Kim","Park","Lee"]
+      first: ["Sung","Min","Hyun","Jun","Woo","Tae"],
+      last: ["Kim","Park","Lee","Choi","Jung","Kang"]
     },
     {
       country: "Arjantin", flag: "🇦🇷", weight: 1,
-      first: ["Andres","Pablo","Santiago","Facundo","Gonzalo"],
-      last: ["Vidal","Molina","Acosta","Rojas","Medina"]
+      first: ["Andres","Pablo","Santiago","Facundo","Gonzalo","Nicolas","Ezequiel","Ramiro"],
+      last: ["Vidal","Molina","Acosta","Rojas","Medina","Aguirre","Gimenez","Cabrera"]
     }
   ];
 
@@ -57,7 +57,7 @@
     { name: "Sahilspor",          short: "SHL", primary: "#0f766e", secondary: "#ffffff", tier: 1, nickname: "Liman Çocukları",  city: "İzmir",     stadium: "Liman Park",          capacity: 35000, founded: 1970, formation: "4-3-3" },
     { name: "Kartepe Birlik",     short: "KRT", primary: "#111827", secondary: "#f97316", tier: 2, nickname: "Tepe Güçleri",     city: "Kocaeli",   stadium: "Kartepe Arena",       capacity: 24000, founded: 1975, formation: "4-4-2" },
     { name: "Doğu Ekspres FK",    short: "DEK", primary: "#4c1d95", secondary: "#e0e7ff", tier: 2, nickname: "Ekspresliler",     city: "Erzurum",   stadium: "Doğu Ekspres Stadı",  capacity: 22000, founded: 1968, formation: "3-5-2" },
-    { name: "Yeşilova Genç.",     short: "YŞL", primary: "#166534", secondary: "#ffffff", tier: 2, nickname: "Filizler",        city: "Bursa",     stadium: "Yeşilova Stadı",      capacity: 23000, founded: 1958, formation: "4-3-3" },
+    { name: "Yeşilova Gençlik SK", short: "YŞL", primary: "#166534", secondary: "#ffffff", tier: 2, nickname: "Filizler",       city: "Bursa",     stadium: "Yeşilova Stadı",      capacity: 23000, founded: 1958, formation: "4-3-3" },
     { name: "Rüzgarkent SK",      short: "RZG", primary: "#0c4a6e", secondary: "#bae6fd", tier: 2, nickname: "Poyrazlar",       city: "Çanakkale", stadium: "Rüzgarkent Stadı",    capacity: 19000, founded: 1972, formation: "4-4-2" },
     { name: "Akdeniz Yıldızı",    short: "AKD", primary: "#155e75", secondary: "#fde68a", tier: 2, nickname: "Turkuvazlılar",   city: "Antalya",   stadium: "Akdeniz Arena",       capacity: 21000, founded: 1965, formation: "4-2-3-1" },
     { name: "Bozkır Demirspor",   short: "BZK", primary: "#3f3f46", secondary: "#d4d4d8", tier: 3, nickname: "Bozkır Güçleri",  city: "Kayseri",   stadium: "Bozkır Stadı",        capacity: 17000, founded: 1980, formation: "5-3-2" },
