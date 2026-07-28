@@ -40,8 +40,10 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
   const chatsOverlay = document.getElementById("chatsOverlay");
   const chatsList = document.getElementById("chatsList");
   const newChatBtn = document.getElementById("newChatBtn");
+  const newChatQuickBtn = document.getElementById("newChatQuickBtn");
   const closeChatsBtn = document.getElementById("closeChatsBtn");
   const toast = document.getElementById("toast");
+  const heroTryBtn = document.getElementById("heroTryBtn");
 
   const GREETING = "Merhaba! Ben Nova AI 👋 Yazabilir, mikrofonla konuşabilir ya da kamerayla fotoğraf gösterebilirsin.";
   const STORE_KEY = "nova_ai_chats_v1";
@@ -524,14 +526,33 @@ Kullanıcı bir fotoğraf gönderirse, fotoğrafta gördüklerini açıkla ve so
     chatsOverlay.classList.add("hidden");
   });
 
-  newChatBtn.addEventListener("click", () => {
+  function startNewChat() {
+    if (isThinking) {
+      showToast("Nova düşünürken yeni sohbet açılamaz, biraz bekle.");
+      return;
+    }
+
     const chat = makeChat();
     store.chats.push(chat);
     switchToChat(chat.id);
     saveStore();
     chatsOverlay.classList.add("hidden");
     showToast("🆕 Yeni sohbet başlatıldı");
-  });
+  }
+
+  newChatBtn.addEventListener("click", startNewChat);
+  newChatQuickBtn.addEventListener("click", startNewChat);
+
+  // ---- Hero "Ücretsiz Deneyin" only shows before the first try ----
+  if (heroTryBtn) {
+    if (localStorage.getItem("nova_tried_free") === "1") {
+      heroTryBtn.classList.add("hidden");
+    } else {
+      heroTryBtn.addEventListener("click", () => {
+        localStorage.setItem("nova_tried_free", "1");
+      });
+    }
+  }
 
   // ---- Init ----
   renderActiveChat();
