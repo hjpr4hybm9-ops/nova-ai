@@ -194,6 +194,24 @@ main.wrap {
 .card.remaining .card-value { color: var(--remaining); }
 .card.remaining.over .card-value { color: var(--over); }
 
+.camera-cta {
+  background: linear-gradient(135deg, rgba(34, 197, 94, .16), rgba(56, 189, 248, .08));
+  border-color: var(--brand);
+}
+
+.camera-cta-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.camera-cta-text h3 { margin: 0 0 4px; }
+.camera-cta-text p { margin: 0; color: var(--text-dim); font-size: 14px; }
+
+.camera-cta #quickCameraBtn { flex-shrink: 0; }
+
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
