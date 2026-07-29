@@ -163,13 +163,18 @@
       <div class="section-head">
         <span class="eyebrow">Pratik Yap</span>
         <h2>Ezber Kartların</h2>
-        <p>Kendi kartlarını ekle, karıştır ve aktif hatırlama ile çalış. Kartların tarayıcında saklanır.</p>
+        <p>Hazır <strong>KPSS Lisans 2026 Tarih</strong> destesiyle (200 soru) çalış, kendi kartlarını ekle ve aktif hatırlama ile pratik yap. Kartların tarayıcında saklanır.</p>
       </div>
 
       <div class="flash-panel">
+        <div class="deck-tabs" id="deckTabs">
+          <button type="button" class="tool-btn" data-deck="kpss-tarih-2026">🎓 KPSS Tarih 2026 (200 soru)</button>
+          <button type="button" class="tool-btn" data-deck="genel">🧪 Örnek Genel Bilgi</button>
+        </div>
+
         <form class="flash-form" id="cardForm">
-          <input id="cardFront" type="text" maxlength="120" autocomplete="off" placeholder="Soru / ön yüz (örn: Fransa'nın başkenti?)" required>
-          <input id="cardBack" type="text" maxlength="120" autocomplete="off" placeholder="Cevap / arka yüz (örn: Paris)" required>
+          <input id="cardFront" type="text" maxlength="200" autocomplete="off" placeholder="Soru / ön yüz (örn: Malazgirt Savaşı hangi yıl oldu?)" required>
+          <input id="cardBack" type="text" maxlength="200" autocomplete="off" placeholder="Cevap / arka yüz (örn: 1071)" required>
           <button type="submit" class="btn btn-primary">Kart Ekle</button>
         </form>
 
@@ -178,6 +183,7 @@
           <div class="flash-toolbar-actions">
             <button type="button" class="tool-btn" id="shuffleBtn">🔀 Karıştır</button>
             <button type="button" class="tool-btn" id="resetProgressBtn">↩️ İlerlemeyi Sıfırla</button>
+            <button type="button" class="tool-btn" id="restoreDeckBtn">♻️ Varsayılana Sıfırla</button>
             <button type="button" class="tool-btn" id="clearCardsBtn">🗑️ Tüm Kartları Sil</button>
           </div>
         </div>
