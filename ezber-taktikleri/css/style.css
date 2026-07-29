@@ -431,6 +431,17 @@ li { margin-bottom: 6px; }
   color: var(--text-dim);
 }
 
+.flash-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.flash-nav .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.flash-nav .tool-btn:disabled:hover { border-color: var(--border); color: var(--text); }
+
 .flash-done { padding: 40px 0; }
 .flash-done p { font-size: 16px; margin-bottom: 18px; }
 
