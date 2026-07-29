@@ -166,13 +166,37 @@
       <div class="section-head">
         <span class="eyebrow">Pratik Yap</span>
         <h2>Ezber Kartların</h2>
-        <p>Hazır <strong>KPSS Lisans 2026 Tarih</strong> destesiyle (200 soru) çalış, kendi kartlarını ekle ve aktif hatırlama ile pratik yap. Kartların tarayıcında saklanır.</p>
+        <p>1. sınıftan 12. sınıfa her sınıf için karışık ders destesi, LGS / YKS / KPSS destesi ve kendi kartların — hepsi tek yerde. Kartların tarayıcında saklanır.</p>
       </div>
 
       <div class="flash-panel">
-        <div class="deck-tabs" id="deckTabs">
-          <button type="button" class="tool-btn" data-deck="kpss-tarih-2026">🎓 KPSS Tarih 2026 (200 soru)</button>
-          <button type="button" class="tool-btn" data-deck="genel">🧪 Örnek Genel Bilgi</button>
+        <div class="deck-select-wrap">
+          <label for="deckSelect" class="deck-select-label">📚 Çalışılacak deste:</label>
+          <select id="deckSelect" class="deck-select">
+            <optgroup label="Sınavlar">
+              <option value="kpss-tarih-2026">🎓 KPSS Tarih 2026 (200 soru)</option>
+              <option value="kpss-genel">🎓 KPSS Genel Kültür (50 soru)</option>
+              <option value="yks">🎓 YKS - TYT/AYT (50 soru)</option>
+              <option value="lgs">🎓 LGS (50 soru)</option>
+            </optgroup>
+            <optgroup label="Sınıflar (Karışık Ders)">
+              <option value="sinif-1">1. Sınıf (50 soru)</option>
+              <option value="sinif-2">2. Sınıf (50 soru)</option>
+              <option value="sinif-3">3. Sınıf (50 soru)</option>
+              <option value="sinif-4">4. Sınıf (50 soru)</option>
+              <option value="sinif-5">5. Sınıf (50 soru)</option>
+              <option value="sinif-6">6. Sınıf (50 soru)</option>
+              <option value="sinif-7">7. Sınıf (50 soru)</option>
+              <option value="sinif-8">8. Sınıf (50 soru)</option>
+              <option value="sinif-9">9. Sınıf (50 soru)</option>
+              <option value="sinif-10">10. Sınıf (50 soru)</option>
+              <option value="sinif-11">11. Sınıf (50 soru)</option>
+              <option value="sinif-12">12. Sınıf (50 soru)</option>
+            </optgroup>
+            <optgroup label="Diğer">
+              <option value="genel">🧪 Örnek Genel Bilgi (4 soru)</option>
+            </optgroup>
+          </select>
         </div>
 
         <form class="flash-form" id="cardForm">
