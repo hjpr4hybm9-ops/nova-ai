@@ -97,6 +97,11 @@
     });
   });
 
+  document.getElementById("quickCameraBtn").addEventListener("click", () => {
+    document.querySelector('.tab-btn[data-tab="ai"]').click();
+    openCamera();
+  });
+
   // ---------- Toast ----------
   const toast = document.getElementById("toast");
   let toastTimer = null;
