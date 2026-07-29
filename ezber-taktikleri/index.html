@@ -184,6 +184,7 @@
         <div class="flash-toolbar">
           <span class="flash-count" id="cardCount">0 kart</span>
           <div class="flash-toolbar-actions">
+            <button type="button" class="tool-btn" id="mistakesBtn">🧺 Yanlış Sepeti <span id="mistakesCount">(0)</span></button>
             <button type="button" class="tool-btn" id="shuffleBtn">🔀 Karıştır</button>
             <button type="button" class="tool-btn" id="resetProgressBtn">↩️ İlerlemeyi Sıfırla</button>
             <button type="button" class="tool-btn" id="restoreDeckBtn">♻️ Varsayılana Sıfırla</button>
@@ -206,9 +207,14 @@
             </div>
             <p class="flash-hint" id="flashHint">Kartı çevirmek için üzerine tıkla</p>
 
-            <div class="flash-actions">
+            <div class="flash-actions" id="flashActionsPrimary">
               <button type="button" class="btn btn-outline btn-negative" id="dontKnowBtn">❌ Bilmiyorum</button>
               <button type="button" class="btn btn-primary" id="knowBtn">✅ Biliyorum</button>
+            </div>
+
+            <div class="flash-actions hidden" id="flashActionsConfirm">
+              <button type="button" class="btn btn-outline btn-negative" id="wrongBtn">❌ Yanlış Bildim</button>
+              <button type="button" class="btn btn-primary" id="correctBtn">✅ Doğru Bildim</button>
             </div>
 
             <div class="flash-stats">
@@ -383,6 +389,21 @@
   </section>
 
 </main>
+
+<div class="mistakes-overlay hidden" id="mistakesOverlay">
+  <div class="mistakes-sheet">
+    <div class="mistakes-header">
+      <h3>🧺 Yanlış Sepeti</h3>
+      <button type="button" class="icon-btn" id="closeMistakesBtn" aria-label="Kapat">✕</button>
+    </div>
+    <p class="mistakes-sub">Yanlış bildiğin kartlar burada birikir; bir kartı doğru bilene kadar sepette kalır.</p>
+    <div class="mistakes-list" id="mistakesList"></div>
+    <div class="mistakes-actions">
+      <button type="button" class="btn btn-outline btn-negative" id="clearMistakesBtn">🗑️ Sepeti Temizle</button>
+      <button type="button" class="btn btn-primary" id="practiceMistakesBtn">🔁 Bu Kartlarla Çalış</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast hidden" id="toast"></div>
 
