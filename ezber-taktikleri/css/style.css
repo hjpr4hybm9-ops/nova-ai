@@ -316,6 +316,13 @@ li { margin-bottom: 6px; }
   border-radius: var(--radius);
   padding: 24px;
 }
+.deck-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
 .flash-form {
   display: flex;
   gap: 10px;
