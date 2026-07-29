@@ -470,6 +470,8 @@
   var correctBtn = document.getElementById("correctBtn");
   var wrongBtn = document.getElementById("wrongBtn");
   var restartBtn = document.getElementById("restartBtn");
+  var prevCardBtn = document.getElementById("prevCardBtn");
+  var nextCardBtn = document.getElementById("nextCardBtn");
 
   var mistakesOverlay = document.getElementById("mistakesOverlay");
   var mistakesList = document.getElementById("mistakesList");
@@ -650,7 +652,17 @@
 
     knownStat.textContent = known;
     remainingStat.textContent = queue.length - currentIndex;
+    if (prevCardBtn) prevCardBtn.disabled = currentIndex <= 0;
+    if (nextCardBtn) nextCardBtn.disabled = currentIndex >= queue.length - 1;
     showPrimaryActions();
+  }
+
+  function goToCard(index) {
+    if (!cards.length || !queue.length) return;
+    if (index < 0) index = 0;
+    if (index > queue.length - 1) index = queue.length - 1;
+    currentIndex = index;
+    renderStage();
   }
 
   function flipCard() {
@@ -709,6 +721,9 @@
 
   if (correctBtn) correctBtn.addEventListener("click", function () { gradeCard(true); });
   if (wrongBtn) wrongBtn.addEventListener("click", function () { gradeCard(false); });
+
+  if (prevCardBtn) prevCardBtn.addEventListener("click", function () { goToCard(currentIndex - 1); });
+  if (nextCardBtn) nextCardBtn.addEventListener("click", function () { goToCard(currentIndex + 1); });
 
   if (restartBtn) restartBtn.addEventListener("click", startRound);
   if (resetProgressBtn) resetProgressBtn.addEventListener("click", function () {
