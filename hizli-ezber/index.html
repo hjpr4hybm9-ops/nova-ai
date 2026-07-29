@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#150f24">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("ezber.theme");
+      if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  })();
+</script>
+<meta name="description" content="Hızlı ezberleme teknikleri: zihin sarayı, aralıklı tekrar, aktif hatırlama ve daha fazlası. Kart tekrarı antrenörü ve hafıza testleriyle pratik yap.">
+<title>Hızlı Ezber — Hızlı Ezberleme Teknikleri</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <img class="logo" src="icons/icon-192.png" alt="Hızlı Ezber" width="32" height="32">
+      <span class="brand-name">Hızlı Ezber</span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="teknikler">Teknikler</button>
+      <button class="tab-btn" data-tab="kartlar">Kart Tekrarı</button>
+      <button class="tab-btn" data-tab="test">Hafıza Testi</button>
+      <button class="tab-btn" data-tab="sss">SSS</button>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- TEKNİKLER -->
+  <section class="panel active" id="panel-teknikler">
+    <div class="hero-box">
+      <span class="eyebrow">✦ Bilim destekli hafıza yöntemleri</span>
+      <h1>Daha az zamanda, kalıcı olarak ezberle</h1>
+      <p>Aşağıdaki sekiz teknik; hafıza sporcularının ve öğrencilerin sınavlara, dillere ve sunumlara hazırlanırken kullandığı en etkili yöntemlerdir. Bir teknik seç, adımlarını oku, sonra <strong>Kart Tekrarı</strong> ve <strong>Hafıza Testi</strong> araçlarıyla hemen pratik yap.</p>
+    </div>
+
+    <div class="grid-3" id="techniqueGrid">
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">🏛️</span>
+          <span class="card-title">Zihin Sarayı (Loci Yöntemi)</span>
+        </summary>
+        <p>İyi tanıdığın bir mekanı (evin, okul yolun) zihninde canlandır ve ezberlenecek her öğeyi o mekandaki belirli bir noktaya yerleştir.</p>
+        <ol>
+          <li>Tanıdığın bir mekanı seç ve içinde sabit bir rota belirle (kapı → koridor → salon...).</li>
+          <li>Rotadaki her durağa ezberlemek istediğin bir öğeyi canlı, abartılı bir görüntüyle yerleştir.</li>
+          <li>Hatırlamak için zihninde aynı rotada yürü ve durakları sırayla ziyaret et.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">🧩</span>
+          <span class="card-title">Parçalama (Chunking)</span>
+        </summary>
+        <p>Uzun bir bilgi dizisini küçük, anlamlı gruplara böl. Telefon numaralarının 3-3-4 haneli yazılması bu tekniğin en bilinen örneğidir.</p>
+        <ol>
+          <li>Ezberlenecek diziyi 3-4 öğelik küçük gruplara ayır.</li>
+          <li>Her gruba mümkünse anlam ya da ritim kat.</li>
+          <li>Önce grupları, sonra grupların sırasını ezberle.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">📅</span>
+          <span class="card-title">Aralıklı Tekrar (Spaced Repetition)</span>
+        </summary>
+        <p>Bilgiyi unutmadan hemen önce tekrar et; her doğru hatırlayışta tekrar aralığını uzat. Aşağıdaki Kart Tekrarı aracı bunu otomatik yapar.</p>
+        <ol>
+          <li>Yeni bilgiyi öğrendikten sonraki gün tekrar et.</li>
+          <li>Doğru hatırladıkça tekrar aralığını 2, 4, 7, 14 gün gibi artır.</li>
+          <li>Yanlış hatırlarsan aralığı sıfırla ve baştan başla.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">🎯</span>
+          <span class="card-title">Aktif Hatırlama (Active Recall)</span>
+        </summary>
+        <p>Notu tekrar tekrar okumak yerine kitabı kapat ve bilgiyi hafızandan çekmeye çalış. Beyin, hatırlama çabası gösterdiğinde bilgiyi daha güçlü kaydeder.</p>
+        <ol>
+          <li>Konuyu bir kez oku, sonra kaynağı kapat.</li>
+          <li>Kendine sorular sor ya da boş bir sayfaya yazabildiğini yaz.</li>
+          <li>Kaynaktan kontrol et, eksikleri işaretleyip tekrar dene.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">🗣️</span>
+          <span class="card-title">Feynman Tekniği</span>
+        </summary>
+        <p>Öğrendiğin konuyu hiç bilmeyen birine, basit ve günlük kelimelerle anlatıyormuş gibi anlat. Takıldığın yer, tam olarak anlamadığın yerdir.</p>
+        <ol>
+          <li>Konunun başlığını bir kağıdın üstüne yaz.</li>
+          <li>Sanki 10 yaşında birine anlatıyormuş gibi basitçe açıkla.</li>
+          <li>Takıldığın noktaları kaynağa dönüp tekrar öğren, tekrar anlat.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">🔤</span>
+          <span class="card-title">Kısaltmalar ve Akrostişler</span>
+        </summary>
+        <p>Ezberlenecek maddelerin ilk harflerinden akılda kalıcı bir kelime ya da cümle türet (ör. gökkuşağı renkleri için "Mor Kırmızı..." gibi cümleler).</p>
+        <ol>
+          <li>Ezberlenecek maddelerin baş harflerini alt alta yaz.</li>
+          <li>Bu harflerle komik ya da tuhaf bir kelime/cümle oluştur.</li>
+          <li>Cümleyi birkaç kez tekrarlayarak maddelerin sırasını pekiştir.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">📖</span>
+          <span class="card-title">Hikayeleştirme (Zincirleme)</span>
+        </summary>
+        <p>Birbiriyle ilgisiz görünen öğeleri saçma, abartılı bir hikayeyle zihninde birbirine bağla. Ne kadar tuhafsa o kadar akılda kalıcı olur.</p>
+        <ol>
+          <li>Ezberlenecek öğeleri sırayla listele.</li>
+          <li>Her öğeyi bir sonrakine bağlayan kısa, komik bir sahne kur.</li>
+          <li>Hikayeyi baştan sona zihninde tekrar canlandır.</li>
+        </ol>
+      </details>
+
+      <details class="card tech-card">
+        <summary>
+          <span class="card-icon">🎨</span>
+          <span class="card-title">Görselleştirme</span>
+        </summary>
+        <p>Soyut bir kavramı ya da sayıyı canlı, renkli ve hareketli bir zihinsel görüntüye çevir. Beyin görselleri kelimelerden çok daha kolay hatırlar.</p>
+        <ol>
+          <li>Ezberlenecek kavramı somut bir nesneye ya da sahneye dönüştür.</li>
+          <li>Görüntüye renk, hareket ve abartı ekle.</li>
+          <li>Gözlerini kapatıp görüntüyü birkaç saniye net şekilde canlandır.</li>
+        </ol>
+      </details>
+    </div>
+
+    <div class="box tip-box">
+      <h3>3 adımda hızlı ezber rutini</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Anla</h4>
+          <p>Ezberlemeden önce konuyu kendi cümlelerinle özetle. Anlamadan ezberlenen bilgi çabuk unutulur.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>Kodla</h4>
+          <p>Yukarıdaki tekniklerden birini seçip bilgiyi görsel, hikaye ya da kısaltmaya dönüştür.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>Tekrarla</h4>
+          <p><strong>Kart Tekrarı</strong> aracını kullanarak aralıklı tekrarla bilgiyi kalıcı hafızaya taşı.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KART TEKRARI -->
+  <section class="panel" id="panel-kartlar">
+    <div class="box">
+      <div class="box-header">
+        <h3>Desteler</h3>
+        <button type="button" class="btn btn-outline btn-sm" id="newDeckBtn">➕ Yeni Deste</button>
+      </div>
+      <div class="deck-chips" id="deckChips"></div>
+      <p class="empty-hint" id="deckEmptyHint">Henüz deste yok. Önce bir deste oluştur.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="box">
+        <h3>Yeni Kart Ekle</h3>
+        <form id="cardForm" class="tool-form">
+          <label>
+            Ön Yüz (Soru)
+            <textarea id="cardFront" placeholder="Örn. Zihin sarayı tekniği nedir?" required></textarea>
+          </label>
+          <label>
+            Arka Yüz (Cevap)
+            <textarea id="cardBack" placeholder="Örn. Tanıdık bir mekana ezberlenecek öğeleri yerleştirme yöntemi." required></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="addCardBtn">Karta Ekle</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="box">
+        <h3>Deste Durumu</h3>
+        <div class="cards-stats" id="deckStats"></div>
+        <div class="box-list" id="boxLevelList"></div>
+        <p class="hint-text">Leitner kutu sistemi: Kutu 1 her gün, Kutu 2 → 2 günde bir, Kutu 3 → 4 günde bir, Kutu 4 → 7 günde bir, Kutu 5 → 14 günde bir tekrar edilir.</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h3>Tekrar Zamanı</h3>
+        <span class="due-count" id="dueCount">0 kart hazır</span>
+      </div>
+
+      <div class="review-area" id="reviewArea">
+        <p class="empty-hint" id="reviewEmptyHint">Şu an tekrar edilecek kart yok. Yeni kart ekle ya da yarın tekrar gel.</p>
+
+        <div class="flashcard hidden" id="flashcard">
+          <div class="flashcard-inner" id="flashcardInner">
+            <div class="flashcard-face flashcard-front">
+              <span class="flashcard-label">Soru</span>
+              <p id="flashcardFrontText"></p>
+              <button type="button" class="btn btn-outline" id="revealBtn">Cevabı Göster</button>
+            </div>
+            <div class="flashcard-face flashcard-back hidden" id="flashcardBackFace">
+              <span class="flashcard-label">Cevap</span>
+              <p id="flashcardBackText"></p>
+            </div>
+          </div>
+
+          <div class="review-actions hidden" id="reviewActions">
+            <button type="button" class="btn btn-ghost btn-danger" id="btnForgot">😵 Hatırlamadım</button>
+            <button type="button" class="btn btn-outline" id="btnHard">😐 Zor</button>
+            <button type="button" class="btn btn-primary" id="btnEasy">😄 Kolay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HAFIZA TESTİ -->
+  <section class="panel" id="panel-test">
+    <div class="box">
+      <div class="section-head-sm">
+        <h3>Hızlı Hafıza Testi</h3>
+        <p class="hint-text">Bir zorluk seç, kelime listesini süresi içinde ezberlemeye çalış, sonra hatırladıklarını yaz. Bu test; parçalama ve hikayeleştirme tekniklerini denemek için idealdir.</p>
+      </div>
+
+      <div class="difficulty-row" id="difficultyRow">
+        <button type="button" class="diff-btn active" data-diff="kolay" data-words="5" data-seconds="20">Kolay · 5 kelime · 20 sn</button>
+        <button type="button" class="diff-btn" data-diff="orta" data-words="8" data-seconds="15">Orta · 8 kelime · 15 sn</button>
+        <button type="button" class="diff-btn" data-diff="zor" data-words="12" data-seconds="10">Zor · 12 kelime · 10 sn</button>
+      </div>
+
+      <div class="test-stage" id="testStage">
+        <div class="test-idle" id="testIdle">
+          <p>Hazır olduğunda testi başlat. Kelime listesi ekranda kısa süreliğine görünecek.</p>
+          <button type="button" class="btn btn-primary" id="startTestBtn">▶️ Testi Başlat</button>
+        </div>
+
+        <div class="test-countdown hidden" id="testCountdown">
+          <span id="countdownNum">3</span>
+        </div>
+
+        <div class="test-words hidden" id="testWords">
+          <div class="word-grid" id="wordGrid"></div>
+          <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+        </div>
+
+        <div class="test-recall hidden" id="testRecall">
+          <label>
+            Hatırladığın kelimeleri virgülle ayırarak yaz
+            <textarea id="recallInput" placeholder="örn: kalem, deniz, güneş..."></textarea>
+          </label>
+          <button type="button" class="btn btn-primary" id="checkRecallBtn">Kontrol Et</button>
+        </div>
+
+        <div class="test-result hidden" id="testResult">
+          <div class="result-score" id="resultScore"></div>
+          <div class="result-lists">
+            <div>
+              <h4>Doğru hatırladıkların</h4>
+              <ul id="correctList" class="word-result-list"></ul>
+            </div>
+            <div>
+              <h4>Kaçırdıkların</h4>
+              <ul id="missedList" class="word-result-list"></ul>
+            </div>
+          </div>
+          <p class="test-tip" id="testTip"></p>
+          <button type="button" class="btn btn-outline" id="retryTestBtn">🔁 Tekrar Dene</button>
+        </div>
+      </div>
+
+      <div class="best-score" id="bestScore"></div>
+    </div>
+  </section>
+
+  <!-- SSS -->
+  <section class="panel" id="panel-sss">
+    <div class="box">
+      <h3>Sıkça Sorulan Sorular</h3>
+      <div class="faq" id="faq">
+        <details class="faq-item">
+          <summary>Bu teknikler gerçekten işe yarıyor mu?</summary>
+          <p>Evet. Zihin sarayı, aralıklı tekrar ve aktif hatırlama; hafıza sporcuları ve bilişsel psikoloji araştırmalarıyla desteklenen, onlarca yıldır kullanılan yöntemlerdir. Önemli olan tekniği düzenli uygulamaktır.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Kart Tekrarı verilerim nerede saklanıyor?</summary>
+          <p>Tüm desteler ve kartlar yalnızca kendi tarayıcında, cihazında saklanır. Herhangi bir sunucuya gönderilmez.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Hangi teknikle başlamalıyım?</summary>
+          <p>Sınav gibi sıralı bilgiler için Zihin Sarayı ve Hikayeleştirme, kelime/tanım ezberi için Kart Tekrarı ile Aralıklı Tekrar, kavramları pekiştirmek için Feynman Tekniği iyi bir başlangıçtır.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Leitner kutu sistemi nedir?</summary>
+          <p>Kartlarını 5 kutuya ayırıp her kutuyu farklı sıklıkla tekrar ettiğin basit bir aralıklı tekrar yöntemidir. Bir kartı doğru hatırladıkça bir sonraki kutuya terfi eder, yanlış hatırlarsan 1. kutuya geri döner.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Hafıza testi sonuçlarım kaydediliyor mu?</summary>
+          <p>Yalnızca en iyi skorun, tekrar karşılaştırma yapabilmen için tarayıcında saklanır.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Hızlı Ezber — teknikler ve araçlar herkese açıktır; verilerin bu tarayıcıda saklanır. © <span id="year"></span></p>
+  </div>
+</footer>
+
+<script src="js/main.js?v=1"></script>
+</body>
+</html>
