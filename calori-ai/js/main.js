@@ -700,12 +700,25 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
     return String(response);
   }
 
+  const AI_TIMEOUT_MS = 30000;
+  const AI_TIMEOUT_ERROR = "ai-timeout";
+
+  function withTimeout(promise, ms) {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(AI_TIMEOUT_ERROR)), ms);
+      promise.then(
+        (value) => { clearTimeout(timer); resolve(value); },
+        (err) => { clearTimeout(timer); reject(err); }
+      );
+    });
+  }
+
   async function getReply() {
     if (typeof puter === "undefined" || !puter.ai || typeof puter.ai.chat !== "function") {
       throw new Error("AI motoru yüklenemedi.");
     }
     const apiMessages = [{ role: "system", content: SYSTEM_PROMPT }, ...buildAiHistory()];
-    const response = await puter.ai.chat(apiMessages);
+    const response = await withTimeout(puter.ai.chat(apiMessages), AI_TIMEOUT_MS);
     const reply = extractText(response).trim();
     if (!reply) throw new Error("Boş yanıt geldi.");
     return reply;
@@ -716,7 +729,7 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
       throw new Error("AI motoru yüklenemedi.");
     }
     const prompt = `${SYSTEM_PROMPT}\n\nKullanıcının notu: ${userText || "(yok)"}\n\nFotoğraftaki yemeği tanı ve yukarıdaki formatta besin değerlerini tahmin et.`;
-    const response = await puter.ai.chat(prompt, imageDataURL);
+    const response = await withTimeout(puter.ai.chat(prompt, imageDataURL), AI_TIMEOUT_MS);
     const reply = extractText(response).trim();
     if (!reply) throw new Error("Boş yanıt geldi.");
     return reply;
@@ -749,7 +762,12 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
     } catch (error) {
       console.error(error);
       typingRow.remove();
-      const errText = "Şu anda bağlanırken bir sorun oluştu. Lütfen tekrar deneyin.";
+      const timedOut = error && error.message === AI_TIMEOUT_ERROR;
+      const errText = timedOut
+        ? (imageDataURL
+          ? "Fotoğraf analizi çok uzun sürdü ve yanıt alınamadı. Fotoğrafı biraz daha yakından, iyi ışıkta çekip tekrar dener misin? Olmazsa yemeği yazarak da tarif edebilirsin."
+          : "Yanıt çok uzun sürdü ve alınamadı. Lütfen tekrar dener misin?")
+        : "Şu anda bağlanırken bir sorun oluştu. Lütfen tekrar deneyin.";
       addBubble("ai", errText);
       pushAiMessage("ai", errText);
       aiHint.textContent = "Bağlantı sorunu yaşandı, tekrar deneyebilirsin.";
@@ -810,14 +828,19 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
   cameraBtn.addEventListener("click", openCamera);
   cameraCancelBtn.addEventListener("click", closeCamera);
 
+  const CAMERA_MAX_DIM = 1280;
+
   captureBtn.addEventListener("click", async () => {
-    const width = cameraVideo.videoWidth || 640;
-    const height = cameraVideo.videoHeight || 480;
+    const rawWidth = cameraVideo.videoWidth || 640;
+    const rawHeight = cameraVideo.videoHeight || 480;
+    const scale = Math.min(1, CAMERA_MAX_DIM / Math.max(rawWidth, rawHeight));
+    const width = Math.round(rawWidth * scale);
+    const height = Math.round(rawHeight * scale);
     cameraCanvas.width = width;
     cameraCanvas.height = height;
     const ctx = cameraCanvas.getContext("2d");
     ctx.drawImage(cameraVideo, 0, 0, width, height);
-    const dataURL = cameraCanvas.toDataURL("image/jpeg", 0.85);
+    const dataURL = cameraCanvas.toDataURL("image/jpeg", 0.8);
 
     const caption = aiInput.value.trim();
     aiInput.value = "";
