@@ -599,3 +599,98 @@ input:focus, select:focus, textarea:focus {
   .header-actions { justify-content: center; }
   .result-lists { grid-template-columns: 1fr; }
 }
+
+/* PIN lock screen */
+.lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg);
+  transition: opacity .25s ease;
+}
+
+.lock-screen.unlocked { opacity: 0; pointer-events: none; }
+.lock-screen.hidden { display: none; }
+
+.lock-card {
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.lock-icon { font-size: 38px; margin-bottom: 6px; }
+.lock-title { margin: 0 0 4px; font-size: 21px; }
+.lock-sub { margin: 0 0 22px; color: var(--text-dim); font-size: 14px; }
+
+.lock-error {
+  margin: -14px 0 16px;
+  min-height: 18px;
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.pin-dot.filled { background: var(--brand); border-color: var(--brand); }
+
+.pin-dots.shake { animation: pin-shake .4s ease; }
+
+@keyframes pin-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.key-btn {
+  padding: 16px 0;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.key-btn:hover { filter: brightness(1.12); }
+.key-btn:active { transform: scale(.96); }
+
+.key-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lock-screen { transition: none; }
+  .pin-dots.shake { animation: none; }
+}

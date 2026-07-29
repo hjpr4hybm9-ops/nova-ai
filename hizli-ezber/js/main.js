@@ -53,6 +53,144 @@
     }, 2200);
   }
 
+  // ---------- PIN Lock ----------
+  const PIN_KEY = "ezber.pinHash.v1";
+  const UNLOCKED_KEY = "ezber.unlocked";
+
+  const lockScreen = document.getElementById("lockScreen");
+  const lockSub = document.getElementById("lockSub");
+  const lockError = document.getElementById("lockError");
+  const pinDotsWrap = document.getElementById("pinDots");
+  const pinDots = pinDotsWrap.querySelectorAll(".pin-dot");
+  const keypad = document.getElementById("keypad");
+  const lockResetBtn = document.getElementById("lockResetBtn");
+  const lockBackspace = document.getElementById("lockBackspace");
+  const lockNowBtn = document.getElementById("lockNowBtn");
+
+  async function hashPin(pin) {
+    const data = new TextEncoder().encode("hizli-ezber:" + pin);
+    const digest = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  let enteredPin = "";
+  let firstSetupPin = "";
+  let lockMode = localStorage.getItem(PIN_KEY) ? "unlock" : "setup";
+
+  function updateLockSub() {
+    if (lockMode === "setup") lockSub.textContent = "Uygulamanı korumak için 4 haneli bir PIN belirle";
+    else if (lockMode === "setup-confirm") lockSub.textContent = "PIN'ini onaylamak için tekrar gir";
+    else lockSub.textContent = "Devam etmek için PIN'ini gir";
+  }
+
+  function renderDots() {
+    pinDots.forEach((dot, i) => dot.classList.toggle("filled", i < enteredPin.length));
+  }
+
+  function triggerShake(msg) {
+    lockError.textContent = msg;
+    lockError.classList.remove("hidden");
+    pinDotsWrap.classList.remove("shake");
+    void pinDotsWrap.offsetWidth;
+    pinDotsWrap.classList.add("shake");
+  }
+
+  function resetEntry() {
+    enteredPin = "";
+    renderDots();
+  }
+
+  function unlockApp() {
+    lockScreen.classList.add("unlocked");
+    setTimeout(() => lockScreen.classList.add("hidden"), 300);
+    try { sessionStorage.setItem(UNLOCKED_KEY, "1"); } catch {}
+    lockError.classList.add("hidden");
+    resetEntry();
+  }
+
+  function lockApp() {
+    if (!localStorage.getItem(PIN_KEY)) return;
+    lockMode = "unlock";
+    updateLockSub();
+    resetEntry();
+    lockError.classList.add("hidden");
+    lockScreen.classList.remove("hidden");
+    requestAnimationFrame(() => lockScreen.classList.remove("unlocked"));
+    try { sessionStorage.removeItem(UNLOCKED_KEY); } catch {}
+  }
+
+  async function handlePinComplete() {
+    if (lockMode === "setup") {
+      firstSetupPin = enteredPin;
+      lockMode = "setup-confirm";
+      updateLockSub();
+      resetEntry();
+      lockError.classList.add("hidden");
+      return;
+    }
+    if (lockMode === "setup-confirm") {
+      if (enteredPin !== firstSetupPin) {
+        triggerShake("PIN'ler uyuşmadı, baştan başla.");
+        lockMode = "setup";
+        firstSetupPin = "";
+        updateLockSub();
+        resetEntry();
+        return;
+      }
+      const hash = await hashPin(enteredPin);
+      localStorage.setItem(PIN_KEY, hash);
+      unlockApp();
+      return;
+    }
+    const hash = await hashPin(enteredPin);
+    if (hash === localStorage.getItem(PIN_KEY)) {
+      unlockApp();
+    } else {
+      triggerShake("Yanlış PIN, tekrar dene.");
+      resetEntry();
+    }
+  }
+
+  keypad.addEventListener("click", (e) => {
+    const btn = e.target.closest(".key-btn[data-key]");
+    if (!btn || enteredPin.length >= 4) return;
+    enteredPin += btn.dataset.key;
+    renderDots();
+    lockError.classList.add("hidden");
+    if (enteredPin.length === 4) setTimeout(handlePinComplete, 150);
+  });
+
+  lockBackspace.addEventListener("click", () => {
+    enteredPin = enteredPin.slice(0, -1);
+    renderDots();
+  });
+
+  lockResetBtn.addEventListener("click", () => {
+    if (!confirm("PIN'ini sıfırlamak istediğine emin misin? Kartların ve desterin silinmez, sadece PIN kaldırılır ve yeni bir PIN belirlemen istenir.")) return;
+    localStorage.removeItem(PIN_KEY);
+    lockMode = "setup";
+    firstSetupPin = "";
+    updateLockSub();
+    resetEntry();
+    lockError.classList.add("hidden");
+  });
+
+  lockNowBtn.addEventListener("click", () => {
+    if (!localStorage.getItem(PIN_KEY)) {
+      showToast("Önce bir PIN belirlemelisin.");
+      return;
+    }
+    lockApp();
+  });
+
+  updateLockSub();
+  renderDots();
+  let alreadyUnlocked = false;
+  try { alreadyUnlocked = sessionStorage.getItem(UNLOCKED_KEY) === "1"; } catch {}
+  if (alreadyUnlocked && localStorage.getItem(PIN_KEY)) {
+    lockScreen.classList.add("hidden");
+  }
+
   // ---------- Tabs ----------
   const tabBtns = document.querySelectorAll(".tab-btn");
   const panels = document.querySelectorAll(".panel");
