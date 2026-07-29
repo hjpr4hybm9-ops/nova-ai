@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c1712">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("caloriai.theme");
+      if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  })();
+</script>
+<meta name="description" content="Calori AI — yapay zekâ destekli kalori ve besin takibi. Yemeklerini yaz ya da fotoğrafını göster, kalori ve makro değerlerini anında öğren.">
+<title>Calori AI — Yapay Zekâ ile Kalori Takibi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">
+    <img src="icons/icon-192.png" alt="Calori AI" width="64" height="64">
+  </div>
+  <p class="loading-text">Calori AI yükleniyor…</p>
+</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <img class="logo" src="icons/icon-192.png" alt="Calori AI" width="32" height="32">
+      <span class="brand-name">Calori AI</span>
+      <span class="header-greeting" id="headerGreeting" style="display:none;"></span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="ozet">Genel Bakış</button>
+      <button class="tab-btn" data-tab="gunluk">Günlük</button>
+      <button class="tab-btn" data-tab="ai">AI Analiz</button>
+      <button class="tab-btn" data-tab="hedefler">Hedeflerim</button>
+      <button class="tab-btn" data-tab="ayarlar">Ayarlar</button>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline btn-sm" id="puterBtn" data-state="out">Puter ile Giriş Yap</button>
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- GENEL BAKIŞ -->
+  <section class="panel active viz-root" id="panel-ozet">
+    <div class="cards">
+      <div class="card consumed">
+        <span class="card-label">Bugün Alınan</span>
+        <span class="card-value" id="sumConsumed">0 kcal</span>
+      </div>
+      <div class="card goal">
+        <span class="card-label">Günlük Hedef</span>
+        <span class="card-value" id="sumGoal">0 kcal</span>
+      </div>
+      <div class="card remaining">
+        <span class="card-label">Kalan / Aşım</span>
+        <span class="card-value" id="sumRemaining">0 kcal</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="box">
+        <div class="box-header">
+          <h3>Bugünkü Makro Dağılımı</h3>
+        </div>
+        <div class="donut-wrap" id="donutWrap">
+          <div class="donut-center" id="donutCenter">
+            <span class="donut-center-label">Bugün</span>
+            <span class="donut-center-value" id="donutCenterValue">0 kcal</span>
+          </div>
+        </div>
+        <div class="chart-legend" id="donutLegend"></div>
+        <p class="empty-hint" id="donutEmptyHint">Bugün için henüz kayıt yok.</p>
+      </div>
+      <div class="box">
+        <h3>Bugünkü Öğünler</h3>
+        <ul class="recent-list" id="recentList"></ul>
+        <p class="empty-hint" id="recentEmptyHint">Henüz öğün eklenmedi.</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h3>Son 7 Gün</h3>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-swatch swatch-consumed"></span>Alınan Kalori</span>
+        <span class="legend-item">┅ Hedef</span>
+      </div>
+      <div class="bar-chart-wrap" id="barChartWrap"></div>
+    </div>
+  </section>
+
+  <div class="chart-tooltip" id="chartTooltip"></div>
+
+  <!-- GÜNLÜK -->
+  <section class="panel" id="panel-gunluk">
+    <div class="box">
+      <h3 id="entryFormTitle">Yeni Öğün Ekle</h3>
+      <form id="entryForm" class="tx-form">
+        <input type="hidden" id="entryEditId" value="">
+        <div class="field-row">
+          <label>
+            Öğün
+            <select id="entryMeal" required>
+              <option value="kahvalti">Kahvaltı</option>
+              <option value="ogle">Öğle Yemeği</option>
+              <option value="aksam">Akşam Yemeği</option>
+              <option value="atistirmalik">Atıştırmalık</option>
+            </select>
+          </label>
+          <label class="grow">
+            Yiyecek Adı
+            <input type="text" id="entryName" placeholder="Örn. Izgara tavuk salatası" required>
+          </label>
+          <label>
+            Tarih
+            <input type="date" id="entryDate" required>
+          </label>
+        </div>
+        <div class="field-row">
+          <label>
+            Kalori (kcal)
+            <input type="number" id="entryKcal" min="0" step="1" placeholder="0" required>
+          </label>
+          <label>
+            Protein (g)
+            <input type="number" id="entryProtein" min="0" step="0.1" placeholder="0">
+          </label>
+          <label>
+            Karbonhidrat (g)
+            <input type="number" id="entryCarbs" min="0" step="0.1" placeholder="0">
+          </label>
+          <label>
+            Yağ (g)
+            <input type="number" id="entryFat" min="0" step="0.1" placeholder="0">
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="entrySubmitBtn">Kaydet</button>
+          <button type="button" class="btn btn-ghost" id="entryCancelEdit" style="display:none;">İptal</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h3>Tüm Öğünler</h3>
+        <div class="filters">
+          <select id="filterDate">
+            <option value="">Tüm Tarihler</option>
+          </select>
+          <select id="filterMeal">
+            <option value="">Tüm Öğünler</option>
+            <option value="kahvalti">Kahvaltı</option>
+            <option value="ogle">Öğle Yemeği</option>
+            <option value="aksam">Akşam Yemeği</option>
+            <option value="atistirmalik">Atıştırmalık</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Öğün</th>
+              <th>Yiyecek</th>
+              <th>Kalori</th>
+              <th>P / K / Y (g)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="entryTableBody"></tbody>
+        </table>
+      </div>
+      <p class="empty-hint" id="entryEmptyHint">Henüz öğün eklenmedi.</p>
+    </div>
+  </section>
+
+  <!-- AI ANALİZ -->
+  <section class="panel" id="panel-ai">
+    <div class="box">
+      <div class="section-head-sm">
+        <h3>Yapay Zekâ ile Kalori Tahmini</h3>
+        <p class="hint-text">Yediğin yemeği yaz ya da fotoğrafını çek — Calori AI kalori ve makro değerlerini tahmin etsin. Tahmini beğenirsen tek tıkla günlüğüne ekleyebilirsin.</p>
+      </div>
+
+      <div class="demo-panel">
+        <div class="demo-toolbar">
+          <button type="button" class="tool-btn" id="clearAiChatBtn">🗑️ Sohbeti Temizle</button>
+        </div>
+
+        <div class="demo-chat" id="aiChat">
+          <div class="demo-row demo-ai">
+            <div class="demo-bubble">Merhaba! Ben Calori AI 🥗 Ne yediğini yaz (örn. "1 tabak mercimek çorbası ve 2 dilim ekmek") ya da kameradan fotoğrafını göster, kalorisini tahmin edeyim.</div>
+          </div>
+        </div>
+
+        <form class="demo-composer" id="aiForm">
+          <button type="button" class="icon-btn" id="cameraBtn" title="Fotoğraf çek">📷</button>
+          <input id="aiInput" type="text" maxlength="400" autocomplete="off" placeholder="Ne yedin?">
+          <button type="submit" id="aiSend">Gönder</button>
+        </form>
+        <p class="demo-hint" id="aiHint">Bu analiz tarayıcınızda çalışan bir yapay zekâ modeli kullanır, tahminler yaklaşıktır.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="camera-overlay hidden" id="cameraOverlay">
+    <div class="camera-sheet">
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <canvas id="cameraCanvas" class="hidden"></canvas>
+      <div class="camera-actions">
+        <button type="button" class="btn btn-outline" id="cameraCancelBtn">İptal</button>
+        <button type="button" class="btn btn-primary" id="captureBtn">📸 Çek</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- HEDEFLERİM -->
+  <section class="panel" id="panel-hedefler">
+    <div class="grid-2">
+      <div class="box">
+        <h3>Kişisel Bilgiler</h3>
+        <form id="goalForm" class="tool-form">
+          <div class="field-row">
+            <label>
+              Cinsiyet
+              <select id="goalGender">
+                <option value="kadin">Kadın</option>
+                <option value="erkek">Erkek</option>
+              </select>
+            </label>
+            <label>
+              Yaş
+              <input type="number" id="goalAge" min="10" max="100" step="1" required>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>
+              Boy (cm)
+              <input type="number" id="goalHeight" min="100" max="250" step="0.1" required>
+            </label>
+            <label>
+              Kilo (kg)
+              <input type="number" id="goalWeight" min="30" max="300" step="0.1" required>
+            </label>
+          </div>
+          <label>
+            Aktivite Seviyesi
+            <select id="goalActivity">
+              <option value="1.2">Hareketsiz (masa başı iş, egzersiz yok)</option>
+              <option value="1.375">Az Hareketli (haftada 1-3 gün hafif egzersiz)</option>
+              <option value="1.55">Orta Hareketli (haftada 3-5 gün egzersiz)</option>
+              <option value="1.725">Çok Hareketli (haftada 6-7 gün egzersiz)</option>
+              <option value="1.9">Aşırı Hareketli (fiziksel iş + günlük egzersiz)</option>
+            </select>
+          </label>
+          <label>
+            Hedef
+            <select id="goalTarget">
+              <option value="-500">Kilo Vermek (günde -500 kcal)</option>
+              <option value="0" selected>Kiloyu Korumak</option>
+              <option value="300">Kilo Almak (günde +300 kcal)</option>
+            </select>
+          </label>
+          <button type="submit" class="btn btn-primary">Hesapla ve Hedef Olarak Kaydet</button>
+        </form>
+      </div>
+
+      <div class="box">
+        <h3>Hesaplanan Hedeflerin</h3>
+        <div class="tool-result" id="goalResult"></div>
+        <p class="hint-text">Mifflin-St Jeor formülüyle bazal metabolizma hızın (BMR) ve toplam günlük enerji ihtiyacın (TDEE) hesaplanır. Makrolar: kilogram başına 1,6 g protein, 0,8 g yağ, kalan enerji karbonhidrattan gelir.</p>
+        <div class="form-actions" style="margin-top:14px;">
+          <button type="button" class="btn btn-outline" id="manualGoalBtn">Hedefi Elle Gir</button>
+        </div>
+        <div class="set-pin-panel" id="manualGoalPanel" style="display:none;">
+          <div class="field-row">
+            <label>
+              Günlük Kalori Hedefi
+              <input type="number" id="manualKcal" min="0" step="10">
+            </label>
+          </div>
+          <div class="field-row">
+            <label>
+              Protein (g)
+              <input type="number" id="manualProtein" min="0" step="1">
+            </label>
+            <label>
+              Karbonhidrat (g)
+              <input type="number" id="manualCarbs" min="0" step="1">
+            </label>
+            <label>
+              Yağ (g)
+              <input type="number" id="manualFat" min="0" step="1">
+            </label>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="saveManualGoalBtn">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AYARLAR -->
+  <section class="panel" id="panel-ayarlar">
+    <div class="box">
+      <h3>Puter Hesabı</h3>
+      <p class="hint-text">Kaybolma riskine karşı verilerini koru — Puter ile giriş yap, günlüğün ve hedeflerin hesabına yedeklensin.</p>
+      <div class="settings-row">
+        <span id="settingsPuterStatus">Bağlı değil</span>
+        <button type="button" class="btn btn-outline btn-sm" id="settingsPuterBtn" data-state="out">Puter ile Giriş Yap</button>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Kullanıcı Bilgileri</h3>
+      <div class="settings-row">
+        <span>Görünen İsim</span>
+        <div class="settings-inline-form">
+          <input type="text" id="displayNameInput" placeholder="Adınız">
+          <button type="button" class="btn btn-outline btn-sm" id="displayNameSave">Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Görünüm</h3>
+      <div class="settings-row">
+        <span>Koyu Mod</span>
+        <label class="switch">
+          <input type="checkbox" id="darkModeSwitch">
+          <span class="switch-track"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <span>Tercih Edilen Dil</span>
+        <span class="settings-value">Türkçe</span>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Uygulama Kilidi</h3>
+      <p class="hint-text">Uygulamayı bir PIN kodu ile koru. Sekmeyi her açtığında PIN sorulur.</p>
+      <div class="settings-row">
+        <span>PIN Kilidi</span>
+        <label class="switch">
+          <input type="checkbox" id="appLockSwitch">
+          <span class="switch-track"></span>
+        </label>
+      </div>
+      <div class="set-pin-panel" id="setPinPanel" style="display:none;">
+        <div class="field-row">
+          <label>
+            Yeni PIN
+            <input type="password" id="newPinInput" inputmode="numeric" maxlength="6" placeholder="4-6 hane">
+          </label>
+          <label>
+            PIN (Tekrar)
+            <input type="password" id="confirmPinInput" inputmode="numeric" maxlength="6" placeholder="4-6 hane">
+          </label>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="savePinBtn">PIN'i Kaydet</button>
+        <p class="pin-error" id="pinError" style="display:none;"></p>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Veri Yönetimi</h3>
+      <div class="settings-row">
+        <span>Verilerimi Dışa Aktar</span>
+        <button type="button" class="btn btn-outline btn-sm" id="exportDataBtn">Dışa Aktar (.json)</button>
+      </div>
+      <div class="settings-row">
+        <span>Verilerimi İçe Aktar</span>
+        <button type="button" class="btn btn-outline btn-sm" id="importDataBtn">Dosya Seç</button>
+        <input type="file" id="importDataInput" accept="application/json" style="display:none;">
+      </div>
+      <div class="settings-row">
+        <span>Tüm Verileri Sil</span>
+        <button type="button" class="btn btn-ghost btn-sm btn-danger" id="clearDataBtn">Tümünü Sil</button>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Hakkında</h3>
+      <p class="hint-text">Calori AI — sürüm 1.0. Verilerin bu tarayıcıda saklanır; Puter ile giriş yaptığında hesabına yedeklenir. Kalori tahminleri yaklaşık değerlerdir, tıbbi tavsiye yerine geçmez.</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <img src="icons/icon-192.png" alt="Calori AI" class="lock-logo" width="56" height="56">
+    <p>Devam etmek için PIN kodunu girin</p>
+    <input type="password" id="lockPinInput" inputmode="numeric" maxlength="6" class="lock-pin-input" placeholder="••••">
+    <button type="button" class="btn btn-primary" id="lockUnlockBtn">Kilidi Aç</button>
+    <p class="lock-error" id="lockError" style="display:none;">Yanlış PIN, tekrar deneyin.</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Calori AI — verilerin bu tarayıcıda saklanır; Puter ile giriş yaptığında hesabına yedeklenir.</p>
+  </div>
+</footer>
+
+<script src="https://js.puter.com/v2/"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
