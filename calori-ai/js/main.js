@@ -97,10 +97,13 @@
     });
   });
 
-  document.getElementById("quickCameraBtn").addEventListener("click", () => {
-    document.querySelector('.tab-btn[data-tab="ai"]').click();
-    openCamera();
-  });
+  const quickCameraBtn = document.getElementById("quickCameraBtn");
+  if (quickCameraBtn) {
+    quickCameraBtn.addEventListener("click", () => {
+      document.querySelector('.tab-btn[data-tab="ai"]').click();
+      openCamera();
+    });
+  }
 
   // ---------- Toast ----------
   const toast = document.getElementById("toast");
@@ -983,14 +986,28 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
       updatePuterButton(null);
       return;
     }
+    btn.disabled = true;
+    const originalLabel = btn.textContent;
+    btn.textContent = "Bağlanıyor...";
+
+    const popupHintTimer = setTimeout(() => {
+      showToast("Giriş penceresi açılmadıysa tarayıcın açılır pencereleri (popup) engelliyor olabilir. Adres çubuğundaki popup simgesine bakıp bu site için izin verip tekrar dene.", 6000);
+    }, 4000);
+
     try {
       await puter.auth.signIn();
+      clearTimeout(popupHintTimer);
       const user = await puter.auth.getUser();
       updatePuterButton(user);
       await syncFromPuter();
       showToast("🎉 Puter ile giriş yapıldı, verilerin yedekleniyor.");
     } catch {
+      clearTimeout(popupHintTimer);
+      updatePuterButton(null);
       showToast("Giriş penceresi kapatıldı ya da tamamlanamadı. Butona tekrar basıp yeniden deneyebilirsin.", 4000);
+    } finally {
+      btn.disabled = false;
+      if (btn.textContent === "Bağlanıyor...") btn.textContent = originalLabel;
     }
   }
 
