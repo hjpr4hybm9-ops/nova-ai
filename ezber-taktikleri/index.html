@@ -166,7 +166,7 @@
       <div class="section-head">
         <span class="eyebrow">Pratik Yap</span>
         <h2>Ezber Kartların</h2>
-        <p>1. sınıftan 12. sınıfa her sınıf için karışık ders destesi, LGS / YKS / KPSS destesi ve kendi kartların — hepsi tek yerde. Kartların tarayıcında saklanır.</p>
+        <p>1. sınıftan 12. sınıfa her sınıf, kendi dersine ayrılmış destelerle; LGS, YKS ve KPSS için de ders ders ayrı desteler var. İstediğin dersi seç, kendi kartlarını da ekleyebilirsin.</p>
       </div>
 
       <div class="flash-panel">
@@ -175,23 +175,113 @@
           <select id="deckSelect" class="deck-select">
             <optgroup label="Sınavlar">
               <option value="kpss-tarih-2026">🎓 KPSS Tarih 2026 (200 soru)</option>
-              <option value="kpss-genel">🎓 KPSS Genel Kültür (50 soru)</option>
-              <option value="yks">🎓 YKS - TYT/AYT (50 soru)</option>
-              <option value="lgs">🎓 LGS (50 soru)</option>
             </optgroup>
-            <optgroup label="Sınıflar (Karışık Ders)">
-              <option value="sinif-1">1. Sınıf (50 soru)</option>
-              <option value="sinif-2">2. Sınıf (50 soru)</option>
-              <option value="sinif-3">3. Sınıf (50 soru)</option>
-              <option value="sinif-4">4. Sınıf (50 soru)</option>
-              <option value="sinif-5">5. Sınıf (50 soru)</option>
-              <option value="sinif-6">6. Sınıf (50 soru)</option>
-              <option value="sinif-7">7. Sınıf (50 soru)</option>
-              <option value="sinif-8">8. Sınıf (50 soru)</option>
-              <option value="sinif-9">9. Sınıf (50 soru)</option>
-              <option value="sinif-10">10. Sınıf (50 soru)</option>
-              <option value="sinif-11">11. Sınıf (50 soru)</option>
-              <option value="sinif-12">12. Sınıf (50 soru)</option>
+            <optgroup label="1. Sınıf">
+              <option value="sinif-1-turkce">Türkçe (15 soru)</option>
+              <option value="sinif-1-matematik">Matematik (20 soru)</option>
+              <option value="sinif-1-hayat-bilgisi">Hayat Bilgisi (15 soru)</option>
+            </optgroup>
+            <optgroup label="2. Sınıf">
+              <option value="sinif-2-turkce">Türkçe (15 soru)</option>
+              <option value="sinif-2-matematik">Matematik (20 soru)</option>
+              <option value="sinif-2-hayat-bilgisi">Hayat Bilgisi (15 soru)</option>
+            </optgroup>
+            <optgroup label="3. Sınıf">
+              <option value="sinif-3-turkce">Türkçe (13 soru)</option>
+              <option value="sinif-3-matematik">Matematik (15 soru)</option>
+              <option value="sinif-3-fen-bilimleri">Fen Bilimleri (12 soru)</option>
+              <option value="sinif-3-sosyal-bilgiler">Sosyal Bilgiler (10 soru)</option>
+            </optgroup>
+            <optgroup label="4. Sınıf">
+              <option value="sinif-4-turkce">Türkçe (12 soru)</option>
+              <option value="sinif-4-matematik">Matematik (14 soru)</option>
+              <option value="sinif-4-fen-bilimleri">Fen Bilimleri (12 soru)</option>
+              <option value="sinif-4-sosyal-bilgiler">Sosyal Bilgiler (12 soru)</option>
+            </optgroup>
+            <optgroup label="5. Sınıf">
+              <option value="sinif-5-turkce">Türkçe (10 soru)</option>
+              <option value="sinif-5-matematik">Matematik (12 soru)</option>
+              <option value="sinif-5-fen-bilimleri">Fen Bilimleri (12 soru)</option>
+              <option value="sinif-5-sosyal-bilgiler">Sosyal Bilgiler (10 soru)</option>
+              <option value="sinif-5-ingilizce">İngilizce (6 soru)</option>
+            </optgroup>
+            <optgroup label="6. Sınıf">
+              <option value="sinif-6-turkce">Türkçe (10 soru)</option>
+              <option value="sinif-6-matematik">Matematik (12 soru)</option>
+              <option value="sinif-6-fen-bilimleri">Fen Bilimleri (10 soru)</option>
+              <option value="sinif-6-sosyal-bilgiler">Sosyal Bilgiler (10 soru)</option>
+              <option value="sinif-6-ingilizce">İngilizce (8 soru)</option>
+            </optgroup>
+            <optgroup label="7. Sınıf">
+              <option value="sinif-7-turkce">Türkçe (9 soru)</option>
+              <option value="sinif-7-matematik">Matematik (12 soru)</option>
+              <option value="sinif-7-fen-bilimleri">Fen Bilimleri (10 soru)</option>
+              <option value="sinif-7-sosyal-bilgiler">Sosyal Bilgiler (9 soru)</option>
+              <option value="sinif-7-ingilizce">İngilizce (6 soru)</option>
+              <option value="sinif-7-din-kulturu">Din Kültürü (4 soru)</option>
+            </optgroup>
+            <optgroup label="8. Sınıf">
+              <option value="sinif-8-turkce">Türkçe (9 soru)</option>
+              <option value="sinif-8-matematik">Matematik (11 soru)</option>
+              <option value="sinif-8-fen-bilimleri">Fen Bilimleri (9 soru)</option>
+              <option value="sinif-8-inkilap-tarihi">T.C. İnkılap Tarihi ve Atatürkçülük (13 soru)</option>
+              <option value="sinif-8-ingilizce">İngilizce (4 soru)</option>
+              <option value="sinif-8-din-kulturu">Din Kültürü (4 soru)</option>
+            </optgroup>
+            <optgroup label="9. Sınıf">
+              <option value="sinif-9-matematik">Matematik (10 soru)</option>
+              <option value="sinif-9-fizik">Fizik (8 soru)</option>
+              <option value="sinif-9-kimya">Kimya (8 soru)</option>
+              <option value="sinif-9-biyoloji">Biyoloji (8 soru)</option>
+              <option value="sinif-9-tarih">Tarih (8 soru)</option>
+              <option value="sinif-9-edebiyat">Türk Dili ve Edebiyatı (8 soru)</option>
+            </optgroup>
+            <optgroup label="10. Sınıf">
+              <option value="sinif-10-matematik">Matematik (10 soru)</option>
+              <option value="sinif-10-fizik">Fizik (8 soru)</option>
+              <option value="sinif-10-kimya">Kimya (8 soru)</option>
+              <option value="sinif-10-biyoloji">Biyoloji (8 soru)</option>
+              <option value="sinif-10-tarih">Tarih (8 soru)</option>
+              <option value="sinif-10-edebiyat">Edebiyat (8 soru)</option>
+            </optgroup>
+            <optgroup label="11. Sınıf">
+              <option value="sinif-11-matematik">Matematik (10 soru)</option>
+              <option value="sinif-11-fizik">Fizik (8 soru)</option>
+              <option value="sinif-11-kimya">Kimya (8 soru)</option>
+              <option value="sinif-11-biyoloji">Biyoloji (8 soru)</option>
+              <option value="sinif-11-tarih">Tarih (8 soru)</option>
+              <option value="sinif-11-edebiyat">Edebiyat (8 soru)</option>
+            </optgroup>
+            <optgroup label="12. Sınıf">
+              <option value="sinif-12-matematik">Matematik (10 soru)</option>
+              <option value="sinif-12-fizik">Fizik (8 soru)</option>
+              <option value="sinif-12-kimya">Kimya (8 soru)</option>
+              <option value="sinif-12-biyoloji">Biyoloji (8 soru)</option>
+              <option value="sinif-12-tarih">Tarih (8 soru)</option>
+              <option value="sinif-12-edebiyat">Edebiyat (8 soru)</option>
+            </optgroup>
+            <optgroup label="LGS">
+              <option value="lgs-turkce">Türkçe (10 soru)</option>
+              <option value="lgs-matematik">Matematik (12 soru)</option>
+              <option value="lgs-fen-bilimleri">Fen Bilimleri (10 soru)</option>
+              <option value="lgs-inkilap-tarihi">T.C. İnkılap Tarihi ve Atatürkçülük (10 soru)</option>
+              <option value="lgs-din-kulturu">Din Kültürü (4 soru)</option>
+              <option value="lgs-ingilizce">İngilizce (4 soru)</option>
+            </optgroup>
+            <optgroup label="YKS">
+              <option value="yks-turkce">Türkçe (10 soru)</option>
+              <option value="yks-matematik">Matematik (TYT/AYT) (12 soru)</option>
+              <option value="yks-fizik">Fizik (4 soru)</option>
+              <option value="yks-kimya">Kimya (4 soru)</option>
+              <option value="yks-biyoloji">Biyoloji (4 soru)</option>
+              <option value="yks-tarih-cografya">Tarih ve Coğrafya (10 soru)</option>
+              <option value="yks-felsefe">Felsefe (6 soru)</option>
+            </optgroup>
+            <optgroup label="KPSS Genel Kültür">
+              <option value="kpss-genel-cografya">Coğrafya (15 soru)</option>
+              <option value="kpss-genel-vatandaslik-anayasa">Vatandaşlık ve Anayasa (15 soru)</option>
+              <option value="kpss-genel-genel-kultur-guncel">Genel Kültür / Güncel (10 soru)</option>
+              <option value="kpss-genel-turkce-genel-yetenek">Türkçe / Genel Yetenek (10 soru)</option>
             </optgroup>
             <optgroup label="Diğer">
               <option value="genel">🧪 Örnek Genel Bilgi (4 soru)</option>

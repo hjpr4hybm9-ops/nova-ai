@@ -396,8 +396,7 @@
     { front: "Mustafa Kemal Atatürk hangi tarihte vefat etmiştir?", back: "10 Kasım 1938" }
   ];
 
-  var sinif1Cards = [
-    /* Türkçe */
+  var sinif1TurkceCards = [
     { front: "Türk alfabesinde kaç harf vardır?", back: "29" },
     { front: "Kedi kelimesi kaç hecelidir?", back: "2 (ke-di)" },
     { front: "Elma kelimesinin ilk harfi nedir?", back: "E" },
@@ -413,7 +412,9 @@
     { front: "Okul kelimesinde kaç sesli harf vardır?", back: "2 (o, u)" },
     { front: "Kitap kelimesini hecelerine ayır.", back: "Ki-tap" },
     { front: "Bir hikâyenin ilk bölümüne ne denir?", back: "Giriş" },
-    /* Matematik */
+  ];
+
+  var sinif1MatematikCards = [
     { front: "1'den 10'a kadar sayarken 5'ten sonra hangi sayı gelir?", back: "6" },
     { front: "3 + 2 kaç eder?", back: "5" },
     { front: "5 - 2 kaç eder?", back: "3" },
@@ -434,7 +435,9 @@
     { front: "18 sayısının birler basamağı kaçtır?", back: "8" },
     { front: "İki elin parmak sayısı toplamı kaçtır?", back: "10" },
     { front: "5 + 5 kaç eder?", back: "10" },
-    /* Hayat Bilgisi */
+  ];
+
+  var sinif1HayatBilgisiCards = [
     { front: "Bir yılda kaç mevsim vardır?", back: "4" },
     { front: "Yaz mevsiminden sonra hangi mevsim gelir?", back: "Sonbahar" },
     { front: "Okulda bize ders veren kişiye ne denir?", back: "Öğretmen" },
@@ -452,8 +455,7 @@
     { front: "Bir yılda kaç ay vardır?", back: "12" }
   ];
 
-  var sinif2Cards = [
-    /* Türkçe */
+  var sinif2TurkceCards = [
     { front: "Eş anlamlı kelime ne demektir?", back: "Anlamı aynı olan farklı kelime" },
     { front: "Güzel kelimesinin eş anlamlısı nedir?", back: "Hoş / şirin" },
     { front: "Büyük kelimesinin zıt anlamlısı nedir?", back: "Küçük" },
@@ -469,7 +471,9 @@
     { front: "Ev, okul, bahçe kelimeleri hangi tür kelimedir?", back: "İsim (ad)" },
     { front: "Koşmak, gülmek, uyumak kelimeleri hangi tür kelimedir?", back: "Fiil (eylem)" },
     { front: "Masallar genellikle hangi kalıpla başlar?", back: "Bir varmış bir yokmuş" },
-    /* Matematik */
+  ];
+
+  var sinif2MatematikCards = [
     { front: "25 + 14 kaç eder?", back: "39" },
     { front: "40 - 15 kaç eder?", back: "25" },
     { front: "99'dan sonra hangi sayı gelir?", back: "100" },
@@ -490,7 +494,9 @@
     { front: "70 sayısının birler basamağı kaçtır?", back: "0" },
     { front: "Yarım kilogram kaç gramdır?", back: "500 gram" },
     { front: "12 + 8 kaç eder?", back: "20" },
-    /* Hayat Bilgisi */
+  ];
+
+  var sinif2HayatBilgisiCards = [
     { front: "Beş duyu organımız hangileridir?", back: "Göz, kulak, burun, dil, deri" },
     { front: "Tatma duyu organımız hangisidir?", back: "Dil" },
     { front: "Koklama duyu organımız hangisidir?", back: "Burun" },
@@ -508,8 +514,7 @@
     { front: "Bitkilerin büyümesi için nelere ihtiyacı vardır?", back: "Su, güneş ışığı, toprak" }
   ];
 
-  var sinif3Cards = [
-    /* Türkçe */
+  var sinif3TurkceCards = [
     { front: "İsim (ad) nedir?", back: "Varlıkları karşılayan kelime" },
     { front: "Sıfat (önad) nedir?", back: "İsimleri niteleyen kelime" },
     { front: "Kırmızı elma sözünde sıfat hangisidir?", back: "Kırmızı" },
@@ -523,7 +528,9 @@
     { front: "Eş sesli (sesteş) kelime nedir?", back: "Yazılışı aynı, anlamı farklı kelime" },
     { front: "Yüz kelimesi hangi iki farklı anlamda kullanılabilir?", back: "Sayı (100) ve vücut bölümü (surat) anlamında" },
     { front: "Bir mektubun en sonuna genellikle ne yazılır?", back: "İmza (gönderenin adı)" },
-    /* Matematik */
+  ];
+
+  var sinif3MatematikCards = [
     { front: "4 x 6 kaç eder?", back: "24" },
     { front: "7 x 8 kaç eder?", back: "56" },
     { front: "100 - 37 kaç eder?", back: "63" },
@@ -539,7 +546,9 @@
     { front: "45 ÷ 9 kaç eder?", back: "5" },
     { front: "6 x 7 kaç eder?", back: "42" },
     { front: "1000 sayısı kaç basamaklıdır?", back: "4" },
-    /* Fen Bilimleri */
+  ];
+
+  var sinif3FenBilimleriCards = [
     { front: "Canlıların ortak özelliklerinden biri nedir?", back: "Beslenme, büyüme, üreme gibi yaşamsal faaliyetler" },
     { front: "Bitkilerin fotosentez yapması için nelere ihtiyacı vardır?", back: "Güneş ışığı, su ve karbondioksit" },
     { front: "Hayvanlar beslenme şekline göre nasıl gruplara ayrılır?", back: "Otçul, etçil ve hem otçul hem etçil (omnivor)" },
@@ -552,7 +561,9 @@
     { front: "Sesleri hangi duyu organımızla algılarız?", back: "İşitme (kulak)" },
     { front: "Bitkilerin suyu topraktan almasını sağlayan kısmı nedir?", back: "Kök" },
     { front: "Bitkilerin fotosentez yaptığı kısmı nedir?", back: "Yaprak" },
-    /* Sosyal Bilgiler */
+  ];
+
+  var sinif3SosyalBilgilerCards = [
     { front: "Yaşadığımız yerin en küçük yönetim birimine ne denir?", back: "Mahalle veya köy" },
     { front: "Ülkemizin komşularından birini say.", back: "Yunanistan, Bulgaristan, Gürcistan gibi bir komşu ülke" },
     { front: "Haritalarda kara parçaları hangi renk tonlarıyla gösterilir?", back: "Yeşil ve kahverengi tonları" },
@@ -565,8 +576,7 @@
     { front: "Kültürel miras nedir?", back: "Geçmişten günümüze aktarılan değerler ve eserler" }
   ];
 
-  var sinif4Cards = [
-    /* Türkçe */
+  var sinif4TurkceCards = [
     { front: "Fiil (eylem) nedir?", back: "İş, oluş, hareket bildiren kelime" },
     { front: "Zamir (adıl) nedir?", back: "İsimlerin yerini tutan kelime" },
     { front: "Ben, sen, o, biz, siz, onlar hangi tür kelimedir?", back: "Kişi zamiri" },
@@ -579,7 +589,9 @@
     { front: "Ağzı kulaklarına varmak hangi söz grubuna girer?", back: "Deyim" },
     { front: "Bir dilekçenin sonunda genellikle ne bulunur?", back: "Tarih ve imza" },
     { front: "Şiirde aynı sesle biten dizelere ne denir?", back: "Kafiye" },
-    /* Matematik */
+  ];
+
+  var sinif4MatematikCards = [
     { front: "1234 + 4321 kaç eder?", back: "5555" },
     { front: "12 x 12 kaç eder?", back: "144" },
     { front: "144 ÷ 12 kaç eder?", back: "12" },
@@ -594,7 +606,9 @@
     { front: "90 dereceden küçük açıya ne denir?", back: "Dar açı" },
     { front: "90 dereceden büyük açıya ne denir?", back: "Geniş açı" },
     { front: "7 x 6 - 10 işleminin sonucu kaçtır?", back: "32" },
-    /* Fen Bilimleri */
+  ];
+
+  var sinif4FenBilimleriCards = [
     { front: "Kuvvet nesnelerde neyi değiştirebilir?", back: "Hareketini veya şeklini" },
     { front: "Yer çekimi kuvveti cisimleri hangi yöne çeker?", back: "Aşağıya, yere doğru" },
     { front: "Maddenin üç hâli nelerdir?", back: "Katı, sıvı, gaz" },
@@ -607,7 +621,9 @@
     { front: "Elektriği ileten maddelere ne denir?", back: "İletken" },
     { front: "Elektriği iletmeyen maddelere ne denir?", back: "Yalıtkan" },
     { front: "Basit bir elektrik devresinde ışık kaynağı olarak ne kullanılır?", back: "Ampul" },
-    /* Sosyal Bilgiler */
+  ];
+
+  var sinif4SosyalBilgilerCards = [
     { front: "Mektup dışında eski bir haberleşme yolu neydi?", back: "Güvercinle haberleşme, tellal gibi yöntemler" },
     { front: "Kara, hava ve deniz dışında bir ulaşım türü nedir?", back: "Demiryolu (tren)" },
     { front: "Bir ürünün üretilip tüketiciye ulaşana kadar geçtiği sürece ne denir?", back: "Üretim-dağıtım-tüketim zinciri" },
@@ -622,8 +638,7 @@
     { front: "İhtiyaç ile istek arasındaki fark nedir?", back: "İhtiyaç yaşam için gereklidir, istek gerekli olmayan arzudur" }
   ];
 
-  var sinif5Cards = [
-    /* Türkçe */
+  var sinif5TurkceCards = [
     { front: "Sözcükte gerçek anlam nedir?", back: "Kelimenin ilk akla gelen, temel anlamı" },
     { front: "Sözcükte mecaz anlam nedir?", back: "Kelimenin gerçek anlamından farklı, benzetme yoluyla kazandığı anlam" },
     { front: "Yüreği dağ gibi sözünde dağ hangi anlamda kullanılmıştır?", back: "Mecaz anlamda" },
@@ -634,7 +649,9 @@
     { front: "Paragrafta yardımcı düşünce nedir?", back: "Ana düşünceyi destekleyen düşünce" },
     { front: "Bir yazıda yazarın amacı ne olabilir?", back: "Bilgi vermek, ikna etmek veya eğlendirmek" },
     { front: "Göz kulak olmak hangi söz sanatına örnektir?", back: "Deyim" },
-    /* Matematik */
+  ];
+
+  var sinif5MatematikCards = [
     { front: "Bir sayının asal çarpanlarına ayrılmasına ne denir?", back: "Çarpanlara ayırma" },
     { front: "2, 3, 5, 7 gibi sayılara ne denir?", back: "Asal sayı" },
     { front: "12'nin tam bölenleri nelerdir?", back: "1, 2, 3, 4, 6, 12" },
@@ -647,7 +664,9 @@
     { front: "6 ile 8'in en küçük ortak katı (EKOK) kaçtır?", back: "24" },
     { front: "12 ile 18'in en büyük ortak böleni (EBOB) kaçtır?", back: "6" },
     { front: "8 sayısının karesi kaçtır?", back: "64" },
-    /* Fen Bilimleri */
+  ];
+
+  var sinif5FenBilimleriCards = [
     { front: "Güneş Sistemi'nin merkezinde ne bulunur?", back: "Güneş" },
     { front: "Dünya'ya en yakın gök cismi hangisidir?", back: "Ay" },
     { front: "Canlıları sınıflandırırken kullanılan en büyük grup nedir?", back: "Alem" },
@@ -660,7 +679,9 @@
     { front: "Basit makinelere örnek ver.", back: "Makara, eğik düzlem, kaldıraç" },
     { front: "Bir mıknatısın iki kutbu nasıl adlandırılır?", back: "Kuzey ve güney kutbu" },
     { front: "Erime ve donma birbirinin nesidir?", back: "Zıttı (tersi)" },
-    /* Sosyal Bilgiler */
+  ];
+
+  var sinif5SosyalBilgilerCards = [
     { front: "İpek Yolu neden önemlidir?", back: "Doğu ile Batı arasında ticareti sağlayan tarihi yol olduğu için" },
     { front: "İletişim araçlarının gelişimi hayatımızı nasıl etkilemiştir?", back: "Bilgiye ulaşmayı hızlandırmış ve kolaylaştırmıştır" },
     { front: "Yerel yönetimlere örnek ver.", back: "Belediye" },
@@ -671,7 +692,9 @@
     { front: "İnsan hakları neden önemlidir?", back: "Herkesin eşit ve onurlu yaşaması için" },
     { front: "Bir ülkenin bağımsızlığı ne anlama gelir?", back: "Kendi kararlarını başka bir gücün etkisi olmadan alabilmesi" },
     { front: "Sivil toplum kuruluşu (STK) nedir?", back: "Kâr amacı gütmeden topluma fayda sağlamak için kurulan kuruluş" },
-    /* İngilizce */
+  ];
+
+  var sinif5IngilizceCards = [
     { front: "Apple kelimesinin Türkçe anlamı nedir?", back: "Elma" },
     { front: "Book kelimesinin Türkçe anlamı nedir?", back: "Kitap" },
     { front: "Monday hangi gün anlamına gelir?", back: "Pazartesi" },
@@ -680,8 +703,7 @@
     { front: "Family kelimesinin Türkçe anlamı nedir?", back: "Aile" }
   ];
 
-  var sinif6Cards = [
-    /* Türkçe */
+  var sinif6TurkceCards = [
     { front: "Cümlenin öğeleri nelerdir?", back: "Özne, yüklem, nesne, dolaylı tümleç, zarf tümleci" },
     { front: "Yüklem cümlede nedir?", back: "İşi, oluşu, durumu bildiren ve genelde cümle sonunda bulunan öğe" },
     { front: "Nesne (tümleç) cümlede neyi bildirir?", back: "Yüklemin etkilediği varlığı" },
@@ -692,7 +714,9 @@
     { front: "Bir öyküde yer unsuru neyi ifade eder?", back: "Olayın geçtiği mekânı" },
     { front: "Anlatım bozukluğu nedir?", back: "Cümlenin anlam veya yapı bakımından hatalı olması" },
     { front: "Bağlaç nedir?", back: "Kelimeleri veya cümleleri birbirine bağlayan kelime" },
-    /* Matematik */
+  ];
+
+  var sinif6MatematikCards = [
     { front: "Tam sayılar hangi sayılardan oluşur?", back: "Negatif tam sayılar, sıfır ve pozitif tam sayılar" },
     { front: "-5 ile +3 sayılarının toplamı kaçtır?", back: "-2" },
     { front: "Bir sayının mutlak değeri nedir?", back: "Sayının sıfıra olan uzaklığı (her zaman pozitif)" },
@@ -705,7 +729,9 @@
     { front: "Yüzde 50, kesir olarak nedir?", back: "1/2" },
     { front: "Bir kenar uzunluğu 4 cm olan karenin alanı kaç cm karedir?", back: "16" },
     { front: "-8 sayısının mutlak değeri kaçtır?", back: "8" },
-    /* Fen Bilimleri */
+  ];
+
+  var sinif6FenBilimleriCards = [
     { front: "Sindirim sisteminin son organı hangisidir?", back: "Kalın bağırsak" },
     { front: "Kaslarımız ne işe yarar?", back: "Hareket etmemizi sağlar" },
     { front: "Kuvvetin birimi nedir?", back: "Newton" },
@@ -716,7 +742,9 @@
     { front: "Madde döngüsüne bir örnek ver.", back: "Su döngüsü" },
     { front: "Ekosistemde üretici canlılara örnek nedir?", back: "Bitkiler" },
     { front: "Ekosistemde tüketici canlılara örnek nedir?", back: "Hayvanlar" },
-    /* Sosyal Bilgiler */
+  ];
+
+  var sinif6SosyalBilgilerCards = [
     { front: "İslamiyet öncesi Türklerin yaşam biçimi genellikle nasıldı?", back: "Göçebe (konar-göçer)" },
     { front: "Türklerin İslamiyet'i kabul etmesiyle hangi devlet kurulmuştur?", back: "Karahanlı Devleti" },
     { front: "Anadolu'ya Türklerin yerleşmesini sağlayan savaş hangisidir?", back: "Malazgirt Savaşı (1071)" },
@@ -727,7 +755,9 @@
     { front: "Doğal afetlere karşı alınabilecek önlemlere örnek nedir?", back: "Sağlam bina yapımı, erken uyarı sistemleri" },
     { front: "Kültürel etkileşim nedir?", back: "Farklı toplumların birbirini kültürel açıdan etkilemesi" },
     { front: "Bilim insanlarının çalışmalarını paylaştığı ortama örnek nedir?", back: "Bilimsel dergi, konferans" },
-    /* İngilizce */
+  ];
+
+  var sinif6IngilizceCards = [
     { front: "School kelimesinin Türkçe anlamı nedir?", back: "Okul" },
     { front: "Teacher kelimesinin Türkçe anlamı nedir?", back: "Öğretmen" },
     { front: "What time is it? ifadesinin anlamı nedir?", back: "Saat kaç?" },
@@ -738,8 +768,7 @@
     { front: "My name is... ifadesinin anlamı nedir?", back: "Benim adım..." }
   ];
 
-  var sinif7Cards = [
-    /* Türkçe */
+  var sinif7TurkceCards = [
     { front: "Sıfat-fiil (ortaç) nedir?", back: "Fiilden türeyip isim gibi kullanılan, sıfat görevi gören kelime" },
     { front: "-an/-en eki fiile gelince hangi fiilimsi oluşur?", back: "Sıfat-fiil (ortaç)" },
     { front: "Zarf-fiil (bağ-fiil) nedir?", back: "Fiilden türeyip zarf görevinde kullanılan kelime" },
@@ -749,7 +778,9 @@
     { front: "Betimleyici (tasvir edici) anlatım nedir?", back: "Bir varlığı, yeri okuyucunun gözünde canlandıracak şekilde anlatma" },
     { front: "Cümlede neden-sonuç ilişkisi hangi bağlaçlarla kurulur?", back: "İçin, dolayı gibi bağlaçlarla" },
     { front: "Cümlede öznel ifadeye örnek nedir?", back: "Bence, bana göre gibi kişisel görüş bildiren ifadeler" },
-    /* Matematik */
+  ];
+
+  var sinif7MatematikCards = [
     { front: "Rasyonel sayı nedir?", back: "İki tam sayının oranı şeklinde yazılabilen sayı" },
     { front: "Bir doğrunun eğimi neyi ifade eder?", back: "Doğrunun dikliğini" },
     { front: "Cebirsel ifadelerde terim nedir?", back: "Artı veya eksi işaretiyle ayrılan ifadeler" },
@@ -762,7 +793,9 @@
     { front: "5x - 3 = 12 denkleminde x kaçtır?", back: "3" },
     { front: "Negatif bir sayının karesi neden pozitiftir?", back: "İki negatif sayının çarpımı pozitif olduğu için" },
     { front: "Bir üçgende iki kenarın toplamı üçüncü kenardan büyük müdür?", back: "Evet (üçgen eşitsizliği)" },
-    /* Fen Bilimleri */
+  ];
+
+  var sinif7FenBilimleriCards = [
     { front: "Hücrenin yönetim merkezi hangi organeldir?", back: "Çekirdek" },
     { front: "Bitki hücresinde bulunup hayvan hücresinde bulunmayan yapılar nelerdir?", back: "Hücre duvarı ve kloroplast" },
     { front: "Newton neyin ölçü birimidir?", back: "Kuvvetin" },
@@ -773,7 +806,9 @@
     { front: "Kalıtım nedir?", back: "Özelliklerin nesilden nesile aktarılması" },
     { front: "DNA'nın açılımı nedir?", back: "Deoksiribonükleik asit" },
     { front: "Basınç birimi nedir?", back: "Pascal" },
-    /* Sosyal Bilgiler */
+  ];
+
+  var sinif7SosyalBilgilerCards = [
     { front: "Osmanlı Devleti'ni kim, ne zaman kurmuştur?", back: "Osman Gazi, 1299" },
     { front: "İstanbul'un fethi hangi çağı kapatıp hangi çağı açmıştır?", back: "Orta Çağ'ı kapatıp Yeni Çağ'ı açmıştır" },
     { front: "Osmanlı Devleti'nde eğitim kurumlarına örnek nedir?", back: "Medrese" },
@@ -783,22 +818,25 @@
     { front: "Osmanlı'da bilim insanlarına örnek nedir?", back: "Piri Reis, Ali Kuşçu" },
     { front: "Piri Reis hangi eseriyle tanınır?", back: "Dünya haritası ve Kitab-ı Bahriye" },
     { front: "Osmanlı Devleti'nin ilk başkenti neresidir?", back: "Söğüt" },
-    /* İngilizce */
+  ];
+
+  var sinif7IngilizceCards = [
     { front: "Because kelimesinin Türkçe anlamı nedir?", back: "Çünkü" },
     { front: "I have to ifadesinin anlamı nedir?", back: "Yapmam gerekiyor" },
     { front: "Always kelimesinin Türkçe anlamı nedir?", back: "Her zaman" },
     { front: "Never kelimesinin Türkçe anlamı nedir?", back: "Asla, hiçbir zaman" },
     { front: "Healthy food ifadesinin anlamı nedir?", back: "Sağlıklı besin" },
     { front: "Free time ifadesinin anlamı nedir?", back: "Boş zaman" },
-    /* Din Kültürü */
+  ];
+
+  var sinif7DinKulturuCards = [
     { front: "İslam dininin temel inanç esaslarına ne denir?", back: "İman esasları (Amentü)" },
     { front: "Kur'an-ı Kerim kaç sure içerir?", back: "114" },
     { front: "Zekât nedir?", back: "Belirli bir mal varlığına sahip Müslümanların ihtiyaç sahiplerine verdiği yardım" },
     { front: "Hz. Muhammed'in doğduğu şehir neresidir?", back: "Mekke" }
   ];
 
-  var sinif8Cards = [
-    /* Türkçe */
+  var sinif8TurkceCards = [
     { front: "Cümlenin öğelerini bulurken önce hangi öğe bulunur?", back: "Yüklem" },
     { front: "Dolaylı tümleç cümlede neyi bildirir?", back: "Yer, yön, durum bildiren tümleç" },
     { front: "Fiilde kip nedir?", back: "Fiilin zaman veya anlam bakımından gösterdiği durum" },
@@ -808,7 +846,9 @@
     { front: "Paragrafta giriş cümlesi nasıl tanınır?", back: "Konuyu ilk kez ortaya koyan, kendinden önce cümle gerektirmeyen cümledir" },
     { front: "Öznel anlatımlı cümleye örnek nedir?", back: "Bu film çok güzeldi gibi kişisel yargı içeren cümle" },
     { front: "Bir cümlede birden fazla yüklem varsa cümle nasıl adlandırılır?", back: "Birleşik veya sıralı cümle" },
-    /* Matematik */
+  ];
+
+  var sinif8MatematikCards = [
     { front: "Çarpanlara ayırma nedir?", back: "Bir ifadeyi çarpanlarının çarpımı şeklinde yazma" },
     { front: "a kare eksi b kare ifadesi nasıl çarpanlarına ayrılır?", back: "(a-b)(a+b)" },
     { front: "İki bilinmeyenli bir doğrusal denklem sisteminde kaç denklem gerekir?", back: "2" },
@@ -820,7 +860,9 @@
     { front: "Veri analizinde ortanca (medyan) nedir?", back: "Sıralı verilerin ortasındaki değer" },
     { front: "Bir olayın olma olasılığı nasıl hesaplanır?", back: "İstenen durum sayısı bölü toplam durum sayısı" },
     { front: "Üç basamaklı en büyük sayı ile en küçük sayının farkı kaçtır?", back: "999 - 100 = 899" },
-    /* Fen Bilimleri */
+  ];
+
+  var sinif8FenBilimleriCards = [
     { front: "DNA hücrenin hangi bölümünde bulunur?", back: "Çekirdek" },
     { front: "Mitoz bölünme sonucunda kaç hücre oluşur?", back: "2" },
     { front: "Mayoz bölünme sonucunda kaç hücre oluşur?", back: "4" },
@@ -830,7 +872,9 @@
     { front: "Asit ve baz karışınca ne oluşur?", back: "Tuz ve su (nötrleşme tepkimesi)" },
     { front: "Basit elektrik devresinde direnç neyi ifade eder?", back: "Akıma karşı gösterilen zorluk" },
     { front: "Canlıların genetik bilgisini taşıyan molekül hangisidir?", back: "DNA" },
-    /* T.C. İnkılap Tarihi ve Atatürkçülük */
+  ];
+
+  var sinif8InkilapTarihiCards = [
     { front: "I. Dünya Savaşı hangi yıllar arasında yaşanmıştır?", back: "1914-1918" },
     { front: "Mustafa Kemal Samsun'a hangi tarihte çıkmıştır?", back: "19 Mayıs 1919" },
     { front: "TBMM hangi tarihte açılmıştır?", back: "23 Nisan 1920" },
@@ -844,20 +888,23 @@
     { front: "Lozan Barış Antlaşması hangi yıl imzalanmıştır?", back: "1923" },
     { front: "Laiklik ilkesi ne anlama gelir?", back: "Din ve devlet işlerinin birbirinden ayrılması" },
     { front: "Saltanat hangi tarihte kaldırılmıştır?", back: "1 Kasım 1922" },
-    /* İngilizce */
+  ];
+
+  var sinif8IngilizceCards = [
     { front: "Would you like...? ifadesi ne için kullanılır?", back: "Nazikçe teklif sunmak için" },
     { front: "In my opinion ifadesinin anlamı nedir?", back: "Bence, benim fikrime göre" },
     { front: "Environment kelimesinin Türkçe anlamı nedir?", back: "Çevre" },
     { front: "Global warming ifadesinin anlamı nedir?", back: "Küresel ısınma" },
-    /* Din Kültürü */
+  ];
+
+  var sinif8DinKulturuCards = [
     { front: "İslam'ın beş şartından biri olan hac nedir?", back: "Belirli zamanlarda Mekke'ye yapılan ibadet amaçlı ziyaret" },
     { front: "Oruç hangi ayda tutulur?", back: "Ramazan ayında" },
     { front: "Kelime-i şehadet neyi ifade eder?", back: "Allah'ın birliğine ve Hz. Muhammed'in elçiliğine şahitlik" },
     { front: "İslam dininde sünnet ne demektir?", back: "Hz. Muhammed'in söz, davranış ve onaylarına dayanan uygulamalar" }
   ];
 
-  var sinif9Cards = [
-    /* Matematik */
+  var sinif9MatematikCards = [
     { front: "Kümelerde boş küme nasıl gösterilir?", back: "Boş süslü parantez veya belirli bir sembol" },
     { front: "Doğal sayılar kümesi neyi ifade eder?", back: "0, 1, 2, 3... sayılarını" },
     { front: "Mutlak değer fonksiyonu neyi verir?", back: "Sayının işaretsiz (pozitif) değerini" },
@@ -868,7 +915,9 @@
     { front: "Faktöriyel işlemi ne anlama gelir?", back: "Bir sayıdan 1'e kadar olan sayıların çarpımı" },
     { front: "5 faktöriyel (5!) kaçtır?", back: "120" },
     { front: "Permütasyon ile kombinasyon arasındaki temel fark nedir?", back: "Permütasyonda sıralama önemlidir, kombinasyonda önemli değildir" },
-    /* Fizik */
+  ];
+
+  var sinif9FizikCards = [
     { front: "Fizik biliminin temel amacı nedir?", back: "Doğa olaylarını gözlem ve deneyle açıklamak" },
     { front: "Hız birimi SI sisteminde nedir?", back: "m/s" },
     { front: "Sabit hızlı harekete ne denir?", back: "Düzgün doğrusal hareket" },
@@ -877,7 +926,9 @@
     { front: "Kuvvetin vektörel bir büyüklük olması ne anlama gelir?", back: "Hem büyüklüğü hem yönü vardır" },
     { front: "Enerji birimi nedir?", back: "Joule" },
     { front: "Öz kütle (yoğunluk) nasıl hesaplanır?", back: "Kütle bölü hacim" },
-    /* Kimya */
+  ];
+
+  var sinif9KimyaCards = [
     { front: "Kimyanın inceleme konusu nedir?", back: "Maddenin yapısı, özellikleri ve değişimleri" },
     { front: "Atomun temel parçacıkları nelerdir?", back: "Proton, nötron, elektron" },
     { front: "Protonlar atomun neresinde bulunur?", back: "Çekirdekte" },
@@ -886,7 +937,9 @@
     { front: "Element ile bileşik arasındaki fark nedir?", back: "Element tek cins atomdan, bileşik farklı atomların birleşiminden oluşur" },
     { front: "Karışımlar kaça ayrılır?", back: "2 (homojen ve heterojen)" },
     { front: "Damıtma (distilasyon) hangi tür karışımları ayırmaya yarar?", back: "Homojen sıvı karışımları" },
-    /* Biyoloji */
+  ];
+
+  var sinif9BiyolojiCards = [
     { front: "Canlıların temel yapı taşı nedir?", back: "Hücre" },
     { front: "Prokaryot ile ökaryot hücre arasındaki temel fark nedir?", back: "Prokaryotta zarla çevrili çekirdek yoktur, ökaryotta vardır" },
     { front: "Hücre zarının temel görevi nedir?", back: "Hücreyi dış ortamdan ayırmak ve madde alışverişini düzenlemek" },
@@ -895,7 +948,9 @@
     { front: "Fotosentez hangi organelde gerçekleşir?", back: "Kloroplast" },
     { front: "Homeostazi nedir?", back: "Vücudun iç dengesini koruması" },
     { front: "Bir ekosistemde enerji akışı hangi yönde gerçekleşir?", back: "Üreticiden tüketiciye doğru, tek yönlü" },
-    /* Tarih */
+  ];
+
+  var sinif9TarihCards = [
     { front: "Tarih öncesi çağlar nelere göre ayrılır?", back: "Kullanılan alet ve gereçlere göre" },
     { front: "İlk Çağ'da yazının icadı hangi uygarlığa aittir?", back: "Sümerler" },
     { front: "Mısır uygarlığı hangi nehir çevresinde gelişmiştir?", back: "Nil Nehri" },
@@ -904,7 +959,9 @@
     { front: "Hitit uygarlığı tarihteki ilk yazılı antlaşma ile hangi devletle tanınır?", back: "Mısırla yapılan Kadeş Antlaşması ile" },
     { front: "Eski Yunan uygarlığında yönetim biçimi olarak neyle tanınır?", back: "Site devletleri (polis) ve demokrasi ile" },
     { front: "Roma uygarlığının hukuk alanındaki en önemli mirası nedir?", back: "Roma Hukuku" },
-    /* Türk Dili ve Edebiyatı */
+  ];
+
+  var sinif9EdebiyatCards = [
     { front: "Edebiyatın en eski sözlü ürünlerinden biri nedir?", back: "Destan" },
     { front: "Divan edebiyatı hangi dönemlerde etkili olmuştur?", back: "Osmanlı döneminde (13-19. yüzyıllar)" },
     { front: "Halk edebiyatı ürünlerine örnek nedir?", back: "Türkü, mani, atasözü" },
@@ -915,8 +972,7 @@
     { front: "Tiyatro eserlerinde konuşmaların yazılı hâline ne denir?", back: "Diyalog" }
   ];
 
-  var sinif10Cards = [
-    /* Matematik */
+  var sinif10MatematikCards = [
     { front: "Fonksiyonlarda bileşke fonksiyon nedir?", back: "İki fonksiyonun art arda uygulanmasıyla oluşan yeni fonksiyon" },
     { front: "Ters fonksiyon nasıl gösterilir?", back: "f üzeri -1 şeklinde" },
     { front: "Polinom nedir?", back: "Değişkenlerin tam sayı kuvvetlerinden oluşan matematiksel ifade" },
@@ -927,7 +983,9 @@
     { front: "10 tabanında logaritma 100 kaçtır?", back: "2" },
     { front: "Bir dizinin aritmetik dizi olması ne anlama gelir?", back: "Ardışık terimler arasındaki farkın sabit olması" },
     { front: "Geometrik dizide ardışık terimler arasındaki oran nasıl adlandırılır?", back: "Ortak çarpan" },
-    /* Fizik */
+  ];
+
+  var sinif10FizikCards = [
     { front: "İş (fizikte) nasıl tanımlanır?", back: "Kuvvet çarpı yol, kuvvet yönünde alınan yol" },
     { front: "Enerjinin korunumu yasası neyi ifade eder?", back: "Enerji yoktan var, vardan yok edilemez, sadece dönüşür" },
     { front: "Elektrik akımının birimi nedir?", back: "Amper" },
@@ -936,7 +994,9 @@
     { front: "Pascal hangi büyüklüğün birimidir?", back: "Basıncın" },
     { front: "Kaldırma kuvveti hangi ortamda etkilidir?", back: "Sıvı ve gaz (akışkan) ortamlarda" },
     { front: "Isı ile sıcaklık arasındaki fark nedir?", back: "Isı enerjidir, sıcaklık bu enerjinin şiddetinin ölçüsüdür" },
-    /* Kimya */
+  ];
+
+  var sinif10KimyaCards = [
     { front: "Periyodik cetvelde yatay sıralara ne denir?", back: "Periyot" },
     { front: "Periyodik cetvelde dikey sütunlara ne denir?", back: "Grup" },
     { front: "Elektronegatiflik nedir?", back: "Bir atomun elektronu kendine çekme gücü" },
@@ -945,7 +1005,9 @@
     { front: "Asitlerin ortak özelliği nedir?", back: "Suda H+ iyonu verirler, pH'ları 7'den küçüktür" },
     { front: "Bazların ortak özelliği nedir?", back: "Suda OH- iyonu verirler, pH'ları 7'den büyüktür" },
     { front: "Mol kavramı neyi ifade eder?", back: "Avogadro sayısı kadar tanecik içeren madde miktarı" },
-    /* Biyoloji */
+  ];
+
+  var sinif10BiyolojiCards = [
     { front: "Kalıtımın temel biriminin adı nedir?", back: "Gen" },
     { front: "Mendel'in kalıtım çalışmalarında kullandığı bitki hangisidir?", back: "Bezelye" },
     { front: "Baskın (dominant) genin özelliği nedir?", back: "Kendini her zaman gösteren gen" },
@@ -954,7 +1016,9 @@
     { front: "Kromozom nedir?", back: "DNA ve proteinlerden oluşan, kalıtsal bilgiyi taşıyan yapı" },
     { front: "İnsanda kaç kromozom bulunur?", back: "46" },
     { front: "Cinsiyeti belirleyen kromozomlara ne denir?", back: "Eşey (cinsiyet) kromozomları" },
-    /* Tarih */
+  ];
+
+  var sinif10TarihCards = [
     { front: "Orta Çağ Avrupa'sında toprak sahipliğine dayalı sisteme ne denir?", back: "Feodalite" },
     { front: "Türklerin İslamiyet'i kabulünden sonra kurulan ilk büyük Türk-İslam devleti hangisidir?", back: "Karahanlı Devleti" },
     { front: "Büyük Selçuklu Devleti'ni kim kurmuştur?", back: "Tuğrul Bey" },
@@ -963,7 +1027,9 @@
     { front: "Haçlı Seferleri'nin temel nedenlerinden biri nedir?", back: "Kutsal toprakları (Kudüs) ele geçirmek" },
     { front: "Osmanlı Devleti hangi yıl, kim tarafından kurulmuştur?", back: "1299, Osman Gazi" },
     { front: "İstanbul'un fethi hangi yıl gerçekleşmiştir?", back: "1453" },
-    /* Edebiyat */
+  ];
+
+  var sinif10EdebiyatCards = [
     { front: "Divan edebiyatının en önemli nazım biçimlerinden biri nedir?", back: "Gazel" },
     { front: "Divan şiirinde beyit nedir?", back: "İki dizeden oluşan şiir birimi" },
     { front: "Halk edebiyatında aşık tarzı şiirin temsilcilerinden biri kimdir?", back: "Karacaoğlan" },
@@ -974,8 +1040,7 @@
     { front: "Namık Kemal hangi edebi akımın önemli isimlerindendir?", back: "Tanzimat edebiyatı" }
   ];
 
-  var sinif11Cards = [
-    /* Matematik */
+  var sinif11MatematikCards = [
     { front: "Trigonometride tanjant nasıl hesaplanır?", back: "Karşı kenar bölü komşu kenar" },
     { front: "Bir dairenin analitik denklemi nasıldır?", back: "(x-a) kare + (y-b) kare = r kare" },
     { front: "Türev neyi ifade eder?", back: "Bir fonksiyonun anlık değişim hızını" },
@@ -986,7 +1051,9 @@
     { front: "Permütasyonda tekrarlı elemanlar varsa formül nasıl değişir?", back: "Tekrar eden elemanların faktöriyeline bölünür" },
     { front: "Olasılıkta bağımsız olaylarda ve durumunun olasılığı nasıl bulunur?", back: "Olasılıklar çarpılarak" },
     { front: "Aritmetik dizinin n. terimi formülü nedir?", back: "a1 + (n-1) x d" },
-    /* Fizik */
+  ];
+
+  var sinif11FizikCards = [
     { front: "Elektrik alan nedir?", back: "Elektrik yüklerinin çevresinde oluşturduğu etki alanı" },
     { front: "Manyetik alan nedir?", back: "Mıknatısların ve akım taşıyan tellerin çevresinde oluşturduğu etki alanı" },
     { front: "Elektromanyetik indüksiyon nedir?", back: "Değişen manyetik alanın elektrik akımı oluşturması" },
@@ -995,7 +1062,9 @@
     { front: "Işık dalgaları hangi tür dalgadır?", back: "Elektromanyetik (enine) dalga" },
     { front: "Atom modelinde elektronların bulunma olasılığının yüksek olduğu bölgeye ne denir?", back: "Orbital" },
     { front: "Radyoaktif bozunma türlerinden birini say.", back: "Alfa, beta veya gama bozunması" },
-    /* Kimya */
+  ];
+
+  var sinif11KimyaCards = [
     { front: "Kimyasal tepkimelerde enerji açığa çıkarsa buna ne denir?", back: "Ekzotermik tepkime" },
     { front: "Kimyasal tepkimelerde enerji soğurulursa buna ne denir?", back: "Endotermik tepkime" },
     { front: "Tepkime hızını etkileyen faktörlere örnek nedir?", back: "Sıcaklık, derişim, katalizör" },
@@ -1004,7 +1073,9 @@
     { front: "pH ölçeği kaç ile kaç arasında değişir?", back: "0 ile 14 arasında" },
     { front: "Nötr bir çözeltinin pH'ı kaçtır?", back: "7" },
     { front: "Organik kimyanın temel elementi hangisidir?", back: "Karbon" },
-    /* Biyoloji */
+  ];
+
+  var sinif11BiyolojiCards = [
     { front: "İnsanda sinir sisteminin temel hücresi nedir?", back: "Nöron" },
     { front: "Hormon salgılayan bezlere ne denir?", back: "Endokrin bez" },
     { front: "Kan grubu sistemlerinden biri hangisidir?", back: "ABO sistemi" },
@@ -1013,7 +1084,9 @@
     { front: "Fotosentezin çıktıları nelerdir?", back: "Glikoz (besin) ve oksijen" },
     { front: "Hücresel solunum hangi organelde gerçekleşir?", back: "Mitokondri" },
     { front: "Bitkilerde su taşınmasını sağlayan doku hangisidir?", back: "Odun boruları (ksilem)" },
-    /* Tarih */
+  ];
+
+  var sinif11TarihCards = [
     { front: "Osmanlı Devleti'nin en geniş sınırlara ulaştığı padişah kimdir?", back: "Kanuni Sultan Süleyman" },
     { front: "Halifelik unvanı Osmanlı'ya hangi padişah döneminde geçmiştir?", back: "Yavuz Sultan Selim döneminde" },
     { front: "Osmanlı'da divan teşkilatının başındaki kişi kimdir?", back: "Sadrazam" },
@@ -1022,7 +1095,9 @@
     { front: "Tanzimat Fermanı'nın en önemli özelliği nedir?", back: "Kanun önünde eşitlik ilkesinin kabulü" },
     { front: "I. Meşrutiyet hangi yıl ilan edilmiştir?", back: "1876" },
     { front: "II. Meşrutiyet hangi yıl ilan edilmiştir?", back: "1908" },
-    /* Edebiyat */
+  ];
+
+  var sinif11EdebiyatCards = [
     { front: "Servet-i Fünun edebiyatı hangi yıllarda etkili olmuştur?", back: "1896-1901 arasında" },
     { front: "Servet-i Fünun edebiyatının önde gelen isimlerinden biri kimdir?", back: "Tevfik Fikret" },
     { front: "Fecr-i Ati topluluğu hangi dönemde ortaya çıkmıştır?", back: "II. Meşrutiyet sonrası (1909)" },
@@ -1033,8 +1108,7 @@
     { front: "Türk edebiyatında ilk yerli roman kabul edilen eser hangisidir?", back: "Taaşşuk-ı Talat ve Fitnat" }
   ];
 
-  var sinif12Cards = [
-    /* Matematik */
+  var sinif12MatematikCards = [
     { front: "Türev alma kurallarından çarpım kuralı nasıldır?", back: "(fg)' = f'g + fg'" },
     { front: "İntegral, türevin nesidir?", back: "Tersi (ters işlemi)" },
     { front: "Belirli integral neyi hesaplamaya yarar?", back: "Bir eğri altındaki alanı" },
@@ -1045,7 +1119,9 @@
     { front: "Analitik geometride iki nokta arasındaki uzaklık nasıl bulunur?", back: "Koordinat farklarının karelerinin toplamının karekökü alınarak" },
     { front: "Bir doğrunun eğimi 0 ise doğru nasıldır?", back: "Yatay (x eksenine paralel)" },
     { front: "Bir doğrunun eğimi tanımsız ise doğru nasıldır?", back: "Dikey (y eksenine paralel)" },
-    /* Fizik */
+  ];
+
+  var sinif12FizikCards = [
     { front: "Modern fiziğin temelini atan iki büyük teori nedir?", back: "Görelilik teorisi ve kuantum mekaniği" },
     { front: "Görelilik teorisini kim geliştirmiştir?", back: "Albert Einstein" },
     { front: "Fotoelektrik olay neyi açıklar?", back: "Işığın metal yüzeyden elektron koparmasını" },
@@ -1054,7 +1130,9 @@
     { front: "Küçük çekirdeklerin birleşmesine ne denir?", back: "Füzyon" },
     { front: "Yarı iletken maddelere örnek nedir?", back: "Silisyum, germanyum" },
     { front: "Elektrik devrelerinde diyotun görevi nedir?", back: "Akımı tek yönde geçirmek" },
-    /* Kimya */
+  ];
+
+  var sinif12KimyaCards = [
     { front: "Organik bileşiklerde karbon atomları arasındaki bağ türleri nelerdir?", back: "Tekli, ikili, üçlü bağ" },
     { front: "Alkanlar hangi tür karbon bağına sahiptir?", back: "Tekli bağ (doymuş)" },
     { front: "Alkenler hangi tür karbon bağına sahiptir?", back: "İkili bağ" },
@@ -1063,7 +1141,9 @@
     { front: "Polimer nedir?", back: "Küçük moleküllerin (monomer) birleşmesiyle oluşan büyük molekül" },
     { front: "Doğal polimerlere örnek nedir?", back: "Nişasta, selüloz, protein" },
     { front: "Sentetik polimerlere örnek nedir?", back: "Naylon, polietilen (plastik)" },
-    /* Biyoloji */
+  ];
+
+  var sinif12BiyolojiCards = [
     { front: "Ekosistemde madde döngüsüne örnek nedir?", back: "Azot döngüsü, karbon döngüsü" },
     { front: "Popülasyon nedir?", back: "Belirli bir bölgede yaşayan aynı türe ait canlıların oluşturduğu topluluk" },
     { front: "Biyolojik çeşitlilik neden önemlidir?", back: "Ekosistem dengesini ve sürdürülebilirliği sağlar" },
@@ -1072,7 +1152,9 @@
     { front: "Biyoteknolojinin kullanım alanlarına örnek nedir?", back: "Tıp, tarım, endüstri" },
     { front: "Kök hücrelerin özelliği nedir?", back: "Farklı hücre türlerine dönüşebilme yeteneği" },
     { front: "Merkezi sinir sistemi hangi organlardan oluşur?", back: "Beyin ve omurilik" },
-    /* Tarih */
+  ];
+
+  var sinif12TarihCards = [
     { front: "I. Dünya Savaşı'nın başlangıç nedeni olarak kabul edilen olay nedir?", back: "Avusturya-Macaristan veliahdının Saraybosna'da öldürülmesi" },
     { front: "Mondros Ateşkes Antlaşması hangi yıl imzalanmıştır?", back: "1918" },
     { front: "Kurtuluş Savaşı'nın kazanılmasıyla imzalanan barış antlaşması hangisidir?", back: "Lozan Barış Antlaşması" },
@@ -1081,7 +1163,9 @@
     { front: "Türkiye II. Dünya Savaşı'na katılmış mıdır?", back: "Hayır, savaşın büyük bölümünde tarafsız kalmıştır" },
     { front: "Soğuk Savaş dönemi hangi iki blok arasında yaşanmıştır?", back: "ABD önderliğindeki Batı Bloku ve SSCB önderliğindeki Doğu Bloku" },
     { front: "Türkiye NATO'ya hangi yıl üye olmuştur?", back: "1952" },
-    /* Edebiyat */
+  ];
+
+  var sinif12EdebiyatCards = [
     { front: "Cumhuriyet dönemi edebiyatının temel özelliklerinden biri nedir?", back: "Toplumcu ve gerçekçi konulara yönelme" },
     { front: "Yedi Meşaleciler hangi türde eser vermiştir?", back: "Şiir" },
     { front: "Garip (I. Yeni) akımının öncüleri kimlerdir?", back: "Orhan Veli, Oktay Rifat, Melih Cevdet Anday" },
@@ -1092,8 +1176,7 @@
     { front: "Türk edebiyatında Nobel Ödülü kazanan yazar kimdir?", back: "Orhan Pamuk" }
   ];
 
-  var lgsCards = [
-    /* Türkçe */
+  var lgsTurkceCards = [
     { front: "Bir metinde amaç-sonuç ilişkisi hangi bağlaçlarla kurulur?", back: "Diye, için gibi bağlaçlarla" },
     { front: "Ama, fakat, lakin bağlaçları cümlede nasıl bir anlam ilişkisi kurar?", back: "Karşıtlık (zıtlık)" },
     { front: "Bir cümlede koşul anlamı hangi ekle verilir?", back: "-se/-sa eki veya eğer kelimesiyle" },
@@ -1104,7 +1187,9 @@
     { front: "Bir yazıda tanık gösterme hangi düşünceyi geliştirme yoludur?", back: "Görüşü desteklemek için başka bir kişinin sözüne başvurma" },
     { front: "Karşılaştırma düşünceyi geliştirme yollarından biri midir?", back: "Evet" },
     { front: "Deyimlerin cümleye kattığı en önemli özellik nedir?", back: "Anlatımı etkili ve akıcı kılmak" },
-    /* Matematik */
+  ];
+
+  var lgsMatematikCards = [
     { front: "EBOB nasıl bulunur?", back: "Ortak asal çarpanların en küçük üslüsünün çarpımıyla" },
     { front: "Üslü sayılarda (a üzeri m) üzeri n ifadesinin sonucu nedir?", back: "a üzeri (m çarpı n)" },
     { front: "Kareköklü sayılarda karekök a çarpı karekök b işleminin sonucu nedir?", back: "Karekök (a çarpı b)" },
@@ -1117,7 +1202,9 @@
     { front: "Silindirin hacmi nasıl hesaplanır?", back: "π x yarıçap kare x yükseklik" },
     { front: "Olasılıkta kesin olayın olasılığı kaçtır?", back: "1" },
     { front: "Olasılıkta imkânsız olayın olasılığı kaçtır?", back: "0" },
-    /* Fen Bilimleri */
+  ];
+
+  var lgsFenBilimleriCards = [
     { front: "Mevsimlerin oluşmasında Dünya'nın ekseninin eğik olması nasıl etkilidir?", back: "Güneş ışınlarının geliş açısını değiştirir" },
     { front: "DNA'nın yapı taşları nelerdir?", back: "Nükleotitler" },
     { front: "Kalıtsal hastalıklara örnek nedir?", back: "Renk körlüğü, hemofili" },
@@ -1128,7 +1215,9 @@
     { front: "Elektrik devresinde seri bağlı ampullerden biri sönerse diğerleri ne olur?", back: "Söner" },
     { front: "Elektrik devresinde paralel bağlı ampullerden biri sönerse diğerleri ne olur?", back: "Yanmaya devam eder" },
     { front: "Periyodik tabloda metaller genellikle nerede bulunur?", back: "Sol ve orta kısımda" },
-    /* T.C. İnkılap Tarihi ve Atatürkçülük */
+  ];
+
+  var lgsInkilapTarihiCards = [
     { front: "Amasya Genelgesi hangi tarihte yayımlanmıştır?", back: "22 Haziran 1919" },
     { front: "Erzurum ve Sivas kongrelerinin ortak amacı nedir?", back: "Milli birliği sağlamak ve işgallere karşı direnişi örgütlemek" },
     { front: "Misak-ı Milli kararları hangi mecliste kabul edilmiştir?", back: "Son Osmanlı Mebusan Meclisi" },
@@ -1139,20 +1228,23 @@
     { front: "Yurtta sulh, cihanda sulh sözü ne anlama gelir?", back: "Ülke içinde ve dünyada barışı esas almak" },
     { front: "Türkiye Milletler Cemiyeti'ne hangi yıl üye olmuştur?", back: "1932" },
     { front: "Montrö Boğazlar Sözleşmesi'nin önemi nedir?", back: "Boğazlar üzerinde Türk egemenliğinin sağlanması" },
-    /* Din Kültürü */
+  ];
+
+  var lgsDinKulturuCards = [
     { front: "İslam'da ibadetlerin temel amacı nedir?", back: "Allah'a kulluk etmek" },
     { front: "Vicdan özgürlüğü ne anlama gelir?", back: "Kişinin inanç ve düşüncelerini özgürce yaşayabilmesi" },
     { front: "Veda Hutbesi'nde vurgulanan temel değerlerden biri nedir?", back: "İnsan hakları ve eşitlik" },
     { front: "Dinin toplumsal birlik açısından önemi nedir?", back: "Ortak değerler etrafında toplumu bir araya getirmesi" },
-    /* İngilizce */
+  ];
+
+  var lgsIngilizceCards = [
     { front: "I am going to... kalıbı ne için kullanılır?", back: "Gelecekteki bir plandan bahsetmek için" },
     { front: "Have you ever...? kalıbı hangi zamanla ilgilidir?", back: "Present Perfect Tense, geçmiş deneyim sormak için" },
     { front: "Should kelimesi ne için kullanılır?", back: "Tavsiye vermek için" },
     { front: "If I were you... ifadesi ne anlama gelir?", back: "Senin yerinde olsam..." }
   ];
 
-  var yksCards = [
-    /* Türkçe */
+  var yksTurkceCards = [
     { front: "Sözcükte genel-özel anlam ne demektir?", back: "Bir sözcüğün diğerinden daha geniş veya dar anlamlı olması" },
     { front: "Anlam daralması ile anlam genişlemesi neyi ifade eder?", back: "Bir sözcüğün zamanla anlamının daralması veya genişlemesini" },
     { front: "Gereksiz yardımcı fiil kullanımı hangi tür hataya girer?", back: "Anlatım bozukluğu" },
@@ -1163,7 +1255,9 @@
     { front: "Gözlük sözcüğü hangi ek türünü almıştır?", back: "Yapım eki" },
     { front: "Zarf tümleci cümlede neyi bildirir?", back: "Zaman, durum, yer-yön gibi anlamları" },
     { front: "Giriş-gelişme-sonuç yapısı hangi tür yazılarda görülür?", back: "Kompozisyon türü yazılarda" },
-    /* Matematik (TYT/AYT) */
+  ];
+
+  var yksMatematikCards = [
     { front: "Birebir (injektif) fonksiyon ne demektir?", back: "Her elemanın görüntüsünün farklı olduğu fonksiyon" },
     { front: "Örten (sürjektif) fonksiyon ne demektir?", back: "Değer kümesindeki her elemanın bir görüntü olduğu fonksiyon" },
     { front: "Bir dizinin limiti sabit bir değere yaklaşıyorsa buna ne denir?", back: "Yakınsak dizi" },
@@ -1176,22 +1270,30 @@
     { front: "Karmaşık sayılarda bir sayının eşleniği nasıl bulunur?", back: "Sanal kısmın işareti değiştirilerek" },
     { front: "Birim çember neyi ifade eder?", back: "Yarıçapı 1 olan, merkezi orijinde olan çember" },
     { front: "İntegralin geometrik anlamı nedir?", back: "Bir fonksiyonun grafiği ile x ekseni arasındaki alan" },
-    /* Fizik */
+  ];
+
+  var yksFizikCards = [
     { front: "Kapalı bir sistemde enerjinin korunumu ilkesi neyi ifade eder?", back: "Toplam enerjinin sabit kaldığını" },
     { front: "Basit harmonik hareket örneği nedir?", back: "Sarkacın salınımı, yayın titreşimi" },
     { front: "Elektrik yükleri arasındaki kuvveti hesaplayan yasa hangisidir?", back: "Coulomb Yasası" },
     { front: "Manyetik alan içinde hareket eden yüklü parçacığa etki eden kuvvete ne denir?", back: "Lorentz kuvveti" },
-    /* Kimya */
+  ];
+
+  var yksKimyaCards = [
     { front: "Kimyasal tepkimelerde kütlenin korunumu yasasını kim ortaya koymuştur?", back: "Lavoisier" },
     { front: "Gazların basınç-hacim ilişkisini açıklayan yasa hangisidir?", back: "Boyle Yasası" },
     { front: "Derişim arttıkça tepkime hızı genellikle nasıl değişir?", back: "Artar" },
     { front: "Elektrokimyasal hücrelerde anot neresidir?", back: "Yükseltgenmenin (oksidasyonun) gerçekleştiği elektrot" },
-    /* Biyoloji */
+  ];
+
+  var yksBiyolojiCards = [
     { front: "Ekolojide besin zinciri nedir?", back: "Canlılar arasındaki beslenme ilişkilerinin sıralı gösterimi" },
     { front: "Homeostazi hangi sistemler tarafından sağlanır?", back: "Sinir ve endokrin (hormon) sistemleri" },
     { front: "Genetik çeşitliliğin kaynaklarından biri nedir?", back: "Mutasyon" },
     { front: "Bitkilerde gaz alışverişi hangi yapı ile gerçekleşir?", back: "Stoma (gözenek)" },
-    /* Tarih ve Coğrafya */
+  ];
+
+  var yksTarihCografyaCards = [
     { front: "Osmanlı Devleti'nde tımar sistemi neye dayanır?", back: "Toprak gelirinin hizmet karşılığı dağıtılmasına" },
     { front: "Sanayi Devrimi hangi ülkede başlamıştır?", back: "İngiltere" },
     { front: "Fransız İhtilali'nin dünya tarihine en önemli katkısı nedir?", back: "Milliyetçilik, özgürlük, eşitlik fikirlerinin yayılması" },
@@ -1202,7 +1304,9 @@
     { front: "İklim ile bitki örtüsü arasındaki ilişki nasıldır?", back: "İklim koşulları bitki örtüsünü doğrudan belirler" },
     { front: "Ekonomik coğrafyada birincil sektör hangi faaliyetleri kapsar?", back: "Tarım, hayvancılık, madencilik gibi faaliyetler" },
     { front: "Nüfus piramidi neyi gösterir?", back: "Bir ülkenin yaş ve cinsiyete göre nüfus dağılımını" },
-    /* Felsefe */
+  ];
+
+  var yksFelsefeCards = [
     { front: "Bilgi felsefesine ne denir?", back: "Epistemoloji" },
     { front: "Varlık felsefesine ne denir?", back: "Ontoloji" },
     { front: "Ahlak felsefesine ne denir?", back: "Etik" },
@@ -1211,8 +1315,7 @@
     { front: "Aristoteles'e göre insanın mutluluğa ulaşma amacına ne denir?", back: "Eudaimonia" }
   ];
 
-  var kpssGenelCards = [
-    /* Coğrafya */
+  var kpssGenelCografyaCards = [
     { front: "Türkiye'nin yüzölçümü yaklaşık kaç km karedir?", back: "783.000 km²" },
     { front: "Türkiye'nin en yüksek dağı hangisidir?", back: "Ağrı Dağı (5137 m)" },
     { front: "Türkiye'nin en uzun nehri hangisidir?", back: "Kızılırmak" },
@@ -1228,7 +1331,9 @@
     { front: "Türkiye'de sanayinin en yoğun olduğu bölge hangisidir?", back: "Marmara Bölgesi" },
     { front: "Fırat ve Dicle nehirleri nereye dökülür?", back: "Basra Körfezi" },
     { front: "Türkiye'de kış turizminin geliştiği bölgelere örnek nedir?", back: "Doğu Anadolu ve Karadeniz bölgeleri" },
-    /* Vatandaşlık ve Anayasa */
+  ];
+
+  var kpssGenelVatandaslikAnayasaCards = [
     { front: "Türkiye Cumhuriyeti Anayasası'na göre egemenlik kime aittir?", back: "Millete, kayıtsız şartsız" },
     { front: "Yasama yetkisi hangi organa aittir?", back: "TBMM" },
     { front: "Yürütme yetkisi kime aittir?", back: "Cumhurbaşkanına" },
@@ -1244,7 +1349,9 @@
     { front: "Anayasa'nın değiştirilemez maddeleri hangi konuları kapsar?", back: "Devletin şekli (Cumhuriyet), bayrak, dil, başkent gibi temel nitelikler" },
     { front: "Türkiye'nin resmi dili nedir?", back: "Türkçe" },
     { front: "Anayasa değişikliği teklifi için TBMM'de en az kaçta kaç çoğunluk gerekir?", back: "Üçte biri (1/3)" },
-    /* Genel Kültür / Güncel */
+  ];
+
+  var kpssGenelGenelKulturGuncelCards = [
     { front: "Birleşmiş Milletler'in merkezi neresidir?", back: "New York" },
     { front: "Türkiye Birleşmiş Milletler'e hangi yıl üye olmuştur?", back: "1945" },
     { front: "NATO'nun açılımı nedir?", back: "Kuzey Atlantik Antlaşması Örgütü" },
@@ -1255,7 +1362,9 @@
     { front: "Nobel barış ödülü dışındaki Nobel ödülleri hangi ülkede verilir?", back: "İsveç" },
     { front: "Dünya Sağlık Örgütü'nün kısaltması nedir?", back: "DSÖ (WHO)" },
     { front: "Olimpiyat Oyunları kaç yılda bir düzenlenir?", back: "4 yılda bir" },
-    /* Türkçe / Genel Yetenek */
+  ];
+
+  var kpssGenelTurkceGenelYetenekCards = [
     { front: "KPSS Türkçe testinde en sık sorulan konulardan biri hangisidir?", back: "Paragraf (anlam bilgisi)" },
     { front: "Eş anlamlılık ile yakın anlamlılık arasındaki fark nedir?", back: "Eş anlamlıda anlam birebir aynı, yakın anlamlıda benzer ama tam aynı değildir" },
     { front: "Anlatım bozukluğu nedir?", back: "Cümlenin anlam veya yapı yönünden hatalı kurulması" },
@@ -1270,27 +1379,164 @@
 
   var decks = {
     "kpss-tarih-2026": { label: "KPSS Tarih 2026", short: "KPSS Tarih 2026", cards: kpssTarihCards },
-    "kpss-genel": { label: "KPSS Genel Kültür", short: "KPSS Genel Kültür", cards: kpssGenelCards },
-    "yks": { label: "YKS (TYT-AYT)", short: "YKS", cards: yksCards },
-    "lgs": { label: "LGS", short: "LGS", cards: lgsCards },
-    "sinif-1": { label: "1. Sınıf", short: "1. Sınıf", cards: sinif1Cards },
-    "sinif-2": { label: "2. Sınıf", short: "2. Sınıf", cards: sinif2Cards },
-    "sinif-3": { label: "3. Sınıf", short: "3. Sınıf", cards: sinif3Cards },
-    "sinif-4": { label: "4. Sınıf", short: "4. Sınıf", cards: sinif4Cards },
-    "sinif-5": { label: "5. Sınıf", short: "5. Sınıf", cards: sinif5Cards },
-    "sinif-6": { label: "6. Sınıf", short: "6. Sınıf", cards: sinif6Cards },
-    "sinif-7": { label: "7. Sınıf", short: "7. Sınıf", cards: sinif7Cards },
-    "sinif-8": { label: "8. Sınıf", short: "8. Sınıf", cards: sinif8Cards },
-    "sinif-9": { label: "9. Sınıf", short: "9. Sınıf", cards: sinif9Cards },
-    "sinif-10": { label: "10. Sınıf", short: "10. Sınıf", cards: sinif10Cards },
-    "sinif-11": { label: "11. Sınıf", short: "11. Sınıf", cards: sinif11Cards },
-    "sinif-12": { label: "12. Sınıf", short: "12. Sınıf", cards: sinif12Cards },
+    "sinif-1-turkce": { label: "1. Sınıf · Türkçe", short: "1. Sınıf · Türkçe", cards: sinif1TurkceCards },
+    "sinif-1-matematik": { label: "1. Sınıf · Matematik", short: "1. Sınıf · Matematik", cards: sinif1MatematikCards },
+    "sinif-1-hayat-bilgisi": { label: "1. Sınıf · Hayat Bilgisi", short: "1. Sınıf · Hayat Bilgisi", cards: sinif1HayatBilgisiCards },
+    "sinif-2-turkce": { label: "2. Sınıf · Türkçe", short: "2. Sınıf · Türkçe", cards: sinif2TurkceCards },
+    "sinif-2-matematik": { label: "2. Sınıf · Matematik", short: "2. Sınıf · Matematik", cards: sinif2MatematikCards },
+    "sinif-2-hayat-bilgisi": { label: "2. Sınıf · Hayat Bilgisi", short: "2. Sınıf · Hayat Bilgisi", cards: sinif2HayatBilgisiCards },
+    "sinif-3-turkce": { label: "3. Sınıf · Türkçe", short: "3. Sınıf · Türkçe", cards: sinif3TurkceCards },
+    "sinif-3-matematik": { label: "3. Sınıf · Matematik", short: "3. Sınıf · Matematik", cards: sinif3MatematikCards },
+    "sinif-3-fen-bilimleri": { label: "3. Sınıf · Fen Bilimleri", short: "3. Sınıf · Fen Bilimleri", cards: sinif3FenBilimleriCards },
+    "sinif-3-sosyal-bilgiler": { label: "3. Sınıf · Sosyal Bilgiler", short: "3. Sınıf · Sosyal Bilgiler", cards: sinif3SosyalBilgilerCards },
+    "sinif-4-turkce": { label: "4. Sınıf · Türkçe", short: "4. Sınıf · Türkçe", cards: sinif4TurkceCards },
+    "sinif-4-matematik": { label: "4. Sınıf · Matematik", short: "4. Sınıf · Matematik", cards: sinif4MatematikCards },
+    "sinif-4-fen-bilimleri": { label: "4. Sınıf · Fen Bilimleri", short: "4. Sınıf · Fen Bilimleri", cards: sinif4FenBilimleriCards },
+    "sinif-4-sosyal-bilgiler": { label: "4. Sınıf · Sosyal Bilgiler", short: "4. Sınıf · Sosyal Bilgiler", cards: sinif4SosyalBilgilerCards },
+    "sinif-5-turkce": { label: "5. Sınıf · Türkçe", short: "5. Sınıf · Türkçe", cards: sinif5TurkceCards },
+    "sinif-5-matematik": { label: "5. Sınıf · Matematik", short: "5. Sınıf · Matematik", cards: sinif5MatematikCards },
+    "sinif-5-fen-bilimleri": { label: "5. Sınıf · Fen Bilimleri", short: "5. Sınıf · Fen Bilimleri", cards: sinif5FenBilimleriCards },
+    "sinif-5-sosyal-bilgiler": { label: "5. Sınıf · Sosyal Bilgiler", short: "5. Sınıf · Sosyal Bilgiler", cards: sinif5SosyalBilgilerCards },
+    "sinif-5-ingilizce": { label: "5. Sınıf · İngilizce", short: "5. Sınıf · İngilizce", cards: sinif5IngilizceCards },
+    "sinif-6-turkce": { label: "6. Sınıf · Türkçe", short: "6. Sınıf · Türkçe", cards: sinif6TurkceCards },
+    "sinif-6-matematik": { label: "6. Sınıf · Matematik", short: "6. Sınıf · Matematik", cards: sinif6MatematikCards },
+    "sinif-6-fen-bilimleri": { label: "6. Sınıf · Fen Bilimleri", short: "6. Sınıf · Fen Bilimleri", cards: sinif6FenBilimleriCards },
+    "sinif-6-sosyal-bilgiler": { label: "6. Sınıf · Sosyal Bilgiler", short: "6. Sınıf · Sosyal Bilgiler", cards: sinif6SosyalBilgilerCards },
+    "sinif-6-ingilizce": { label: "6. Sınıf · İngilizce", short: "6. Sınıf · İngilizce", cards: sinif6IngilizceCards },
+    "sinif-7-turkce": { label: "7. Sınıf · Türkçe", short: "7. Sınıf · Türkçe", cards: sinif7TurkceCards },
+    "sinif-7-matematik": { label: "7. Sınıf · Matematik", short: "7. Sınıf · Matematik", cards: sinif7MatematikCards },
+    "sinif-7-fen-bilimleri": { label: "7. Sınıf · Fen Bilimleri", short: "7. Sınıf · Fen Bilimleri", cards: sinif7FenBilimleriCards },
+    "sinif-7-sosyal-bilgiler": { label: "7. Sınıf · Sosyal Bilgiler", short: "7. Sınıf · Sosyal Bilgiler", cards: sinif7SosyalBilgilerCards },
+    "sinif-7-ingilizce": { label: "7. Sınıf · İngilizce", short: "7. Sınıf · İngilizce", cards: sinif7IngilizceCards },
+    "sinif-7-din-kulturu": { label: "7. Sınıf · Din Kültürü", short: "7. Sınıf · Din Kültürü", cards: sinif7DinKulturuCards },
+    "sinif-8-turkce": { label: "8. Sınıf · Türkçe", short: "8. Sınıf · Türkçe", cards: sinif8TurkceCards },
+    "sinif-8-matematik": { label: "8. Sınıf · Matematik", short: "8. Sınıf · Matematik", cards: sinif8MatematikCards },
+    "sinif-8-fen-bilimleri": { label: "8. Sınıf · Fen Bilimleri", short: "8. Sınıf · Fen Bilimleri", cards: sinif8FenBilimleriCards },
+    "sinif-8-inkilap-tarihi": { label: "8. Sınıf · T.C. İnkılap Tarihi ve Atatürkçülük", short: "8. Sınıf · T.C. İnkılap Tarihi ve Atatürkçülük", cards: sinif8InkilapTarihiCards },
+    "sinif-8-ingilizce": { label: "8. Sınıf · İngilizce", short: "8. Sınıf · İngilizce", cards: sinif8IngilizceCards },
+    "sinif-8-din-kulturu": { label: "8. Sınıf · Din Kültürü", short: "8. Sınıf · Din Kültürü", cards: sinif8DinKulturuCards },
+    "sinif-9-matematik": { label: "9. Sınıf · Matematik", short: "9. Sınıf · Matematik", cards: sinif9MatematikCards },
+    "sinif-9-fizik": { label: "9. Sınıf · Fizik", short: "9. Sınıf · Fizik", cards: sinif9FizikCards },
+    "sinif-9-kimya": { label: "9. Sınıf · Kimya", short: "9. Sınıf · Kimya", cards: sinif9KimyaCards },
+    "sinif-9-biyoloji": { label: "9. Sınıf · Biyoloji", short: "9. Sınıf · Biyoloji", cards: sinif9BiyolojiCards },
+    "sinif-9-tarih": { label: "9. Sınıf · Tarih", short: "9. Sınıf · Tarih", cards: sinif9TarihCards },
+    "sinif-9-edebiyat": { label: "9. Sınıf · Türk Dili ve Edebiyatı", short: "9. Sınıf · Türk Dili ve Edebiyatı", cards: sinif9EdebiyatCards },
+    "sinif-10-matematik": { label: "10. Sınıf · Matematik", short: "10. Sınıf · Matematik", cards: sinif10MatematikCards },
+    "sinif-10-fizik": { label: "10. Sınıf · Fizik", short: "10. Sınıf · Fizik", cards: sinif10FizikCards },
+    "sinif-10-kimya": { label: "10. Sınıf · Kimya", short: "10. Sınıf · Kimya", cards: sinif10KimyaCards },
+    "sinif-10-biyoloji": { label: "10. Sınıf · Biyoloji", short: "10. Sınıf · Biyoloji", cards: sinif10BiyolojiCards },
+    "sinif-10-tarih": { label: "10. Sınıf · Tarih", short: "10. Sınıf · Tarih", cards: sinif10TarihCards },
+    "sinif-10-edebiyat": { label: "10. Sınıf · Edebiyat", short: "10. Sınıf · Edebiyat", cards: sinif10EdebiyatCards },
+    "sinif-11-matematik": { label: "11. Sınıf · Matematik", short: "11. Sınıf · Matematik", cards: sinif11MatematikCards },
+    "sinif-11-fizik": { label: "11. Sınıf · Fizik", short: "11. Sınıf · Fizik", cards: sinif11FizikCards },
+    "sinif-11-kimya": { label: "11. Sınıf · Kimya", short: "11. Sınıf · Kimya", cards: sinif11KimyaCards },
+    "sinif-11-biyoloji": { label: "11. Sınıf · Biyoloji", short: "11. Sınıf · Biyoloji", cards: sinif11BiyolojiCards },
+    "sinif-11-tarih": { label: "11. Sınıf · Tarih", short: "11. Sınıf · Tarih", cards: sinif11TarihCards },
+    "sinif-11-edebiyat": { label: "11. Sınıf · Edebiyat", short: "11. Sınıf · Edebiyat", cards: sinif11EdebiyatCards },
+    "sinif-12-matematik": { label: "12. Sınıf · Matematik", short: "12. Sınıf · Matematik", cards: sinif12MatematikCards },
+    "sinif-12-fizik": { label: "12. Sınıf · Fizik", short: "12. Sınıf · Fizik", cards: sinif12FizikCards },
+    "sinif-12-kimya": { label: "12. Sınıf · Kimya", short: "12. Sınıf · Kimya", cards: sinif12KimyaCards },
+    "sinif-12-biyoloji": { label: "12. Sınıf · Biyoloji", short: "12. Sınıf · Biyoloji", cards: sinif12BiyolojiCards },
+    "sinif-12-tarih": { label: "12. Sınıf · Tarih", short: "12. Sınıf · Tarih", cards: sinif12TarihCards },
+    "sinif-12-edebiyat": { label: "12. Sınıf · Edebiyat", short: "12. Sınıf · Edebiyat", cards: sinif12EdebiyatCards },
+    "lgs-turkce": { label: "LGS · Türkçe", short: "LGS · Türkçe", cards: lgsTurkceCards },
+    "lgs-matematik": { label: "LGS · Matematik", short: "LGS · Matematik", cards: lgsMatematikCards },
+    "lgs-fen-bilimleri": { label: "LGS · Fen Bilimleri", short: "LGS · Fen Bilimleri", cards: lgsFenBilimleriCards },
+    "lgs-inkilap-tarihi": { label: "LGS · T.C. İnkılap Tarihi ve Atatürkçülük", short: "LGS · T.C. İnkılap Tarihi ve Atatürkçülük", cards: lgsInkilapTarihiCards },
+    "lgs-din-kulturu": { label: "LGS · Din Kültürü", short: "LGS · Din Kültürü", cards: lgsDinKulturuCards },
+    "lgs-ingilizce": { label: "LGS · İngilizce", short: "LGS · İngilizce", cards: lgsIngilizceCards },
+    "yks-turkce": { label: "YKS · Türkçe", short: "YKS · Türkçe", cards: yksTurkceCards },
+    "yks-matematik": { label: "YKS · Matematik (TYT/AYT)", short: "YKS · Matematik (TYT/AYT)", cards: yksMatematikCards },
+    "yks-fizik": { label: "YKS · Fizik", short: "YKS · Fizik", cards: yksFizikCards },
+    "yks-kimya": { label: "YKS · Kimya", short: "YKS · Kimya", cards: yksKimyaCards },
+    "yks-biyoloji": { label: "YKS · Biyoloji", short: "YKS · Biyoloji", cards: yksBiyolojiCards },
+    "yks-tarih-cografya": { label: "YKS · Tarih ve Coğrafya", short: "YKS · Tarih ve Coğrafya", cards: yksTarihCografyaCards },
+    "yks-felsefe": { label: "YKS · Felsefe", short: "YKS · Felsefe", cards: yksFelsefeCards },
+    "kpss-genel-cografya": { label: "KPSS Genel Kültür · Coğrafya", short: "KPSS Genel Kültür · Coğrafya", cards: kpssGenelCografyaCards },
+    "kpss-genel-vatandaslik-anayasa": { label: "KPSS Genel Kültür · Vatandaşlık ve Anayasa", short: "KPSS Genel Kültür · Vatandaşlık ve Anayasa", cards: kpssGenelVatandaslikAnayasaCards },
+    "kpss-genel-genel-kultur-guncel": { label: "KPSS Genel Kültür · Genel Kültür / Güncel", short: "KPSS Genel Kültür · Genel Kültür / Güncel", cards: kpssGenelGenelKulturGuncelCards },
+    "kpss-genel-turkce-genel-yetenek": { label: "KPSS Genel Kültür · Türkçe / Genel Yetenek", short: "KPSS Genel Kültür · Türkçe / Genel Yetenek", cards: kpssGenelTurkceGenelYetenekCards },
     "genel": { label: "Örnek Genel Bilgi", short: "Genel Bilgi", cards: genelCards }
   };
   var deckOrder = [
-    "kpss-tarih-2026", "kpss-genel", "yks", "lgs",
-    "sinif-1", "sinif-2", "sinif-3", "sinif-4", "sinif-5", "sinif-6",
-    "sinif-7", "sinif-8", "sinif-9", "sinif-10", "sinif-11", "sinif-12",
+    "kpss-tarih-2026",
+    "sinif-1-turkce",
+    "sinif-1-matematik",
+    "sinif-1-hayat-bilgisi",
+    "sinif-2-turkce",
+    "sinif-2-matematik",
+    "sinif-2-hayat-bilgisi",
+    "sinif-3-turkce",
+    "sinif-3-matematik",
+    "sinif-3-fen-bilimleri",
+    "sinif-3-sosyal-bilgiler",
+    "sinif-4-turkce",
+    "sinif-4-matematik",
+    "sinif-4-fen-bilimleri",
+    "sinif-4-sosyal-bilgiler",
+    "sinif-5-turkce",
+    "sinif-5-matematik",
+    "sinif-5-fen-bilimleri",
+    "sinif-5-sosyal-bilgiler",
+    "sinif-5-ingilizce",
+    "sinif-6-turkce",
+    "sinif-6-matematik",
+    "sinif-6-fen-bilimleri",
+    "sinif-6-sosyal-bilgiler",
+    "sinif-6-ingilizce",
+    "sinif-7-turkce",
+    "sinif-7-matematik",
+    "sinif-7-fen-bilimleri",
+    "sinif-7-sosyal-bilgiler",
+    "sinif-7-ingilizce",
+    "sinif-7-din-kulturu",
+    "sinif-8-turkce",
+    "sinif-8-matematik",
+    "sinif-8-fen-bilimleri",
+    "sinif-8-inkilap-tarihi",
+    "sinif-8-ingilizce",
+    "sinif-8-din-kulturu",
+    "sinif-9-matematik",
+    "sinif-9-fizik",
+    "sinif-9-kimya",
+    "sinif-9-biyoloji",
+    "sinif-9-tarih",
+    "sinif-9-edebiyat",
+    "sinif-10-matematik",
+    "sinif-10-fizik",
+    "sinif-10-kimya",
+    "sinif-10-biyoloji",
+    "sinif-10-tarih",
+    "sinif-10-edebiyat",
+    "sinif-11-matematik",
+    "sinif-11-fizik",
+    "sinif-11-kimya",
+    "sinif-11-biyoloji",
+    "sinif-11-tarih",
+    "sinif-11-edebiyat",
+    "sinif-12-matematik",
+    "sinif-12-fizik",
+    "sinif-12-kimya",
+    "sinif-12-biyoloji",
+    "sinif-12-tarih",
+    "sinif-12-edebiyat",
+    "lgs-turkce",
+    "lgs-matematik",
+    "lgs-fen-bilimleri",
+    "lgs-inkilap-tarihi",
+    "lgs-din-kulturu",
+    "lgs-ingilizce",
+    "yks-turkce",
+    "yks-matematik",
+    "yks-fizik",
+    "yks-kimya",
+    "yks-biyoloji",
+    "yks-tarih-cografya",
+    "yks-felsefe",
+    "kpss-genel-cografya",
+    "kpss-genel-vatandaslik-anayasa",
+    "kpss-genel-genel-kultur-guncel",
+    "kpss-genel-turkce-genel-yetenek",
     "genel"
   ];
 
