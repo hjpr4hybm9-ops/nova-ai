@@ -8,8 +8,10 @@
   (function () {
     try {
       var t = localStorage.getItem("ezberlab.theme");
-      if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", t);
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+      /* else: no explicit preference (or "system") -> prefers-color-scheme governs */
     } catch (e) {}
   })();
 </script>
@@ -32,6 +34,7 @@
       <a href="#nasil">Nasıl Uygulanır</a>
       <a href="#pratik">Ezber Kartları</a>
       <a href="#sayac">Çalışma Sayacı</a>
+      <a href="#ayarlar">Ayarlar</a>
       <a href="#sss">SSS</a>
     </nav>
 
@@ -201,10 +204,10 @@
               <div class="flash-face flash-front" id="flashFront">Soru</div>
               <div class="flash-face flash-back hidden" id="flashBack">Cevap</div>
             </div>
-            <p class="flash-hint">Kartı çevirmek için üzerine tıkla</p>
+            <p class="flash-hint" id="flashHint">Kartı çevirmek için üzerine tıkla</p>
 
             <div class="flash-actions">
-              <button type="button" class="btn btn-outline" id="againBtn">🔁 Tekrar Göster</button>
+              <button type="button" class="btn btn-outline btn-negative" id="dontKnowBtn">❌ Bilmiyorum</button>
               <button type="button" class="btn btn-primary" id="knowBtn">✅ Biliyorum</button>
             </div>
 
@@ -245,6 +248,66 @@
           <button type="button" class="btn btn-outline" id="timerResetBtn">↺ Sıfırla</button>
         </div>
         <p class="timer-status" id="timerStatus">Hazır olduğunda başlat.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ayarlar">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Ayarlar</span>
+        <h2>Uygulamayı sana göre ayarla</h2>
+        <p>Görünüm, ses ve kart tercihlerini düzenle. Ayarların tarayıcında saklanır.</p>
+      </div>
+
+      <div class="settings-panel">
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Görünüm</h3>
+            <p>Açık, koyu ya da cihazının ayarını takip eden temayı seç.</p>
+          </div>
+          <div class="settings-control" id="themeOptions">
+            <button type="button" class="tool-btn" data-theme-choice="light">☀️ Açık</button>
+            <button type="button" class="tool-btn" data-theme-choice="dark">🌙 Koyu</button>
+            <button type="button" class="tool-btn" data-theme-choice="system">🖥️ Sistem</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Sayaç Sesi</h3>
+            <p>Çalışma turu bittiğinde kısa bir sesli uyarı çalsın.</p>
+          </div>
+          <div class="settings-control">
+            <label class="switch">
+              <input type="checkbox" id="timerSoundToggle">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Otomatik Karıştır</h3>
+            <p>Her yeni turda ezber kartları otomatik olarak karıştırılsın.</p>
+          </div>
+          <div class="settings-control">
+            <label class="switch">
+              <input type="checkbox" id="autoShuffleToggle">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Verileri Sıfırla</h3>
+            <p>Tüm desteler, ilerleme ve ayarlar bu tarayıcıdan tamamen silinir.</p>
+          </div>
+          <div class="settings-control">
+            <button type="button" class="btn btn-outline btn-negative" id="resetAllBtn">🗑️ Her Şeyi Sıfırla</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>

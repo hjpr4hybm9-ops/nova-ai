@@ -2,21 +2,130 @@
   "use strict";
 
   var THEME_KEY = "ezberlab.theme";
+  var TIMER_SOUND_KEY = "ezberlab.timerSound";
+  var AUTO_SHUFFLE_KEY = "ezberlab.autoShuffle";
   var CARDS_KEY_PREFIX = "ezberlab.cards.";
   var ACTIVE_DECK_KEY = "ezberlab.activeDeck";
 
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ---------- Theme toggle ---------- */
+  function loadBoolSetting(key, defaultValue) {
+    try {
+      var v = localStorage.getItem(key);
+      if (v === null) return defaultValue;
+      return v === "1";
+    } catch (e) { return defaultValue; }
+  }
+
+  function saveBoolSetting(key, value) {
+    try { localStorage.setItem(key, value ? "1" : "0"); } catch (e) {}
+  }
+
+  /* ---------- Theme (Ayarlar: Görünüm) ---------- */
   var themeToggle = document.getElementById("themeToggle");
+  var themeOptions = document.getElementById("themeOptions");
+
+  function currentThemePref() {
+    try {
+      var t = localStorage.getItem(THEME_KEY);
+      if (t === "light" || t === "dark") return t;
+    } catch (e) {}
+    return "system";
+  }
+
+  function updateThemeOptionsUI() {
+    if (!themeOptions) return;
+    var pref = currentThemePref();
+    themeOptions.querySelectorAll(".tool-btn").forEach(function (btn) {
+      btn.classList.toggle("active", btn.dataset.themeChoice === pref);
+    });
+  }
+
+  function setThemePref(pref) {
+    if (pref === "system") {
+      try { localStorage.removeItem(THEME_KEY); } catch (e) {}
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      try { localStorage.setItem(THEME_KEY, pref); } catch (e) {}
+      document.documentElement.setAttribute("data-theme", pref);
+    }
+    updateThemeOptionsUI();
+  }
+
   if (themeToggle) {
     themeToggle.addEventListener("click", function () {
       var root = document.documentElement;
-      var current = root.getAttribute("data-theme") === "light" ? "light" : "dark";
-      var next = current === "light" ? "dark" : "light";
-      root.setAttribute("data-theme", next);
-      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+      var effective = root.getAttribute("data-theme") ||
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      setThemePref(effective === "light" ? "dark" : "light");
+    });
+  }
+
+  if (themeOptions) {
+    themeOptions.addEventListener("click", function (e) {
+      var btn = e.target.closest(".tool-btn");
+      if (!btn) return;
+      setThemePref(btn.dataset.themeChoice);
+    });
+  }
+
+  updateThemeOptionsUI();
+
+  /* ---------- Ayarlar: Sayaç sesi & Otomatik karıştır ---------- */
+  var timerSoundToggle = document.getElementById("timerSoundToggle");
+  var autoShuffleToggle = document.getElementById("autoShuffleToggle");
+  var resetAllBtn = document.getElementById("resetAllBtn");
+
+  var timerSoundEnabled = loadBoolSetting(TIMER_SOUND_KEY, true);
+  if (timerSoundToggle) {
+    timerSoundToggle.checked = timerSoundEnabled;
+    timerSoundToggle.addEventListener("change", function () {
+      timerSoundEnabled = timerSoundToggle.checked;
+      saveBoolSetting(TIMER_SOUND_KEY, timerSoundEnabled);
+    });
+  }
+
+  var autoShuffleEnabled = loadBoolSetting(AUTO_SHUFFLE_KEY, false);
+  if (autoShuffleToggle) {
+    autoShuffleToggle.checked = autoShuffleEnabled;
+    autoShuffleToggle.addEventListener("change", function () {
+      autoShuffleEnabled = autoShuffleToggle.checked;
+      saveBoolSetting(AUTO_SHUFFLE_KEY, autoShuffleEnabled);
+    });
+  }
+
+  function playBeep() {
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      var ctx = new Ctx();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    } catch (e) {}
+  }
+
+  if (resetAllBtn) {
+    resetAllBtn.addEventListener("click", function () {
+      if (!confirm("Tüm desteler, ilerleme ve ayarlar bu tarayıcıdan tamamen silinecek. Emin misin?")) return;
+      try {
+        var keysToRemove = [];
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf("ezberlab.") === 0) keysToRemove.push(k);
+        }
+        keysToRemove.forEach(function (k) { localStorage.removeItem(k); });
+      } catch (e) {}
+      location.reload();
     });
   }
 
@@ -345,11 +454,12 @@
   var flashBack = document.getElementById("flashBack");
   var flashPosition = document.getElementById("flashPosition");
   var flashProgressBar = document.getElementById("flashProgressBar");
+  var flashHint = document.getElementById("flashHint");
   var knownStat = document.getElementById("knownStat");
   var remainingStat = document.getElementById("remainingStat");
   var doneScore = document.getElementById("doneScore");
 
-  var againBtn = document.getElementById("againBtn");
+  var dontKnowBtn = document.getElementById("dontKnowBtn");
   var knowBtn = document.getElementById("knowBtn");
   var restartBtn = document.getElementById("restartBtn");
 
@@ -370,10 +480,18 @@
 
   function startRound() {
     queue = cards.map(function (c, i) { return i; });
+    if (autoShuffleEnabled) shuffle(queue);
     known = 0;
     currentIndex = 0;
     showingBack = false;
     renderStage();
+  }
+
+  function updateHint() {
+    if (!flashHint) return;
+    flashHint.textContent = showingBack
+      ? "Cevabı gördün mü? Devam etmek için Biliyorum ya da Bilmiyorum'a tekrar bas."
+      : "Kartı çevirmek için üzerine tıkla ya da Biliyorum / Bilmiyorum'a bas.";
   }
 
   function renderStage() {
@@ -410,6 +528,7 @@
 
     knownStat.textContent = known;
     remainingStat.textContent = queue.length - currentIndex;
+    updateHint();
   }
 
   function flipCard() {
@@ -417,6 +536,7 @@
     showingBack = !showingBack;
     flashFront.classList.toggle("hidden", showingBack);
     flashBack.classList.toggle("hidden", !showingBack);
+    updateHint();
   }
 
   function nextCard(markKnown) {
@@ -424,6 +544,15 @@
     if (markKnown) known++;
     currentIndex++;
     renderStage();
+  }
+
+  function handleGrade(markKnown) {
+    if (currentIndex >= queue.length) return;
+    if (!showingBack) {
+      flipCard();
+    } else {
+      nextCard(markKnown);
+    }
   }
 
   function switchDeck(deckId) {
@@ -437,8 +566,8 @@
   }
 
   if (flashCard) flashCard.addEventListener("click", flipCard);
-  if (knowBtn) knowBtn.addEventListener("click", function () { nextCard(true); });
-  if (againBtn) againBtn.addEventListener("click", function () { nextCard(false); });
+  if (knowBtn) knowBtn.addEventListener("click", function () { handleGrade(true); });
+  if (dontKnowBtn) dontKnowBtn.addEventListener("click", function () { handleGrade(false); });
   if (restartBtn) restartBtn.addEventListener("click", startRound);
   if (resetProgressBtn) resetProgressBtn.addEventListener("click", function () {
     startRound();
@@ -561,6 +690,7 @@
           timerInterval = null;
           if (timerStatus) timerStatus.textContent = "Tur tamamlandı! Kısa bir mola ver. 🎉";
           showToast("Ezber turu tamamlandı!");
+          if (timerSoundEnabled) playBeep();
         }
       }, 1000);
     });
