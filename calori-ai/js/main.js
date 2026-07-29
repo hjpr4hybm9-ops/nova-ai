@@ -978,6 +978,7 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
     if (btn.dataset.state === "in") {
       try {
         await puter.auth.signOut();
+        showToast("Çıkış yapıldı.");
       } catch {}
       updatePuterButton(null);
       return;
@@ -987,8 +988,9 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
       const user = await puter.auth.getUser();
       updatePuterButton(user);
       await syncFromPuter();
+      showToast("🎉 Puter ile giriş yapıldı, verilerin yedekleniyor.");
     } catch {
-      // kullanıcı girişi iptal etti veya bir hata oluştu
+      showToast("Giriş penceresi kapatıldı ya da tamamlanamadı. Butona tekrar basıp yeniden deneyebilirsin.", 4000);
     }
   }
 
