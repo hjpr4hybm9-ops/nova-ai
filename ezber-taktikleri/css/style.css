@@ -326,12 +326,27 @@ li { margin-bottom: 6px; }
   border-radius: var(--radius);
   padding: 24px;
 }
-.deck-tabs {
+.deck-select-wrap {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 18px;
 }
+.deck-select-label { font-size: 13.5px; font-weight: 600; color: var(--text-dim); }
+.deck-select {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.deck-select:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
 
 .flash-form {
   display: flex;

@@ -396,11 +396,903 @@
     { front: "Mustafa Kemal Atatürk hangi tarihte vefat etmiştir?", back: "10 Kasım 1938" }
   ];
 
+  var sinif1Cards = [
+    /* Türkçe */
+    { front: "Türk alfabesinde kaç harf vardır?", back: "29" },
+    { front: "Kedi kelimesi kaç hecelidir?", back: "2 (ke-di)" },
+    { front: "Elma kelimesinin ilk harfi nedir?", back: "E" },
+    { front: "Birkaç sesli (ünlü) harf say.", back: "a, e, ı, i, o, ö, u, ü" },
+    { front: "Kalem kelimesinde kaç harf vardır?", back: "5" },
+    { front: "Cümle sonuna hangi noktalama işareti konur?", back: "Nokta (.)" },
+    { front: "Soru cümlesi sonuna hangi işaret konur?", back: "Soru işareti (?)" },
+    { front: "Top kelimesinin son harfi nedir?", back: "P" },
+    { front: "Ev kelimesi kaç hecelidir?", back: "1" },
+    { front: "İsimlerin (adların) ilk harfi nasıl yazılır?", back: "Büyük harfle" },
+    { front: "Anne kelimesini hecelerine ayır.", back: "An-ne" },
+    { front: "Bir ünsüz (sessiz) harfe örnek ver.", back: "B, c, d, f gibi bir harf (örnek: B)" },
+    { front: "Okul kelimesinde kaç sesli harf vardır?", back: "2 (o, u)" },
+    { front: "Kitap kelimesini hecelerine ayır.", back: "Ki-tap" },
+    { front: "Bir hikâyenin ilk bölümüne ne denir?", back: "Giriş" },
+    /* Matematik */
+    { front: "1'den 10'a kadar sayarken 5'ten sonra hangi sayı gelir?", back: "6" },
+    { front: "3 + 2 kaç eder?", back: "5" },
+    { front: "5 - 2 kaç eder?", back: "3" },
+    { front: "10 - 1 kaç eder?", back: "9" },
+    { front: "4 + 4 kaç eder?", back: "8" },
+    { front: "6 + 3 kaç eder?", back: "9" },
+    { front: "9 - 4 kaç eder?", back: "5" },
+    { front: "7 + 2 kaç eder?", back: "9" },
+    { front: "8 - 3 kaç eder?", back: "5" },
+    { front: "2 + 6 kaç eder?", back: "8" },
+    { front: "Üç kenarı olan şekle ne denir?", back: "Üçgen" },
+    { front: "Dört eşit kenarı olan şekle ne denir?", back: "Kare" },
+    { front: "Yuvarlak şekle ne denir?", back: "Daire" },
+    { front: "Bir haftada kaç gün vardır?", back: "7" },
+    { front: "20'ye kadar sayarken 15'ten sonra hangi sayı gelir?", back: "16" },
+    { front: "10 + 5 kaç eder?", back: "15" },
+    { front: "12 sayısının onlar basamağı kaçtır?", back: "1" },
+    { front: "18 sayısının birler basamağı kaçtır?", back: "8" },
+    { front: "İki elin parmak sayısı toplamı kaçtır?", back: "10" },
+    { front: "5 + 5 kaç eder?", back: "10" },
+    /* Hayat Bilgisi */
+    { front: "Bir yılda kaç mevsim vardır?", back: "4" },
+    { front: "Yaz mevsiminden sonra hangi mevsim gelir?", back: "Sonbahar" },
+    { front: "Okulda bize ders veren kişiye ne denir?", back: "Öğretmen" },
+    { front: "Trafik ışığında kırmızı ışık ne anlama gelir?", back: "Dur" },
+    { front: "Trafik ışığında yeşil ışık ne anlama gelir?", back: "Geç" },
+    { front: "Ellerimizi ne zaman yıkamalıyız?", back: "Yemekten önce ve tuvaletten sonra" },
+    { front: "Bizi büyüten aile üyelerine ne denir?", back: "Anne ve baba" },
+    { front: "Bir haftanın ilk günü hangisidir?", back: "Pazartesi" },
+    { front: "Dişlerimizi günde en az kaç kez fırçalamalıyız?", back: "2 kez" },
+    { front: "Karşıdan karşıya geçerken yayalar hangi ışıkta geçmelidir?", back: "Yeşil ışıkta" },
+    { front: "Kış mevsiminde hava genellikle nasıldır?", back: "Soğuk" },
+    { front: "Vücudumuzda kaç duyu organı vardır?", back: "5" },
+    { front: "Görme duyu organımız hangisidir?", back: "Göz" },
+    { front: "Duyma duyu organımız hangisidir?", back: "Kulak" },
+    { front: "Bir yılda kaç ay vardır?", back: "12" }
+  ];
+
+  var sinif2Cards = [
+    /* Türkçe */
+    { front: "Eş anlamlı kelime ne demektir?", back: "Anlamı aynı olan farklı kelime" },
+    { front: "Güzel kelimesinin eş anlamlısı nedir?", back: "Hoş / şirin" },
+    { front: "Büyük kelimesinin zıt anlamlısı nedir?", back: "Küçük" },
+    { front: "Zıt anlamlı kelime ne demektir?", back: "Anlamca birbirinin karşıtı olan kelime" },
+    { front: "Sıcak kelimesinin zıt anlamlısı nedir?", back: "Soğuk" },
+    { front: "Bir cümlede genellikle kaç özne bulunur?", back: "Bir tane" },
+    { front: "Ali okula gitti cümlesinde özne hangisidir?", back: "Ali" },
+    { front: "Ünlem cümlesi sonuna hangi işaret konur?", back: "Ünlem işareti (!)" },
+    { front: "Şiirlerdeki satırlara ne denir?", back: "Dize (mısra)" },
+    { front: "Hikâyelerde olayları yaşayan kişiye ne denir?", back: "Kahraman" },
+    { front: "Küçük kelimesi kaç hecelidir?", back: "2 (kü-çük)" },
+    { front: "Virgül cümlede ne için kullanılır?", back: "Kısa bir duraklamayı belirtmek için" },
+    { front: "Ev, okul, bahçe kelimeleri hangi tür kelimedir?", back: "İsim (ad)" },
+    { front: "Koşmak, gülmek, uyumak kelimeleri hangi tür kelimedir?", back: "Fiil (eylem)" },
+    { front: "Masallar genellikle hangi kalıpla başlar?", back: "Bir varmış bir yokmuş" },
+    /* Matematik */
+    { front: "25 + 14 kaç eder?", back: "39" },
+    { front: "40 - 15 kaç eder?", back: "25" },
+    { front: "99'dan sonra hangi sayı gelir?", back: "100" },
+    { front: "2 kere 3 (2x3) kaç eder?", back: "6" },
+    { front: "Saatte akrep neyi gösterir?", back: "Saati" },
+    { front: "Saatte yelkovan neyi gösterir?", back: "Dakikayı" },
+    { front: "Yarım saat kaç dakikadır?", back: "30 dakika" },
+    { front: "50 + 50 kaç eder?", back: "100" },
+    { front: "30'un 10 fazlası kaçtır?", back: "40" },
+    { front: "60 - 20 kaç eder?", back: "40" },
+    { front: "Bir liranın 100'de biri nedir?", back: "Kuruş" },
+    { front: "45 sayısının onlar basamağı kaçtır?", back: "4" },
+    { front: "En büyük iki basamaklı sayı kaçtır?", back: "99" },
+    { front: "15 + 15 kaç eder?", back: "30" },
+    { front: "90 - 45 kaç eder?", back: "45" },
+    { front: "Bir düzine kaç tanedir?", back: "12" },
+    { front: "3 kere 4 (3x4) kaç eder?", back: "12" },
+    { front: "70 sayısının birler basamağı kaçtır?", back: "0" },
+    { front: "Yarım kilogram kaç gramdır?", back: "500 gram" },
+    { front: "12 + 8 kaç eder?", back: "20" },
+    /* Hayat Bilgisi */
+    { front: "Beş duyu organımız hangileridir?", back: "Göz, kulak, burun, dil, deri" },
+    { front: "Tatma duyu organımız hangisidir?", back: "Dil" },
+    { front: "Koklama duyu organımız hangisidir?", back: "Burun" },
+    { front: "Sağlıklı beslenmek için neler yemeliyiz?", back: "Sebze, meyve, süt gibi besinler" },
+    { front: "Çöpleri nereye atmalıyız?", back: "Çöp kutusuna" },
+    { front: "Geri dönüşüm ne işe yarar?", back: "Atıkların yeniden kullanılmasını sağlar" },
+    { front: "Yangın durumunda hangi kurum aranır?", back: "İtfaiye" },
+    { front: "Acil sağlık durumunda hangi numara aranır?", back: "112" },
+    { front: "Yangın ihbarı için hangi numara aranır?", back: "110" },
+    { front: "Polis çağırmak için hangi numara aranır?", back: "155" },
+    { front: "Bayrağımızın renkleri nelerdir?", back: "Kırmızı ve beyaz" },
+    { front: "Ülkemizin başkenti neresidir?", back: "Ankara" },
+    { front: "23 Nisan hangi bayramdır?", back: "Ulusal Egemenlik ve Çocuk Bayramı" },
+    { front: "Suyu tasarruflu kullanmak için ne yapmalıyız?", back: "Musluğu gereksiz yere açık bırakmamak" },
+    { front: "Bitkilerin büyümesi için nelere ihtiyacı vardır?", back: "Su, güneş ışığı, toprak" }
+  ];
+
+  var sinif3Cards = [
+    /* Türkçe */
+    { front: "İsim (ad) nedir?", back: "Varlıkları karşılayan kelime" },
+    { front: "Sıfat (önad) nedir?", back: "İsimleri niteleyen kelime" },
+    { front: "Kırmızı elma sözünde sıfat hangisidir?", back: "Kırmızı" },
+    { front: "Özel isimler nasıl yazılır?", back: "Büyük harfle başlar" },
+    { front: "İstanbul, Ali, Türkiye hangi tür isimdir?", back: "Özel isim" },
+    { front: "Şehir, çocuk, ülke hangi tür isimdir?", back: "Cins (tür) isim" },
+    { front: "Atasözü nedir?", back: "Halkın deneyimlerinden oluşan, öğüt veren kalıplaşmış söz" },
+    { front: "Damlaya damlaya göl olur sözü hangi söz grubuna girer?", back: "Atasözü" },
+    { front: "Paragrafın ilk cümlesine ne denir?", back: "Giriş cümlesi" },
+    { front: "Bir metnin ana fikri nedir?", back: "Yazarın anlatmak istediği en önemli düşünce" },
+    { front: "Eş sesli (sesteş) kelime nedir?", back: "Yazılışı aynı, anlamı farklı kelime" },
+    { front: "Yüz kelimesi hangi iki farklı anlamda kullanılabilir?", back: "Sayı (100) ve vücut bölümü (surat) anlamında" },
+    { front: "Bir mektubun en sonuna genellikle ne yazılır?", back: "İmza (gönderenin adı)" },
+    /* Matematik */
+    { front: "4 x 6 kaç eder?", back: "24" },
+    { front: "7 x 8 kaç eder?", back: "56" },
+    { front: "100 - 37 kaç eder?", back: "63" },
+    { front: "250 + 125 kaç eder?", back: "375" },
+    { front: "Bir kesirde çizginin üstündeki sayıya ne denir?", back: "Pay" },
+    { front: "Bir kesirde çizginin altındaki sayıya ne denir?", back: "Payda" },
+    { front: "1/2 kesri neyi ifade eder?", back: "Bir bütünün iki eşit parçasından birini" },
+    { front: "Bir dikdörtgenin kaç kenarı vardır?", back: "4" },
+    { front: "9 x 9 kaç eder?", back: "81" },
+    { front: "36 ÷ 6 kaç eder?", back: "6" },
+    { front: "500 sayısının yüzler basamağı kaçtır?", back: "5" },
+    { front: "Bir üçgenin iç açıları toplamı kaç derecedir?", back: "180" },
+    { front: "45 ÷ 9 kaç eder?", back: "5" },
+    { front: "6 x 7 kaç eder?", back: "42" },
+    { front: "1000 sayısı kaç basamaklıdır?", back: "4" },
+    /* Fen Bilimleri */
+    { front: "Canlıların ortak özelliklerinden biri nedir?", back: "Beslenme, büyüme, üreme gibi yaşamsal faaliyetler" },
+    { front: "Bitkilerin fotosentez yapması için nelere ihtiyacı vardır?", back: "Güneş ışığı, su ve karbondioksit" },
+    { front: "Hayvanlar beslenme şekline göre nasıl gruplara ayrılır?", back: "Otçul, etçil ve hem otçul hem etçil (omnivor)" },
+    { front: "Suyun katı hâline ne denir?", back: "Buz" },
+    { front: "Suyun gaz hâline ne denir?", back: "Su buharı" },
+    { front: "Mıknatısın çektiği madde türü hangisidir?", back: "Demir (bazı metaller)" },
+    { front: "Gündüz gökyüzünde gördüğümüz ışık kaynağı nedir?", back: "Güneş" },
+    { front: "Gece gökyüzünde gördüğümüz ışık kaynağı nedir?", back: "Ay" },
+    { front: "Hava sıcaklığını ölçmek için hangi alet kullanılır?", back: "Termometre" },
+    { front: "Sesleri hangi duyu organımızla algılarız?", back: "İşitme (kulak)" },
+    { front: "Bitkilerin suyu topraktan almasını sağlayan kısmı nedir?", back: "Kök" },
+    { front: "Bitkilerin fotosentez yaptığı kısmı nedir?", back: "Yaprak" },
+    /* Sosyal Bilgiler */
+    { front: "Yaşadığımız yerin en küçük yönetim birimine ne denir?", back: "Mahalle veya köy" },
+    { front: "Ülkemizin komşularından birini say.", back: "Yunanistan, Bulgaristan, Gürcistan gibi bir komşu ülke" },
+    { front: "Haritalarda kara parçaları hangi renk tonlarıyla gösterilir?", back: "Yeşil ve kahverengi tonları" },
+    { front: "Haritalarda denizler hangi renkle gösterilir?", back: "Mavi" },
+    { front: "Pusula neye yarar?", back: "Yönümüzü bulmaya" },
+    { front: "Güneşin doğduğu yöne ne denir?", back: "Doğu" },
+    { front: "Güneşin battığı yöne ne denir?", back: "Batı" },
+    { front: "Ülkemizin kaç komşu ülkesi vardır?", back: "8" },
+    { front: "Bir ailenin ihtiyaçlarını karşılamak için yaptığı plana ne denir?", back: "Bütçe" },
+    { front: "Kültürel miras nedir?", back: "Geçmişten günümüze aktarılan değerler ve eserler" }
+  ];
+
+  var sinif4Cards = [
+    /* Türkçe */
+    { front: "Fiil (eylem) nedir?", back: "İş, oluş, hareket bildiren kelime" },
+    { front: "Zamir (adıl) nedir?", back: "İsimlerin yerini tutan kelime" },
+    { front: "Ben, sen, o, biz, siz, onlar hangi tür kelimedir?", back: "Kişi zamiri" },
+    { front: "Öznel cümle nedir?", back: "Kişisel görüş bildiren cümle" },
+    { front: "Nesnel cümle nedir?", back: "Kanıtlanabilir, gerçek bilgi bildiren cümle" },
+    { front: "Bir metnin konusu ile ana fikri arasındaki fark nedir?", back: "Konu kısa başlıktır, ana fikir yazarın vermek istediği mesajdır" },
+    { front: "Karşılaştırma bildiren cümlede hangi tür kelimeler kullanılır?", back: "Daha, en, gibi gibi kelimeler" },
+    { front: "Kitap okumayı çok seviyorum cümlesinde yüklem hangisidir?", back: "Seviyorum" },
+    { front: "Deyim nedir?", back: "Gerçek anlamından farklı, kalıplaşmış anlatım" },
+    { front: "Ağzı kulaklarına varmak hangi söz grubuna girer?", back: "Deyim" },
+    { front: "Bir dilekçenin sonunda genellikle ne bulunur?", back: "Tarih ve imza" },
+    { front: "Şiirde aynı sesle biten dizelere ne denir?", back: "Kafiye" },
+    /* Matematik */
+    { front: "1234 + 4321 kaç eder?", back: "5555" },
+    { front: "12 x 12 kaç eder?", back: "144" },
+    { front: "144 ÷ 12 kaç eder?", back: "12" },
+    { front: "Bir dikdörtgenin çevresi nasıl hesaplanır?", back: "(Uzun kenar + kısa kenar) x 2" },
+    { front: "Bir karenin alanı nasıl hesaplanır?", back: "Kenar x kenar" },
+    { front: "3/4 kesri ondalık olarak nedir?", back: "0,75" },
+    { front: "1 kilogram kaç gramdır?", back: "1000 gram" },
+    { front: "1 metre kaç santimetredir?", back: "100 santimetre" },
+    { front: "25 x 4 kaç eder?", back: "100" },
+    { front: "500 ÷ 5 kaç eder?", back: "100" },
+    { front: "Bir açının 90 derece olmasına ne denir?", back: "Dik açı" },
+    { front: "90 dereceden küçük açıya ne denir?", back: "Dar açı" },
+    { front: "90 dereceden büyük açıya ne denir?", back: "Geniş açı" },
+    { front: "7 x 6 - 10 işleminin sonucu kaçtır?", back: "32" },
+    /* Fen Bilimleri */
+    { front: "Kuvvet nesnelerde neyi değiştirebilir?", back: "Hareketini veya şeklini" },
+    { front: "Yer çekimi kuvveti cisimleri hangi yöne çeker?", back: "Aşağıya, yere doğru" },
+    { front: "Maddenin üç hâli nelerdir?", back: "Katı, sıvı, gaz" },
+    { front: "Isı verilince katı madde neye dönüşebilir?", back: "Sıvıya (erime)" },
+    { front: "Dünyamızın uydusu hangisidir?", back: "Ay" },
+    { front: "Güneş Sistemi'nde kaç gezegen vardır?", back: "8" },
+    { front: "Dünya'ya en yakın gezegen hangisidir?", back: "Venüs" },
+    { front: "Dünya'nın kendi ekseni etrafında dönmesi neyi oluşturur?", back: "Gece ve gündüzü" },
+    { front: "Dünya'nın Güneş etrafında dönmesi neyi oluşturur?", back: "Mevsimleri ve bir yılı" },
+    { front: "Elektriği ileten maddelere ne denir?", back: "İletken" },
+    { front: "Elektriği iletmeyen maddelere ne denir?", back: "Yalıtkan" },
+    { front: "Basit bir elektrik devresinde ışık kaynağı olarak ne kullanılır?", back: "Ampul" },
+    /* Sosyal Bilgiler */
+    { front: "Mektup dışında eski bir haberleşme yolu neydi?", back: "Güvercinle haberleşme, tellal gibi yöntemler" },
+    { front: "Kara, hava ve deniz dışında bir ulaşım türü nedir?", back: "Demiryolu (tren)" },
+    { front: "Bir ürünün üretilip tüketiciye ulaşana kadar geçtiği sürece ne denir?", back: "Üretim-dağıtım-tüketim zinciri" },
+    { front: "İstanbul hangi yıl, kim tarafından fethedilmiştir?", back: "1453, Fatih Sultan Mehmed" },
+    { front: "Yaşadığımız çevredeki doğal afetlere örnek ver.", back: "Deprem, sel, çığ" },
+    { front: "Deprem sırasında yapılması gereken en önemli şey nedir?", back: "Sakin kalıp güvenli bir yere sığınmak (Çök-Kapan-Tutun)" },
+    { front: "Vatandaşların oy kullanma hakkına ne denir?", back: "Seçme hakkı" },
+    { front: "Ülkemizi yöneten kişiye ne denir?", back: "Cumhurbaşkanı" },
+    { front: "Ülkemizin yasalarını yapan kuruma ne denir?", back: "TBMM (Türkiye Büyük Millet Meclisi)" },
+    { front: "Bayrak, dil, tarih gibi ortak değerlere ne denir?", back: "Milli değerler" },
+    { front: "Tasarruf ne demektir?", back: "Gereksiz harcamalardan kaçınıp biriktirmek" },
+    { front: "İhtiyaç ile istek arasındaki fark nedir?", back: "İhtiyaç yaşam için gereklidir, istek gerekli olmayan arzudur" }
+  ];
+
+  var sinif5Cards = [
+    /* Türkçe */
+    { front: "Sözcükte gerçek anlam nedir?", back: "Kelimenin ilk akla gelen, temel anlamı" },
+    { front: "Sözcükte mecaz anlam nedir?", back: "Kelimenin gerçek anlamından farklı, benzetme yoluyla kazandığı anlam" },
+    { front: "Yüreği dağ gibi sözünde dağ hangi anlamda kullanılmıştır?", back: "Mecaz anlamda" },
+    { front: "Öznel yargı ile nesnel yargı arasındaki fark nedir?", back: "Öznel kişisel görüş, nesnel kanıtlanabilir bilgidir" },
+    { front: "Bir metnin ana düşüncesini bulmak için nereye bakılır?", back: "Metnin bütününe ve tekrar eden fikre" },
+    { front: "Noktalı virgül (;) ne zaman kullanılır?", back: "Birbirine bağlı sıralı cümleleri ayırmak için" },
+    { front: "Kitap okumak, yüzmek gibi kalıplar hangi kelime türüdür?", back: "Fiilimsi (isim-fiil)" },
+    { front: "Paragrafta yardımcı düşünce nedir?", back: "Ana düşünceyi destekleyen düşünce" },
+    { front: "Bir yazıda yazarın amacı ne olabilir?", back: "Bilgi vermek, ikna etmek veya eğlendirmek" },
+    { front: "Göz kulak olmak hangi söz sanatına örnektir?", back: "Deyim" },
+    /* Matematik */
+    { front: "Bir sayının asal çarpanlarına ayrılmasına ne denir?", back: "Çarpanlara ayırma" },
+    { front: "2, 3, 5, 7 gibi sayılara ne denir?", back: "Asal sayı" },
+    { front: "12'nin tam bölenleri nelerdir?", back: "1, 2, 3, 4, 6, 12" },
+    { front: "3/5 kesri ile 2/5 kesrinin toplamı kaçtır?", back: "5/5 yani 1" },
+    { front: "0,25 ondalık sayısı kesir olarak nedir?", back: "1/4" },
+    { front: "Bir üçgenin alanı nasıl hesaplanır?", back: "(Taban x Yükseklik) / 2" },
+    { front: "Yüzde (%) ne anlama gelir?", back: "100'de kaçı olduğunu ifade eder" },
+    { front: "100'ün %20'si kaçtır?", back: "20" },
+    { front: "Bir dairenin merkezinden çevresine olan uzaklığa ne denir?", back: "Yarıçap" },
+    { front: "6 ile 8'in en küçük ortak katı (EKOK) kaçtır?", back: "24" },
+    { front: "12 ile 18'in en büyük ortak böleni (EBOB) kaçtır?", back: "6" },
+    { front: "8 sayısının karesi kaçtır?", back: "64" },
+    /* Fen Bilimleri */
+    { front: "Güneş Sistemi'nin merkezinde ne bulunur?", back: "Güneş" },
+    { front: "Dünya'ya en yakın gök cismi hangisidir?", back: "Ay" },
+    { front: "Canlıları sınıflandırırken kullanılan en büyük grup nedir?", back: "Alem" },
+    { front: "İnsan vücudunda kanı pompalayan organ hangisidir?", back: "Kalp" },
+    { front: "Solunum sisteminin ana organı hangisidir?", back: "Akciğer" },
+    { front: "Besinlerin sindirimi nerede başlar?", back: "Ağızda" },
+    { front: "Maddenin miktarının ölçüsüne ne denir?", back: "Kütle" },
+    { front: "Sesin yayılması için neye ihtiyaç vardır?", back: "Bir ortama (hava, su, katı madde)" },
+    { front: "Işığın bir yüzeyden geri dönmesine ne denir?", back: "Yansıma" },
+    { front: "Basit makinelere örnek ver.", back: "Makara, eğik düzlem, kaldıraç" },
+    { front: "Bir mıknatısın iki kutbu nasıl adlandırılır?", back: "Kuzey ve güney kutbu" },
+    { front: "Erime ve donma birbirinin nesidir?", back: "Zıttı (tersi)" },
+    /* Sosyal Bilgiler */
+    { front: "İpek Yolu neden önemlidir?", back: "Doğu ile Batı arasında ticareti sağlayan tarihi yol olduğu için" },
+    { front: "İletişim araçlarının gelişimi hayatımızı nasıl etkilemiştir?", back: "Bilgiye ulaşmayı hızlandırmış ve kolaylaştırmıştır" },
+    { front: "Yerel yönetimlere örnek ver.", back: "Belediye" },
+    { front: "Ülkemizde kaç coğrafi bölge vardır?", back: "7" },
+    { front: "Doğal kaynaklara örnek ver.", back: "Su, orman, maden" },
+    { front: "Göç nedir?", back: "Bir yerden başka bir yere yerleşmek amacıyla yapılan yer değiştirme" },
+    { front: "Kültürel miras örneklerinden biri nedir?", back: "Tarihi eserler, gelenekler" },
+    { front: "İnsan hakları neden önemlidir?", back: "Herkesin eşit ve onurlu yaşaması için" },
+    { front: "Bir ülkenin bağımsızlığı ne anlama gelir?", back: "Kendi kararlarını başka bir gücün etkisi olmadan alabilmesi" },
+    { front: "Sivil toplum kuruluşu (STK) nedir?", back: "Kâr amacı gütmeden topluma fayda sağlamak için kurulan kuruluş" },
+    /* İngilizce */
+    { front: "Apple kelimesinin Türkçe anlamı nedir?", back: "Elma" },
+    { front: "Book kelimesinin Türkçe anlamı nedir?", back: "Kitap" },
+    { front: "Monday hangi gün anlamına gelir?", back: "Pazartesi" },
+    { front: "Red kelimesinin Türkçe anlamı nedir?", back: "Kırmızı" },
+    { front: "How are you? ifadesinin anlamı nedir?", back: "Nasılsın?" },
+    { front: "Family kelimesinin Türkçe anlamı nedir?", back: "Aile" }
+  ];
+
+  var sinif6Cards = [
+    /* Türkçe */
+    { front: "Cümlenin öğeleri nelerdir?", back: "Özne, yüklem, nesne, dolaylı tümleç, zarf tümleci" },
+    { front: "Yüklem cümlede nedir?", back: "İşi, oluşu, durumu bildiren ve genelde cümle sonunda bulunan öğe" },
+    { front: "Nesne (tümleç) cümlede neyi bildirir?", back: "Yüklemin etkilediği varlığı" },
+    { front: "Fiilimsi türleri nelerdir?", back: "İsim-fiil, sıfat-fiil, zarf-fiil" },
+    { front: "-mak/-mek eki fiile eklenince ne olur?", back: "İsim-fiil olur" },
+    { front: "Bir varlığı başka bir varlığa benzetmeye ne denir?", back: "Benzetme (teşbih)" },
+    { front: "Kişileştirme (teşhis) nedir?", back: "İnsan olmayan varlıklara insan özelliği verme" },
+    { front: "Bir öyküde yer unsuru neyi ifade eder?", back: "Olayın geçtiği mekânı" },
+    { front: "Anlatım bozukluğu nedir?", back: "Cümlenin anlam veya yapı bakımından hatalı olması" },
+    { front: "Bağlaç nedir?", back: "Kelimeleri veya cümleleri birbirine bağlayan kelime" },
+    /* Matematik */
+    { front: "Tam sayılar hangi sayılardan oluşur?", back: "Negatif tam sayılar, sıfır ve pozitif tam sayılar" },
+    { front: "-5 ile +3 sayılarının toplamı kaçtır?", back: "-2" },
+    { front: "Bir sayının mutlak değeri nedir?", back: "Sayının sıfıra olan uzaklığı (her zaman pozitif)" },
+    { front: "Oran nedir?", back: "İki çokluğun birbirine bölünmesiyle elde edilen değer" },
+    { front: "Orantı nedir?", back: "İki oranın birbirine eşit olması" },
+    { front: "Bir çemberin çevresi nasıl hesaplanır?", back: "2 x π x yarıçap" },
+    { front: "Bir dairenin alanı nasıl hesaplanır?", back: "π x yarıçap kare" },
+    { front: "Cebirsel ifade nedir?", back: "Bilinmeyen içeren matematiksel ifade" },
+    { front: "2x + 3 = 9 denkleminde x kaçtır?", back: "3" },
+    { front: "Yüzde 50, kesir olarak nedir?", back: "1/2" },
+    { front: "Bir kenar uzunluğu 4 cm olan karenin alanı kaç cm karedir?", back: "16" },
+    { front: "-8 sayısının mutlak değeri kaçtır?", back: "8" },
+    /* Fen Bilimleri */
+    { front: "Sindirim sisteminin son organı hangisidir?", back: "Kalın bağırsak" },
+    { front: "Kaslarımız ne işe yarar?", back: "Hareket etmemizi sağlar" },
+    { front: "Kuvvetin birimi nedir?", back: "Newton" },
+    { front: "Sürtünme kuvveti hareketi nasıl etkiler?", back: "Hareketi yavaşlatır" },
+    { front: "Işığın madde içinden geçebilmesine göre maddeler nasıl sınıflandırılır?", back: "Saydam, yarı saydam, opak (saydam olmayan)" },
+    { front: "Elektrik devresinde akımı kesmeye yarayan eleman nedir?", back: "Anahtar (switch)" },
+    { front: "Vücudumuzda oksijenin kana karıştığı organ hangisidir?", back: "Akciğer" },
+    { front: "Madde döngüsüne bir örnek ver.", back: "Su döngüsü" },
+    { front: "Ekosistemde üretici canlılara örnek nedir?", back: "Bitkiler" },
+    { front: "Ekosistemde tüketici canlılara örnek nedir?", back: "Hayvanlar" },
+    /* Sosyal Bilgiler */
+    { front: "İslamiyet öncesi Türklerin yaşam biçimi genellikle nasıldı?", back: "Göçebe (konar-göçer)" },
+    { front: "Türklerin İslamiyet'i kabul etmesiyle hangi devlet kurulmuştur?", back: "Karahanlı Devleti" },
+    { front: "Anadolu'ya Türklerin yerleşmesini sağlayan savaş hangisidir?", back: "Malazgirt Savaşı (1071)" },
+    { front: "Bir ülkenin yönetim biçimlerinden biri nedir?", back: "Cumhuriyet" },
+    { front: "Demokrasi nedir?", back: "Halkın kendi kendini yönetmesi" },
+    { front: "Bireysel hak ve özgürlüklere örnek nedir?", back: "Düşünce özgürlüğü, eğitim hakkı" },
+    { front: "Ekonomik faaliyetlere örnek nedir?", back: "Tarım, sanayi, ticaret" },
+    { front: "Doğal afetlere karşı alınabilecek önlemlere örnek nedir?", back: "Sağlam bina yapımı, erken uyarı sistemleri" },
+    { front: "Kültürel etkileşim nedir?", back: "Farklı toplumların birbirini kültürel açıdan etkilemesi" },
+    { front: "Bilim insanlarının çalışmalarını paylaştığı ortama örnek nedir?", back: "Bilimsel dergi, konferans" },
+    /* İngilizce */
+    { front: "School kelimesinin Türkçe anlamı nedir?", back: "Okul" },
+    { front: "Teacher kelimesinin Türkçe anlamı nedir?", back: "Öğretmen" },
+    { front: "What time is it? ifadesinin anlamı nedir?", back: "Saat kaç?" },
+    { front: "I like ifadesinin anlamı nedir?", back: "Seviyorum / hoşuma gidiyor" },
+    { front: "Weekend kelimesinin Türkçe anlamı nedir?", back: "Hafta sonu" },
+    { front: "Yesterday kelimesinin Türkçe anlamı nedir?", back: "Dün" },
+    { front: "Tomorrow kelimesinin Türkçe anlamı nedir?", back: "Yarın" },
+    { front: "My name is... ifadesinin anlamı nedir?", back: "Benim adım..." }
+  ];
+
+  var sinif7Cards = [
+    /* Türkçe */
+    { front: "Sıfat-fiil (ortaç) nedir?", back: "Fiilden türeyip isim gibi kullanılan, sıfat görevi gören kelime" },
+    { front: "-an/-en eki fiile gelince hangi fiilimsi oluşur?", back: "Sıfat-fiil (ortaç)" },
+    { front: "Zarf-fiil (bağ-fiil) nedir?", back: "Fiilden türeyip zarf görevinde kullanılan kelime" },
+    { front: "-erek/-arak eki hangi fiilimsi türünü oluşturur?", back: "Zarf-fiil" },
+    { front: "Bir metinde yardımcı fikir sayısı hakkında ne söylenebilir?", back: "Birden fazla olabilir" },
+    { front: "Öyküleyici anlatım nedir?", back: "Bir olayın oluş sırasına göre anlatıldığı anlatım biçimi" },
+    { front: "Betimleyici (tasvir edici) anlatım nedir?", back: "Bir varlığı, yeri okuyucunun gözünde canlandıracak şekilde anlatma" },
+    { front: "Cümlede neden-sonuç ilişkisi hangi bağlaçlarla kurulur?", back: "İçin, dolayı gibi bağlaçlarla" },
+    { front: "Cümlede öznel ifadeye örnek nedir?", back: "Bence, bana göre gibi kişisel görüş bildiren ifadeler" },
+    /* Matematik */
+    { front: "Rasyonel sayı nedir?", back: "İki tam sayının oranı şeklinde yazılabilen sayı" },
+    { front: "Bir doğrunun eğimi neyi ifade eder?", back: "Doğrunun dikliğini" },
+    { front: "Cebirsel ifadelerde terim nedir?", back: "Artı veya eksi işaretiyle ayrılan ifadeler" },
+    { front: "3x + 2x işleminin sonucu nedir?", back: "5x" },
+    { front: "Bir dikdörtgenler prizmasının hacmi nasıl hesaplanır?", back: "Uzunluk x genişlik x yükseklik" },
+    { front: "Doğru orantıda bir çokluk artarsa diğeri ne olur?", back: "Artar" },
+    { front: "Ters orantıda bir çokluk artarsa diğeri ne olur?", back: "Azalır" },
+    { front: "Bir çokgenin iç açıları toplamı nasıl bulunur?", back: "(Kenar sayısı - 2) x 180" },
+    { front: "Bir beşgenin iç açıları toplamı kaç derecedir?", back: "540" },
+    { front: "5x - 3 = 12 denkleminde x kaçtır?", back: "3" },
+    { front: "Negatif bir sayının karesi neden pozitiftir?", back: "İki negatif sayının çarpımı pozitif olduğu için" },
+    { front: "Bir üçgende iki kenarın toplamı üçüncü kenardan büyük müdür?", back: "Evet (üçgen eşitsizliği)" },
+    /* Fen Bilimleri */
+    { front: "Hücrenin yönetim merkezi hangi organeldir?", back: "Çekirdek" },
+    { front: "Bitki hücresinde bulunup hayvan hücresinde bulunmayan yapılar nelerdir?", back: "Hücre duvarı ve kloroplast" },
+    { front: "Newton neyin ölçü birimidir?", back: "Kuvvetin" },
+    { front: "Basınç neye bağlıdır?", back: "Uygulanan kuvvet ve yüzey alanına" },
+    { front: "Elektrik enerjisinin ısı enerjisine dönüşümüne örnek nedir?", back: "Elektrikli ısıtıcı, ütü" },
+    { front: "Güneş'e uzaklık sırasına göre ilk üç gezegen hangileridir?", back: "Merkür, Venüs, Dünya" },
+    { front: "Mevsimlerin oluşma nedeni nedir?", back: "Dünya'nın ekseninin eğik olması ve Güneş etrafında dönmesi" },
+    { front: "Kalıtım nedir?", back: "Özelliklerin nesilden nesile aktarılması" },
+    { front: "DNA'nın açılımı nedir?", back: "Deoksiribonükleik asit" },
+    { front: "Basınç birimi nedir?", back: "Pascal" },
+    /* Sosyal Bilgiler */
+    { front: "Osmanlı Devleti'ni kim, ne zaman kurmuştur?", back: "Osman Gazi, 1299" },
+    { front: "İstanbul'un fethi hangi çağı kapatıp hangi çağı açmıştır?", back: "Orta Çağ'ı kapatıp Yeni Çağ'ı açmıştır" },
+    { front: "Osmanlı Devleti'nde eğitim kurumlarına örnek nedir?", back: "Medrese" },
+    { front: "Coğrafi Keşifler'in en önemli sonuçlarından biri nedir?", back: "Yeni kıtaların keşfedilmesi ve ticaret yollarının değişmesi" },
+    { front: "Rönesans hareketi nerede başlamıştır?", back: "İtalya" },
+    { front: "Reform hareketi hangi alanda gerçekleşmiştir?", back: "Din (Hristiyanlık) alanında" },
+    { front: "Osmanlı'da bilim insanlarına örnek nedir?", back: "Piri Reis, Ali Kuşçu" },
+    { front: "Piri Reis hangi eseriyle tanınır?", back: "Dünya haritası ve Kitab-ı Bahriye" },
+    { front: "Osmanlı Devleti'nin ilk başkenti neresidir?", back: "Söğüt" },
+    /* İngilizce */
+    { front: "Because kelimesinin Türkçe anlamı nedir?", back: "Çünkü" },
+    { front: "I have to ifadesinin anlamı nedir?", back: "Yapmam gerekiyor" },
+    { front: "Always kelimesinin Türkçe anlamı nedir?", back: "Her zaman" },
+    { front: "Never kelimesinin Türkçe anlamı nedir?", back: "Asla, hiçbir zaman" },
+    { front: "Healthy food ifadesinin anlamı nedir?", back: "Sağlıklı besin" },
+    { front: "Free time ifadesinin anlamı nedir?", back: "Boş zaman" },
+    /* Din Kültürü */
+    { front: "İslam dininin temel inanç esaslarına ne denir?", back: "İman esasları (Amentü)" },
+    { front: "Kur'an-ı Kerim kaç sure içerir?", back: "114" },
+    { front: "Zekât nedir?", back: "Belirli bir mal varlığına sahip Müslümanların ihtiyaç sahiplerine verdiği yardım" },
+    { front: "Hz. Muhammed'in doğduğu şehir neresidir?", back: "Mekke" }
+  ];
+
+  var sinif8Cards = [
+    /* Türkçe */
+    { front: "Cümlenin öğelerini bulurken önce hangi öğe bulunur?", back: "Yüklem" },
+    { front: "Dolaylı tümleç cümlede neyi bildirir?", back: "Yer, yön, durum bildiren tümleç" },
+    { front: "Fiilde kip nedir?", back: "Fiilin zaman veya anlam bakımından gösterdiği durum" },
+    { front: "Bileşik zamanlı fiil nedir?", back: "Basit çekimli fiile idi, imiş, ise gelmesiyle oluşan fiil" },
+    { front: "Anlatım bozukluklarından gereksiz sözcük kullanımı nasıl önlenir?", back: "Anlamı bozmayan fazlalık kelimeleri çıkararak" },
+    { front: "Cümlede pekiştirme nasıl yapılır?", back: "Sözcüğün ilk hecesi tekrarlanarak (örnek: masmavi)" },
+    { front: "Paragrafta giriş cümlesi nasıl tanınır?", back: "Konuyu ilk kez ortaya koyan, kendinden önce cümle gerektirmeyen cümledir" },
+    { front: "Öznel anlatımlı cümleye örnek nedir?", back: "Bu film çok güzeldi gibi kişisel yargı içeren cümle" },
+    { front: "Bir cümlede birden fazla yüklem varsa cümle nasıl adlandırılır?", back: "Birleşik veya sıralı cümle" },
+    /* Matematik */
+    { front: "Çarpanlara ayırma nedir?", back: "Bir ifadeyi çarpanlarının çarpımı şeklinde yazma" },
+    { front: "a kare eksi b kare ifadesi nasıl çarpanlarına ayrılır?", back: "(a-b)(a+b)" },
+    { front: "İki bilinmeyenli bir doğrusal denklem sisteminde kaç denklem gerekir?", back: "2" },
+    { front: "Üslü sayılarda taban aynıyken üsler çarpılırsa ne olur?", back: "Üsler toplanır" },
+    { front: "Karekök almak hangi işlemin tersidir?", back: "Karesini alma" },
+    { front: "Karekök 16 kaçtır?", back: "4" },
+    { front: "Bir küpün hacmi nasıl hesaplanır?", back: "Kenar x kenar x kenar" },
+    { front: "Veri analizinde ortalama nasıl bulunur?", back: "Verilerin toplamının veri sayısına bölünmesiyle" },
+    { front: "Veri analizinde ortanca (medyan) nedir?", back: "Sıralı verilerin ortasındaki değer" },
+    { front: "Bir olayın olma olasılığı nasıl hesaplanır?", back: "İstenen durum sayısı bölü toplam durum sayısı" },
+    { front: "Üç basamaklı en büyük sayı ile en küçük sayının farkı kaçtır?", back: "999 - 100 = 899" },
+    /* Fen Bilimleri */
+    { front: "DNA hücrenin hangi bölümünde bulunur?", back: "Çekirdek" },
+    { front: "Mitoz bölünme sonucunda kaç hücre oluşur?", back: "2" },
+    { front: "Mayoz bölünme sonucunda kaç hücre oluşur?", back: "4" },
+    { front: "Basınç birimi nedir?", back: "Pascal (Pa)" },
+    { front: "Sıvı basıncı neye bağlıdır?", back: "Sıvının yoğunluğuna ve derinliğe" },
+    { front: "Periyodik tabloda elementler neye göre sıralanır?", back: "Atom numarasına göre" },
+    { front: "Asit ve baz karışınca ne oluşur?", back: "Tuz ve su (nötrleşme tepkimesi)" },
+    { front: "Basit elektrik devresinde direnç neyi ifade eder?", back: "Akıma karşı gösterilen zorluk" },
+    { front: "Canlıların genetik bilgisini taşıyan molekül hangisidir?", back: "DNA" },
+    /* T.C. İnkılap Tarihi ve Atatürkçülük */
+    { front: "I. Dünya Savaşı hangi yıllar arasında yaşanmıştır?", back: "1914-1918" },
+    { front: "Mustafa Kemal Samsun'a hangi tarihte çıkmıştır?", back: "19 Mayıs 1919" },
+    { front: "TBMM hangi tarihte açılmıştır?", back: "23 Nisan 1920" },
+    { front: "Sakarya Meydan Muharebesi hangi yıl kazanılmıştır?", back: "1921" },
+    { front: "Büyük Taarruz hangi tarihte başlamıştır?", back: "26 Ağustos 1922" },
+    { front: "Cumhuriyet hangi tarihte ilan edilmiştir?", back: "29 Ekim 1923" },
+    { front: "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?", back: "Mustafa Kemal Atatürk" },
+    { front: "Harf inkılabı hangi yıl gerçekleşmiştir?", back: "1928" },
+    { front: "Kadınlara milletvekili seçme-seçilme hakkı hangi yıl verilmiştir?", back: "1934" },
+    { front: "Atatürk hangi tarihte vefat etmiştir?", back: "10 Kasım 1938" },
+    { front: "Lozan Barış Antlaşması hangi yıl imzalanmıştır?", back: "1923" },
+    { front: "Laiklik ilkesi ne anlama gelir?", back: "Din ve devlet işlerinin birbirinden ayrılması" },
+    { front: "Saltanat hangi tarihte kaldırılmıştır?", back: "1 Kasım 1922" },
+    /* İngilizce */
+    { front: "Would you like...? ifadesi ne için kullanılır?", back: "Nazikçe teklif sunmak için" },
+    { front: "In my opinion ifadesinin anlamı nedir?", back: "Bence, benim fikrime göre" },
+    { front: "Environment kelimesinin Türkçe anlamı nedir?", back: "Çevre" },
+    { front: "Global warming ifadesinin anlamı nedir?", back: "Küresel ısınma" },
+    /* Din Kültürü */
+    { front: "İslam'ın beş şartından biri olan hac nedir?", back: "Belirli zamanlarda Mekke'ye yapılan ibadet amaçlı ziyaret" },
+    { front: "Oruç hangi ayda tutulur?", back: "Ramazan ayında" },
+    { front: "Kelime-i şehadet neyi ifade eder?", back: "Allah'ın birliğine ve Hz. Muhammed'in elçiliğine şahitlik" },
+    { front: "İslam dininde sünnet ne demektir?", back: "Hz. Muhammed'in söz, davranış ve onaylarına dayanan uygulamalar" }
+  ];
+
+  var sinif9Cards = [
+    /* Matematik */
+    { front: "Kümelerde boş küme nasıl gösterilir?", back: "Boş süslü parantez veya belirli bir sembol" },
+    { front: "Doğal sayılar kümesi neyi ifade eder?", back: "0, 1, 2, 3... sayılarını" },
+    { front: "Mutlak değer fonksiyonu neyi verir?", back: "Sayının işaretsiz (pozitif) değerini" },
+    { front: "Bir fonksiyonun tanım kümesi nedir?", back: "Fonksiyonun aldığı girdi değerlerinin kümesi" },
+    { front: "Birinci dereceden bir bilinmeyenli denklem kaç kök verir?", back: "1" },
+    { front: "İkinci dereceden bir bilinmeyenli denklemin genel adı nedir?", back: "Kuadratik (ikinci derece) denklem" },
+    { front: "Bir üslü ifadede taban negatif ve üs tek sayıysa sonuç ne olur?", back: "Negatif" },
+    { front: "Faktöriyel işlemi ne anlama gelir?", back: "Bir sayıdan 1'e kadar olan sayıların çarpımı" },
+    { front: "5 faktöriyel (5!) kaçtır?", back: "120" },
+    { front: "Permütasyon ile kombinasyon arasındaki temel fark nedir?", back: "Permütasyonda sıralama önemlidir, kombinasyonda önemli değildir" },
+    /* Fizik */
+    { front: "Fizik biliminin temel amacı nedir?", back: "Doğa olaylarını gözlem ve deneyle açıklamak" },
+    { front: "Hız birimi SI sisteminde nedir?", back: "m/s" },
+    { front: "Sabit hızlı harekete ne denir?", back: "Düzgün doğrusal hareket" },
+    { front: "İvme neyi ifade eder?", back: "Hızın zamana göre değişimini" },
+    { front: "Newton'un birinci yasası (eylemsizlik) neyi ifade eder?", back: "Bir cisme net kuvvet etki etmezse hareket durumu değişmez" },
+    { front: "Kuvvetin vektörel bir büyüklük olması ne anlama gelir?", back: "Hem büyüklüğü hem yönü vardır" },
+    { front: "Enerji birimi nedir?", back: "Joule" },
+    { front: "Öz kütle (yoğunluk) nasıl hesaplanır?", back: "Kütle bölü hacim" },
+    /* Kimya */
+    { front: "Kimyanın inceleme konusu nedir?", back: "Maddenin yapısı, özellikleri ve değişimleri" },
+    { front: "Atomun temel parçacıkları nelerdir?", back: "Proton, nötron, elektron" },
+    { front: "Protonlar atomun neresinde bulunur?", back: "Çekirdekte" },
+    { front: "Elektronlar atomda nerede bulunur?", back: "Çekirdek etrafındaki elektron bulutunda" },
+    { front: "Bir elementin atom numarası neyi gösterir?", back: "Proton sayısını" },
+    { front: "Element ile bileşik arasındaki fark nedir?", back: "Element tek cins atomdan, bileşik farklı atomların birleşiminden oluşur" },
+    { front: "Karışımlar kaça ayrılır?", back: "2 (homojen ve heterojen)" },
+    { front: "Damıtma (distilasyon) hangi tür karışımları ayırmaya yarar?", back: "Homojen sıvı karışımları" },
+    /* Biyoloji */
+    { front: "Canlıların temel yapı taşı nedir?", back: "Hücre" },
+    { front: "Prokaryot ile ökaryot hücre arasındaki temel fark nedir?", back: "Prokaryotta zarla çevrili çekirdek yoktur, ökaryotta vardır" },
+    { front: "Hücre zarının temel görevi nedir?", back: "Hücreyi dış ortamdan ayırmak ve madde alışverişini düzenlemek" },
+    { front: "Mitokondrinin görevi nedir?", back: "Hücrenin enerji üretim merkezi olmak" },
+    { front: "Canlıların sınıflandırılmasında en küçük birim nedir?", back: "Tür" },
+    { front: "Fotosentez hangi organelde gerçekleşir?", back: "Kloroplast" },
+    { front: "Homeostazi nedir?", back: "Vücudun iç dengesini koruması" },
+    { front: "Bir ekosistemde enerji akışı hangi yönde gerçekleşir?", back: "Üreticiden tüketiciye doğru, tek yönlü" },
+    /* Tarih */
+    { front: "Tarih öncesi çağlar nelere göre ayrılır?", back: "Kullanılan alet ve gereçlere göre" },
+    { front: "İlk Çağ'da yazının icadı hangi uygarlığa aittir?", back: "Sümerler" },
+    { front: "Mısır uygarlığı hangi nehir çevresinde gelişmiştir?", back: "Nil Nehri" },
+    { front: "Hammurabi Kanunları hangi uygarlığa aittir?", back: "Babilliler" },
+    { front: "Anadolu'da kurulan ilk uygarlıklardan biri hangisidir?", back: "Hititler" },
+    { front: "Hitit uygarlığı tarihteki ilk yazılı antlaşma ile hangi devletle tanınır?", back: "Mısırla yapılan Kadeş Antlaşması ile" },
+    { front: "Eski Yunan uygarlığında yönetim biçimi olarak neyle tanınır?", back: "Site devletleri (polis) ve demokrasi ile" },
+    { front: "Roma uygarlığının hukuk alanındaki en önemli mirası nedir?", back: "Roma Hukuku" },
+    /* Türk Dili ve Edebiyatı */
+    { front: "Edebiyatın en eski sözlü ürünlerinden biri nedir?", back: "Destan" },
+    { front: "Divan edebiyatı hangi dönemlerde etkili olmuştur?", back: "Osmanlı döneminde (13-19. yüzyıllar)" },
+    { front: "Halk edebiyatı ürünlerine örnek nedir?", back: "Türkü, mani, atasözü" },
+    { front: "Şiirde ölçü (vezin) nedir?", back: "Dizelerdeki hece veya durak sayısının düzenli olması" },
+    { front: "Hece ölçüsü nedir?", back: "Dizelerdeki hece sayısına dayanan ölçü" },
+    { front: "Aruz ölçüsü nedir?", back: "Hecelerin uzunluk-kısalığına dayanan, Divan edebiyatında kullanılan ölçü" },
+    { front: "Roman türünün temel özelliği nedir?", back: "Olay, kişi, zaman, mekân öğeleriyle kurgulanmış uzun anlatı" },
+    { front: "Tiyatro eserlerinde konuşmaların yazılı hâline ne denir?", back: "Diyalog" }
+  ];
+
+  var sinif10Cards = [
+    /* Matematik */
+    { front: "Fonksiyonlarda bileşke fonksiyon nedir?", back: "İki fonksiyonun art arda uygulanmasıyla oluşan yeni fonksiyon" },
+    { front: "Ters fonksiyon nasıl gösterilir?", back: "f üzeri -1 şeklinde" },
+    { front: "Polinom nedir?", back: "Değişkenlerin tam sayı kuvvetlerinden oluşan matematiksel ifade" },
+    { front: "İkinci dereceden bir denklemin diskriminantı neyi belirler?", back: "Kökün gerçek olup olmadığını" },
+    { front: "Bir üçgende kosinüs teoremi hangi durumda kullanılır?", back: "Üç kenarı bilinen üçgende açı bulmak için" },
+    { front: "Trigonometride sinüs oranı neyi ifade eder?", back: "Karşı kenar bölü hipotenüs" },
+    { front: "Logaritma neyin tersidir?", back: "Üslü ifadenin" },
+    { front: "10 tabanında logaritma 100 kaçtır?", back: "2" },
+    { front: "Bir dizinin aritmetik dizi olması ne anlama gelir?", back: "Ardışık terimler arasındaki farkın sabit olması" },
+    { front: "Geometrik dizide ardışık terimler arasındaki oran nasıl adlandırılır?", back: "Ortak çarpan" },
+    /* Fizik */
+    { front: "İş (fizikte) nasıl tanımlanır?", back: "Kuvvet çarpı yol, kuvvet yönünde alınan yol" },
+    { front: "Enerjinin korunumu yasası neyi ifade eder?", back: "Enerji yoktan var, vardan yok edilemez, sadece dönüşür" },
+    { front: "Elektrik akımının birimi nedir?", back: "Amper" },
+    { front: "Ohm Yasası neyi ifade eder?", back: "Akım, gerilim ile doğru, direnç ile ters orantılıdır" },
+    { front: "Elektrik potansiyel farkının (gerilim) birimi nedir?", back: "Volt" },
+    { front: "Pascal hangi büyüklüğün birimidir?", back: "Basıncın" },
+    { front: "Kaldırma kuvveti hangi ortamda etkilidir?", back: "Sıvı ve gaz (akışkan) ortamlarda" },
+    { front: "Isı ile sıcaklık arasındaki fark nedir?", back: "Isı enerjidir, sıcaklık bu enerjinin şiddetinin ölçüsüdür" },
+    /* Kimya */
+    { front: "Periyodik cetvelde yatay sıralara ne denir?", back: "Periyot" },
+    { front: "Periyodik cetvelde dikey sütunlara ne denir?", back: "Grup" },
+    { front: "Elektronegatiflik nedir?", back: "Bir atomun elektronu kendine çekme gücü" },
+    { front: "İyonik bağ nasıl oluşur?", back: "Elektron alışverişiyle" },
+    { front: "Kovalent bağ nasıl oluşur?", back: "Elektron ortaklaşımıyla" },
+    { front: "Asitlerin ortak özelliği nedir?", back: "Suda H+ iyonu verirler, pH'ları 7'den küçüktür" },
+    { front: "Bazların ortak özelliği nedir?", back: "Suda OH- iyonu verirler, pH'ları 7'den büyüktür" },
+    { front: "Mol kavramı neyi ifade eder?", back: "Avogadro sayısı kadar tanecik içeren madde miktarı" },
+    /* Biyoloji */
+    { front: "Kalıtımın temel biriminin adı nedir?", back: "Gen" },
+    { front: "Mendel'in kalıtım çalışmalarında kullandığı bitki hangisidir?", back: "Bezelye" },
+    { front: "Baskın (dominant) genin özelliği nedir?", back: "Kendini her zaman gösteren gen" },
+    { front: "Çekinik (resesif) genin özelliği nedir?", back: "Ancak iki kopya olduğunda kendini gösteren gen" },
+    { front: "DNA'nın çift sarmal yapısını kimler keşfetmiştir?", back: "Watson ve Crick" },
+    { front: "Kromozom nedir?", back: "DNA ve proteinlerden oluşan, kalıtsal bilgiyi taşıyan yapı" },
+    { front: "İnsanda kaç kromozom bulunur?", back: "46" },
+    { front: "Cinsiyeti belirleyen kromozomlara ne denir?", back: "Eşey (cinsiyet) kromozomları" },
+    /* Tarih */
+    { front: "Orta Çağ Avrupa'sında toprak sahipliğine dayalı sisteme ne denir?", back: "Feodalite" },
+    { front: "Türklerin İslamiyet'i kabulünden sonra kurulan ilk büyük Türk-İslam devleti hangisidir?", back: "Karahanlı Devleti" },
+    { front: "Büyük Selçuklu Devleti'ni kim kurmuştur?", back: "Tuğrul Bey" },
+    { front: "Malazgirt Savaşı hangi yıl yapılmıştır?", back: "1071" },
+    { front: "Anadolu Selçuklu Devleti'nin başkenti neresidir?", back: "Konya" },
+    { front: "Haçlı Seferleri'nin temel nedenlerinden biri nedir?", back: "Kutsal toprakları (Kudüs) ele geçirmek" },
+    { front: "Osmanlı Devleti hangi yıl, kim tarafından kurulmuştur?", back: "1299, Osman Gazi" },
+    { front: "İstanbul'un fethi hangi yıl gerçekleşmiştir?", back: "1453" },
+    /* Edebiyat */
+    { front: "Divan edebiyatının en önemli nazım biçimlerinden biri nedir?", back: "Gazel" },
+    { front: "Divan şiirinde beyit nedir?", back: "İki dizeden oluşan şiir birimi" },
+    { front: "Halk edebiyatında aşık tarzı şiirin temsilcilerinden biri kimdir?", back: "Karacaoğlan" },
+    { front: "Tanzimat edebiyatı hangi dönemde başlamıştır?", back: "1860'larda" },
+    { front: "Tanzimat edebiyatının öncülerinden biri kimdir?", back: "Şinasi" },
+    { front: "Roman türü Türk edebiyatına hangi dönemde girmiştir?", back: "Tanzimat dönemi" },
+    { front: "Şair Evlenmesi adlı ilk tiyatro örneklerinden biri kimin eseridir?", back: "Şinasi" },
+    { front: "Namık Kemal hangi edebi akımın önemli isimlerindendir?", back: "Tanzimat edebiyatı" }
+  ];
+
+  var sinif11Cards = [
+    /* Matematik */
+    { front: "Trigonometride tanjant nasıl hesaplanır?", back: "Karşı kenar bölü komşu kenar" },
+    { front: "Bir dairenin analitik denklemi nasıldır?", back: "(x-a) kare + (y-b) kare = r kare" },
+    { front: "Türev neyi ifade eder?", back: "Bir fonksiyonun anlık değişim hızını" },
+    { front: "Bir fonksiyonun türevi sıfır olduğu noktada ne olabilir?", back: "Yerel maksimum veya minimum" },
+    { front: "Limit kavramı neyi ifade eder?", back: "Bir fonksiyonun bir noktaya yaklaşırken aldığı değeri" },
+    { front: "Karmaşık sayılarda i neyi ifade eder?", back: "-1'in karekökünü (sanal birim)" },
+    { front: "Parabolün tepe noktasının x koordinatı formülü nedir?", back: "x = -b bölü 2a" },
+    { front: "Permütasyonda tekrarlı elemanlar varsa formül nasıl değişir?", back: "Tekrar eden elemanların faktöriyeline bölünür" },
+    { front: "Olasılıkta bağımsız olaylarda ve durumunun olasılığı nasıl bulunur?", back: "Olasılıklar çarpılarak" },
+    { front: "Aritmetik dizinin n. terimi formülü nedir?", back: "a1 + (n-1) x d" },
+    /* Fizik */
+    { front: "Elektrik alan nedir?", back: "Elektrik yüklerinin çevresinde oluşturduğu etki alanı" },
+    { front: "Manyetik alan nedir?", back: "Mıknatısların ve akım taşıyan tellerin çevresinde oluşturduğu etki alanı" },
+    { front: "Elektromanyetik indüksiyon nedir?", back: "Değişen manyetik alanın elektrik akımı oluşturması" },
+    { front: "Dalga hareketinde frekans neyi ifade eder?", back: "Birim zamandaki titreşim sayısını" },
+    { front: "Ses dalgaları hangi tür dalgadır?", back: "Mekanik (boyuna) dalga" },
+    { front: "Işık dalgaları hangi tür dalgadır?", back: "Elektromanyetik (enine) dalga" },
+    { front: "Atom modelinde elektronların bulunma olasılığının yüksek olduğu bölgeye ne denir?", back: "Orbital" },
+    { front: "Radyoaktif bozunma türlerinden birini say.", back: "Alfa, beta veya gama bozunması" },
+    /* Kimya */
+    { front: "Kimyasal tepkimelerde enerji açığa çıkarsa buna ne denir?", back: "Ekzotermik tepkime" },
+    { front: "Kimyasal tepkimelerde enerji soğurulursa buna ne denir?", back: "Endotermik tepkime" },
+    { front: "Tepkime hızını etkileyen faktörlere örnek nedir?", back: "Sıcaklık, derişim, katalizör" },
+    { front: "Katalizörün görevi nedir?", back: "Tepkime hızını artırmak, kendisi tükenmeden" },
+    { front: "Kimyasal denge nedir?", back: "İleri ve geri tepkime hızlarının eşit olduğu durum" },
+    { front: "pH ölçeği kaç ile kaç arasında değişir?", back: "0 ile 14 arasında" },
+    { front: "Nötr bir çözeltinin pH'ı kaçtır?", back: "7" },
+    { front: "Organik kimyanın temel elementi hangisidir?", back: "Karbon" },
+    /* Biyoloji */
+    { front: "İnsanda sinir sisteminin temel hücresi nedir?", back: "Nöron" },
+    { front: "Hormon salgılayan bezlere ne denir?", back: "Endokrin bez" },
+    { front: "Kan grubu sistemlerinden biri hangisidir?", back: "ABO sistemi" },
+    { front: "Bağışıklık sisteminde antikor üreten hücreler hangileridir?", back: "B lenfositleri" },
+    { front: "Fotosentezin girdileri nelerdir?", back: "Su, karbondioksit ve güneş ışığı" },
+    { front: "Fotosentezin çıktıları nelerdir?", back: "Glikoz (besin) ve oksijen" },
+    { front: "Hücresel solunum hangi organelde gerçekleşir?", back: "Mitokondri" },
+    { front: "Bitkilerde su taşınmasını sağlayan doku hangisidir?", back: "Odun boruları (ksilem)" },
+    /* Tarih */
+    { front: "Osmanlı Devleti'nin en geniş sınırlara ulaştığı padişah kimdir?", back: "Kanuni Sultan Süleyman" },
+    { front: "Halifelik unvanı Osmanlı'ya hangi padişah döneminde geçmiştir?", back: "Yavuz Sultan Selim döneminde" },
+    { front: "Osmanlı'da divan teşkilatının başındaki kişi kimdir?", back: "Sadrazam" },
+    { front: "Osmanlı gerileme döneminin başlangıcı hangi antlaşmayla kabul edilir?", back: "Karlofça Antlaşması (1699)" },
+    { front: "Tanzimat Fermanı hangi yıl ilan edilmiştir?", back: "1839" },
+    { front: "Tanzimat Fermanı'nın en önemli özelliği nedir?", back: "Kanun önünde eşitlik ilkesinin kabulü" },
+    { front: "I. Meşrutiyet hangi yıl ilan edilmiştir?", back: "1876" },
+    { front: "II. Meşrutiyet hangi yıl ilan edilmiştir?", back: "1908" },
+    /* Edebiyat */
+    { front: "Servet-i Fünun edebiyatı hangi yıllarda etkili olmuştur?", back: "1896-1901 arasında" },
+    { front: "Servet-i Fünun edebiyatının önde gelen isimlerinden biri kimdir?", back: "Tevfik Fikret" },
+    { front: "Fecr-i Ati topluluğu hangi dönemde ortaya çıkmıştır?", back: "II. Meşrutiyet sonrası (1909)" },
+    { front: "Milli Edebiyat akımının temel özelliği nedir?", back: "Sade Türkçe kullanımı ve milli konulara yönelme" },
+    { front: "Milli Edebiyat akımının önemli temsilcilerinden biri kimdir?", back: "Ömer Seyfettin" },
+    { front: "Hece ölçüsüne dönüş hangi akımla ilişkilidir?", back: "Milli Edebiyat" },
+    { front: "Roman türünde realizm akımı neyi esas alır?", back: "Gerçekçi, gözleme dayalı anlatım" },
+    { front: "Türk edebiyatında ilk yerli roman kabul edilen eser hangisidir?", back: "Taaşşuk-ı Talat ve Fitnat" }
+  ];
+
+  var sinif12Cards = [
+    /* Matematik */
+    { front: "Türev alma kurallarından çarpım kuralı nasıldır?", back: "(fg)' = f'g + fg'" },
+    { front: "İntegral, türevin nesidir?", back: "Tersi (ters işlemi)" },
+    { front: "Belirli integral neyi hesaplamaya yarar?", back: "Bir eğri altındaki alanı" },
+    { front: "Bir fonksiyonun maksimum noktası nasıl bulunur?", back: "Türevi sıfır yapan ve ikinci türevi negatif olan nokta" },
+    { front: "e sayısı yaklaşık olarak kaçtır?", back: "2,718" },
+    { front: "Logaritmik fonksiyonun tanım kümesi nasıldır?", back: "Pozitif reel sayılar" },
+    { front: "Yakınsak dizi ne demektir?", back: "Belirli bir değere yaklaşan dizi" },
+    { front: "Analitik geometride iki nokta arasındaki uzaklık nasıl bulunur?", back: "Koordinat farklarının karelerinin toplamının karekökü alınarak" },
+    { front: "Bir doğrunun eğimi 0 ise doğru nasıldır?", back: "Yatay (x eksenine paralel)" },
+    { front: "Bir doğrunun eğimi tanımsız ise doğru nasıldır?", back: "Dikey (y eksenine paralel)" },
+    /* Fizik */
+    { front: "Modern fiziğin temelini atan iki büyük teori nedir?", back: "Görelilik teorisi ve kuantum mekaniği" },
+    { front: "Görelilik teorisini kim geliştirmiştir?", back: "Albert Einstein" },
+    { front: "Fotoelektrik olay neyi açıklar?", back: "Işığın metal yüzeyden elektron koparmasını" },
+    { front: "Işığın hem dalga hem tanecik özelliği göstermesine ne denir?", back: "Dalga-tanecik ikiliği" },
+    { front: "Atom çekirdeğinin parçalanmasına ne denir?", back: "Fisyon" },
+    { front: "Küçük çekirdeklerin birleşmesine ne denir?", back: "Füzyon" },
+    { front: "Yarı iletken maddelere örnek nedir?", back: "Silisyum, germanyum" },
+    { front: "Elektrik devrelerinde diyotun görevi nedir?", back: "Akımı tek yönde geçirmek" },
+    /* Kimya */
+    { front: "Organik bileşiklerde karbon atomları arasındaki bağ türleri nelerdir?", back: "Tekli, ikili, üçlü bağ" },
+    { front: "Alkanlar hangi tür karbon bağına sahiptir?", back: "Tekli bağ (doymuş)" },
+    { front: "Alkenler hangi tür karbon bağına sahiptir?", back: "İkili bağ" },
+    { front: "Elektrokimyada pil nasıl çalışır?", back: "Kimyasal enerjiyi elektrik enerjisine dönüştürerek" },
+    { front: "Elektroliz nedir?", back: "Elektrik enerjisiyle kimyasal tepkime gerçekleştirme" },
+    { front: "Polimer nedir?", back: "Küçük moleküllerin (monomer) birleşmesiyle oluşan büyük molekül" },
+    { front: "Doğal polimerlere örnek nedir?", back: "Nişasta, selüloz, protein" },
+    { front: "Sentetik polimerlere örnek nedir?", back: "Naylon, polietilen (plastik)" },
+    /* Biyoloji */
+    { front: "Ekosistemde madde döngüsüne örnek nedir?", back: "Azot döngüsü, karbon döngüsü" },
+    { front: "Popülasyon nedir?", back: "Belirli bir bölgede yaşayan aynı türe ait canlıların oluşturduğu topluluk" },
+    { front: "Biyolojik çeşitlilik neden önemlidir?", back: "Ekosistem dengesini ve sürdürülebilirliği sağlar" },
+    { front: "Evrim teorisinin öncülerinden biri kimdir?", back: "Charles Darwin" },
+    { front: "Doğal seçilim nedir?", back: "Ortama en uyumlu bireylerin hayatta kalıp üreme şansının artması" },
+    { front: "Biyoteknolojinin kullanım alanlarına örnek nedir?", back: "Tıp, tarım, endüstri" },
+    { front: "Kök hücrelerin özelliği nedir?", back: "Farklı hücre türlerine dönüşebilme yeteneği" },
+    { front: "Merkezi sinir sistemi hangi organlardan oluşur?", back: "Beyin ve omurilik" },
+    /* Tarih */
+    { front: "I. Dünya Savaşı'nın başlangıç nedeni olarak kabul edilen olay nedir?", back: "Avusturya-Macaristan veliahdının Saraybosna'da öldürülmesi" },
+    { front: "Mondros Ateşkes Antlaşması hangi yıl imzalanmıştır?", back: "1918" },
+    { front: "Kurtuluş Savaşı'nın kazanılmasıyla imzalanan barış antlaşması hangisidir?", back: "Lozan Barış Antlaşması" },
+    { front: "Cumhuriyet'in ilanından sonra yapılan ilk büyük inkılaplardan biri nedir?", back: "Halifeliğin kaldırılması" },
+    { front: "II. Dünya Savaşı hangi yıllar arasında yaşanmıştır?", back: "1939-1945" },
+    { front: "Türkiye II. Dünya Savaşı'na katılmış mıdır?", back: "Hayır, savaşın büyük bölümünde tarafsız kalmıştır" },
+    { front: "Soğuk Savaş dönemi hangi iki blok arasında yaşanmıştır?", back: "ABD önderliğindeki Batı Bloku ve SSCB önderliğindeki Doğu Bloku" },
+    { front: "Türkiye NATO'ya hangi yıl üye olmuştur?", back: "1952" },
+    /* Edebiyat */
+    { front: "Cumhuriyet dönemi edebiyatının temel özelliklerinden biri nedir?", back: "Toplumcu ve gerçekçi konulara yönelme" },
+    { front: "Yedi Meşaleciler hangi türde eser vermiştir?", back: "Şiir" },
+    { front: "Garip (I. Yeni) akımının öncüleri kimlerdir?", back: "Orhan Veli, Oktay Rifat, Melih Cevdet Anday" },
+    { front: "Garip akımının şiirde savunduğu temel görüş nedir?", back: "Şiirde ölçü, kafiye ve süslü dilin terk edilmesi" },
+    { front: "Nazım Hikmet hangi şiir akımıyla anılır?", back: "Serbest nazım ve toplumcu gerçekçi şiir" },
+    { front: "Cumhuriyet dönemi roman yazarlarından biri kimdir?", back: "Yaşar Kemal" },
+    { front: "İkinci Yeni şiir akımının temel özelliği nedir?", back: "Kapalı, imgeci ve soyut bir anlatım" },
+    { front: "Türk edebiyatında Nobel Ödülü kazanan yazar kimdir?", back: "Orhan Pamuk" }
+  ];
+
+  var lgsCards = [
+    /* Türkçe */
+    { front: "Bir metinde amaç-sonuç ilişkisi hangi bağlaçlarla kurulur?", back: "Diye, için gibi bağlaçlarla" },
+    { front: "Ama, fakat, lakin bağlaçları cümlede nasıl bir anlam ilişkisi kurar?", back: "Karşıtlık (zıtlık)" },
+    { front: "Bir cümlede koşul anlamı hangi ekle verilir?", back: "-se/-sa eki veya eğer kelimesiyle" },
+    { front: "Açıklayıcı anlatım ne amaçla kullanılır?", back: "Bilgi vermek, bir konuyu açıklamak için" },
+    { front: "Bir metindeki grafik/tablo sorularında dikkat edilmesi gereken nedir?", back: "Verilerin doğru okunup karşılaştırılması" },
+    { front: "Cümlede öznenin gizli olması ne anlama gelir?", back: "Fiilin çekiminden anlaşılan, ayrıca yazılmayan özne" },
+    { front: "Sözel mantık sorularında sıralama yaparken nelere dikkat edilir?", back: "Verilen ipuçlarının tümünü birlikte değerlendirmek" },
+    { front: "Bir yazıda tanık gösterme hangi düşünceyi geliştirme yoludur?", back: "Görüşü desteklemek için başka bir kişinin sözüne başvurma" },
+    { front: "Karşılaştırma düşünceyi geliştirme yollarından biri midir?", back: "Evet" },
+    { front: "Deyimlerin cümleye kattığı en önemli özellik nedir?", back: "Anlatımı etkili ve akıcı kılmak" },
+    /* Matematik */
+    { front: "EBOB nasıl bulunur?", back: "Ortak asal çarpanların en küçük üslüsünün çarpımıyla" },
+    { front: "Üslü sayılarda (a üzeri m) üzeri n ifadesinin sonucu nedir?", back: "a üzeri (m çarpı n)" },
+    { front: "Kareköklü sayılarda karekök a çarpı karekök b işleminin sonucu nedir?", back: "Karekök (a çarpı b)" },
+    { front: "Bir veri grubunun aralığı (açıklık) nasıl bulunur?", back: "En büyük değer eksi en küçük değer" },
+    { front: "Bir eşitsizliğin her iki tarafı negatif sayıyla çarpılırsa ne olur?", back: "Eşitsizlik yön değiştirir" },
+    { front: "İki bilinmeyenli bir denklemin grafiği nasıldır?", back: "Bir doğru" },
+    { front: "Üçgende kenarortay neyi ifade eder?", back: "Bir köşeyi karşı kenarın orta noktasına birleştiren doğru parçası" },
+    { front: "Dönüşüm geometrisinde öteleme nedir?", back: "Bir şeklin yönü ve boyutu değişmeden yer değiştirmesi" },
+    { front: "Bir dik prizmanın yüzey alanı nasıl hesaplanır?", back: "Taban alanlarının ve yanal yüzey alanının toplamı" },
+    { front: "Silindirin hacmi nasıl hesaplanır?", back: "π x yarıçap kare x yükseklik" },
+    { front: "Olasılıkta kesin olayın olasılığı kaçtır?", back: "1" },
+    { front: "Olasılıkta imkânsız olayın olasılığı kaçtır?", back: "0" },
+    /* Fen Bilimleri */
+    { front: "Mevsimlerin oluşmasında Dünya'nın ekseninin eğik olması nasıl etkilidir?", back: "Güneş ışınlarının geliş açısını değiştirir" },
+    { front: "DNA'nın yapı taşları nelerdir?", back: "Nükleotitler" },
+    { front: "Kalıtsal hastalıklara örnek nedir?", back: "Renk körlüğü, hemofili" },
+    { front: "Yükseklik ile atmosfer basıncı arasındaki ilişki nasıldır?", back: "Yükseklik arttıkça basınç azalır" },
+    { front: "Kaldıraç türü basit makine hangi işi kolaylaştırır?", back: "Az kuvvetle büyük yükleri kaldırmayı" },
+    { front: "Enerji dönüşümünde verim yüzde 100 olabilir mi?", back: "Hayır, her zaman bir miktar enerji ısı olarak kaybolur" },
+    { front: "Karbon döngüsünde bitkiler ne yapar?", back: "Fotosentezle karbondioksiti alır" },
+    { front: "Elektrik devresinde seri bağlı ampullerden biri sönerse diğerleri ne olur?", back: "Söner" },
+    { front: "Elektrik devresinde paralel bağlı ampullerden biri sönerse diğerleri ne olur?", back: "Yanmaya devam eder" },
+    { front: "Periyodik tabloda metaller genellikle nerede bulunur?", back: "Sol ve orta kısımda" },
+    /* T.C. İnkılap Tarihi ve Atatürkçülük */
+    { front: "Amasya Genelgesi hangi tarihte yayımlanmıştır?", back: "22 Haziran 1919" },
+    { front: "Erzurum ve Sivas kongrelerinin ortak amacı nedir?", back: "Milli birliği sağlamak ve işgallere karşı direnişi örgütlemek" },
+    { front: "Misak-ı Milli kararları hangi mecliste kabul edilmiştir?", back: "Son Osmanlı Mebusan Meclisi" },
+    { front: "I. İnönü Muharebesi'nin siyasi sonuçlarından biri nedir?", back: "TBMM'nin ilk anayasasının kabulü" },
+    { front: "Sakarya Meydan Muharebesi'nden sonra Mustafa Kemal'e verilen unvanlar nelerdir?", back: "Gazilik ve Mareşallik" },
+    { front: "Saltanat hangi tarihte kaldırılmıştır?", back: "1 Kasım 1922" },
+    { front: "Cumhuriyet'in ilanından sonraki ilk inkılaplardan biri hangisidir?", back: "Halifeliğin kaldırılması (1924)" },
+    { front: "Yurtta sulh, cihanda sulh sözü ne anlama gelir?", back: "Ülke içinde ve dünyada barışı esas almak" },
+    { front: "Türkiye Milletler Cemiyeti'ne hangi yıl üye olmuştur?", back: "1932" },
+    { front: "Montrö Boğazlar Sözleşmesi'nin önemi nedir?", back: "Boğazlar üzerinde Türk egemenliğinin sağlanması" },
+    /* Din Kültürü */
+    { front: "İslam'da ibadetlerin temel amacı nedir?", back: "Allah'a kulluk etmek" },
+    { front: "Vicdan özgürlüğü ne anlama gelir?", back: "Kişinin inanç ve düşüncelerini özgürce yaşayabilmesi" },
+    { front: "Veda Hutbesi'nde vurgulanan temel değerlerden biri nedir?", back: "İnsan hakları ve eşitlik" },
+    { front: "Dinin toplumsal birlik açısından önemi nedir?", back: "Ortak değerler etrafında toplumu bir araya getirmesi" },
+    /* İngilizce */
+    { front: "I am going to... kalıbı ne için kullanılır?", back: "Gelecekteki bir plandan bahsetmek için" },
+    { front: "Have you ever...? kalıbı hangi zamanla ilgilidir?", back: "Present Perfect Tense, geçmiş deneyim sormak için" },
+    { front: "Should kelimesi ne için kullanılır?", back: "Tavsiye vermek için" },
+    { front: "If I were you... ifadesi ne anlama gelir?", back: "Senin yerinde olsam..." }
+  ];
+
+  var yksCards = [
+    /* Türkçe */
+    { front: "Sözcükte genel-özel anlam ne demektir?", back: "Bir sözcüğün diğerinden daha geniş veya dar anlamlı olması" },
+    { front: "Anlam daralması ile anlam genişlemesi neyi ifade eder?", back: "Bir sözcüğün zamanla anlamının daralması veya genişlemesini" },
+    { front: "Gereksiz yardımcı fiil kullanımı hangi tür hataya girer?", back: "Anlatım bozukluğu" },
+    { front: "Cümlede öznellik hangi ögelerle anlaşılır?", back: "Kişisel görüş bildiren sözcük ve ifadelerle" },
+    { front: "Deneme türü nedir?", back: "Yazarın bir konudaki görüşlerini kesin yargıya varmadan anlattığı yazı türü" },
+    { front: "Makale türü nedir?", back: "Bilgi vermek veya görüş bildirmek için kesin yargılar içeren yazı türü" },
+    { front: "Türemiş sözcük nedir?", back: "Kök veya gövdeye yapım eki alarak yeni anlam kazanan sözcük" },
+    { front: "Gözlük sözcüğü hangi ek türünü almıştır?", back: "Yapım eki" },
+    { front: "Zarf tümleci cümlede neyi bildirir?", back: "Zaman, durum, yer-yön gibi anlamları" },
+    { front: "Giriş-gelişme-sonuç yapısı hangi tür yazılarda görülür?", back: "Kompozisyon türü yazılarda" },
+    /* Matematik (TYT/AYT) */
+    { front: "Birebir (injektif) fonksiyon ne demektir?", back: "Her elemanın görüntüsünün farklı olduğu fonksiyon" },
+    { front: "Örten (sürjektif) fonksiyon ne demektir?", back: "Değer kümesindeki her elemanın bir görüntü olduğu fonksiyon" },
+    { front: "Bir dizinin limiti sabit bir değere yaklaşıyorsa buna ne denir?", back: "Yakınsak dizi" },
+    { front: "Zincir kuralı ne zaman kullanılır?", back: "Bileşke fonksiyonların türevini alırken" },
+    { front: "Belirsiz integralde sonuca neden +C eklenir?", back: "Sabitin türevi sıfır olduğu için sonsuz çözüm olabileceğinden" },
+    { front: "İki doğrunun paralel olması ne anlama gelir?", back: "Eğimlerinin eşit olması" },
+    { front: "İki doğrunun dik olması ne anlama gelir?", back: "Eğimlerinin çarpımının -1 olması" },
+    { front: "Koşullu olasılık ne demektir?", back: "Bir olayın, başka bir olay gerçekleştiği bilindiğinde olma olasılığı" },
+    { front: "İki vektörün skaler (nokta) çarpımı ne verir?", back: "Bir sayı (skaler değer)" },
+    { front: "Karmaşık sayılarda bir sayının eşleniği nasıl bulunur?", back: "Sanal kısmın işareti değiştirilerek" },
+    { front: "Birim çember neyi ifade eder?", back: "Yarıçapı 1 olan, merkezi orijinde olan çember" },
+    { front: "İntegralin geometrik anlamı nedir?", back: "Bir fonksiyonun grafiği ile x ekseni arasındaki alan" },
+    /* Fizik */
+    { front: "Kapalı bir sistemde enerjinin korunumu ilkesi neyi ifade eder?", back: "Toplam enerjinin sabit kaldığını" },
+    { front: "Basit harmonik hareket örneği nedir?", back: "Sarkacın salınımı, yayın titreşimi" },
+    { front: "Elektrik yükleri arasındaki kuvveti hesaplayan yasa hangisidir?", back: "Coulomb Yasası" },
+    { front: "Manyetik alan içinde hareket eden yüklü parçacığa etki eden kuvvete ne denir?", back: "Lorentz kuvveti" },
+    /* Kimya */
+    { front: "Kimyasal tepkimelerde kütlenin korunumu yasasını kim ortaya koymuştur?", back: "Lavoisier" },
+    { front: "Gazların basınç-hacim ilişkisini açıklayan yasa hangisidir?", back: "Boyle Yasası" },
+    { front: "Derişim arttıkça tepkime hızı genellikle nasıl değişir?", back: "Artar" },
+    { front: "Elektrokimyasal hücrelerde anot neresidir?", back: "Yükseltgenmenin (oksidasyonun) gerçekleştiği elektrot" },
+    /* Biyoloji */
+    { front: "Ekolojide besin zinciri nedir?", back: "Canlılar arasındaki beslenme ilişkilerinin sıralı gösterimi" },
+    { front: "Homeostazi hangi sistemler tarafından sağlanır?", back: "Sinir ve endokrin (hormon) sistemleri" },
+    { front: "Genetik çeşitliliğin kaynaklarından biri nedir?", back: "Mutasyon" },
+    { front: "Bitkilerde gaz alışverişi hangi yapı ile gerçekleşir?", back: "Stoma (gözenek)" },
+    /* Tarih ve Coğrafya */
+    { front: "Osmanlı Devleti'nde tımar sistemi neye dayanır?", back: "Toprak gelirinin hizmet karşılığı dağıtılmasına" },
+    { front: "Sanayi Devrimi hangi ülkede başlamıştır?", back: "İngiltere" },
+    { front: "Fransız İhtilali'nin dünya tarihine en önemli katkısı nedir?", back: "Milliyetçilik, özgürlük, eşitlik fikirlerinin yayılması" },
+    { front: "I. Dünya Savaşı sonunda Osmanlı'yı bölen antlaşma hangisidir?", back: "Sevr Antlaşması" },
+    { front: "Türkiye'nin coğrafi konumu hangi iki kıta arasında köprü oluşturur?", back: "Asya ve Avrupa" },
+    { front: "Türkiye'de nüfusun en yoğun olduğu bölge hangisidir?", back: "Marmara Bölgesi" },
+    { front: "Türkiye'de en fazla yağış alan bölge hangisidir?", back: "Karadeniz Bölgesi" },
+    { front: "İklim ile bitki örtüsü arasındaki ilişki nasıldır?", back: "İklim koşulları bitki örtüsünü doğrudan belirler" },
+    { front: "Ekonomik coğrafyada birincil sektör hangi faaliyetleri kapsar?", back: "Tarım, hayvancılık, madencilik gibi faaliyetler" },
+    { front: "Nüfus piramidi neyi gösterir?", back: "Bir ülkenin yaş ve cinsiyete göre nüfus dağılımını" },
+    /* Felsefe */
+    { front: "Bilgi felsefesine ne denir?", back: "Epistemoloji" },
+    { front: "Varlık felsefesine ne denir?", back: "Ontoloji" },
+    { front: "Ahlak felsefesine ne denir?", back: "Etik" },
+    { front: "Sokrates'in felsefe yöntemine ne denir?", back: "Diyalektik (soru-cevap) yöntemi" },
+    { front: "Platon'un ideal devlet anlayışını anlattığı eseri nedir?", back: "Devlet (Politeia)" },
+    { front: "Aristoteles'e göre insanın mutluluğa ulaşma amacına ne denir?", back: "Eudaimonia" }
+  ];
+
+  var kpssGenelCards = [
+    /* Coğrafya */
+    { front: "Türkiye'nin yüzölçümü yaklaşık kaç km karedir?", back: "783.000 km²" },
+    { front: "Türkiye'nin en yüksek dağı hangisidir?", back: "Ağrı Dağı (5137 m)" },
+    { front: "Türkiye'nin en uzun nehri hangisidir?", back: "Kızılırmak" },
+    { front: "Türkiye'nin en büyük gölü hangisidir?", back: "Van Gölü" },
+    { front: "Türkiye kaç coğrafi bölgeye ayrılır?", back: "7" },
+    { front: "Türkiye'de nüfusu en fazla olan il hangisidir?", back: "İstanbul" },
+    { front: "Türkiye'nin başkenti neresidir?", back: "Ankara" },
+    { front: "Türkiye'yi çevreleyen denizler hangileridir?", back: "Karadeniz, Ege Denizi, Akdeniz, Marmara Denizi" },
+    { front: "Türkiye'nin kaç komşu ülkesi vardır?", back: "8" },
+    { front: "Türkiye'de en fazla zeytin üretimi hangi bölgede yapılır?", back: "Ege Bölgesi" },
+    { front: "Türkiye'de nüfus yoğunluğunun en az olduğu bölge hangisidir?", back: "Doğu Anadolu Bölgesi" },
+    { front: "İstanbul ve Çanakkale boğazları hangi denizleri birbirine bağlar?", back: "Karadeniz'i Ege ve Akdeniz'e bağlar" },
+    { front: "Türkiye'de sanayinin en yoğun olduğu bölge hangisidir?", back: "Marmara Bölgesi" },
+    { front: "Fırat ve Dicle nehirleri nereye dökülür?", back: "Basra Körfezi" },
+    { front: "Türkiye'de kış turizminin geliştiği bölgelere örnek nedir?", back: "Doğu Anadolu ve Karadeniz bölgeleri" },
+    /* Vatandaşlık ve Anayasa */
+    { front: "Türkiye Cumhuriyeti Anayasası'na göre egemenlik kime aittir?", back: "Millete, kayıtsız şartsız" },
+    { front: "Yasama yetkisi hangi organa aittir?", back: "TBMM" },
+    { front: "Yürütme yetkisi kime aittir?", back: "Cumhurbaşkanına" },
+    { front: "Yargı yetkisi kimin adına kullanılır?", back: "Türk Milleti adına bağımsız mahkemelerce" },
+    { front: "TBMM kaç milletvekilinden oluşur?", back: "600" },
+    { front: "Milletvekili seçilme yaşı kaçtır?", back: "18" },
+    { front: "Cumhurbaşkanı seçilme yaşı kaçtır?", back: "40" },
+    { front: "Anayasa Mahkemesi'nin temel görevi nedir?", back: "Kanunların anayasaya uygunluğunu denetlemek" },
+    { front: "Türkiye'de yerel yönetimlere örnek nedir?", back: "Belediye, il özel idaresi, köy" },
+    { front: "Seçme hakkı hangi yaşta kazanılır?", back: "18" },
+    { front: "Türkiye'de kuvvetler ayrılığı ilkesi hangi organlar arasındadır?", back: "Yasama, yürütme, yargı" },
+    { front: "Laiklik devletin hangi temel niteliğidir?", back: "Din ve devlet işlerinin ayrılığını ifade eden niteliği" },
+    { front: "Anayasa'nın değiştirilemez maddeleri hangi konuları kapsar?", back: "Devletin şekli (Cumhuriyet), bayrak, dil, başkent gibi temel nitelikler" },
+    { front: "Türkiye'nin resmi dili nedir?", back: "Türkçe" },
+    { front: "Anayasa değişikliği teklifi için TBMM'de en az kaçta kaç çoğunluk gerekir?", back: "Üçte biri (1/3)" },
+    /* Genel Kültür / Güncel */
+    { front: "Birleşmiş Milletler'in merkezi neresidir?", back: "New York" },
+    { front: "Türkiye Birleşmiş Milletler'e hangi yıl üye olmuştur?", back: "1945" },
+    { front: "NATO'nun açılımı nedir?", back: "Kuzey Atlantik Antlaşması Örgütü" },
+    { front: "Avrupa Birliği'nin ortak para birimi nedir?", back: "Euro" },
+    { front: "Dünyanın en kalabalık kıtası hangisidir?", back: "Asya" },
+    { front: "Dünyanın en büyük okyanusu hangisidir?", back: "Büyük Okyanus (Pasifik)" },
+    { front: "Türkiye'nin resmi para birimi nedir?", back: "Türk Lirası" },
+    { front: "Nobel barış ödülü dışındaki Nobel ödülleri hangi ülkede verilir?", back: "İsveç" },
+    { front: "Dünya Sağlık Örgütü'nün kısaltması nedir?", back: "DSÖ (WHO)" },
+    { front: "Olimpiyat Oyunları kaç yılda bir düzenlenir?", back: "4 yılda bir" },
+    /* Türkçe / Genel Yetenek */
+    { front: "KPSS Türkçe testinde en sık sorulan konulardan biri hangisidir?", back: "Paragraf (anlam bilgisi)" },
+    { front: "Eş anlamlılık ile yakın anlamlılık arasındaki fark nedir?", back: "Eş anlamlıda anlam birebir aynı, yakın anlamlıda benzer ama tam aynı değildir" },
+    { front: "Anlatım bozukluğu nedir?", back: "Cümlenin anlam veya yapı yönünden hatalı kurulması" },
+    { front: "İki nokta (:) işareti ne zaman kullanılır?", back: "Örnek verilecek veya açıklama yapılacak cümlelerden önce" },
+    { front: "Kesme işareti özel isimlere gelen eklerde nasıl kullanılır?", back: "Özel isim ile eki ayırmak için konur" },
+    { front: "Paragrafta giriş cümlesi hangi özelliği taşımaz?", back: "Kendinden önce bir cümle gerektirme özelliğini" },
+    { front: "Yapım eki ile çekim eki arasındaki fark nedir?", back: "Yapım eki yeni sözcük türetir, çekim eki sözcüğün görevini değiştirir" },
+    { front: "de/da bağlacı nasıl yazılır?", back: "Ayrı yazılır" },
+    { front: "-de/-da hâl eki nasıl yazılır?", back: "Bitişik yazılır" },
+    { front: "Bir cümleden birden fazla anlam çıkabiliyorsa buna ne denir?", back: "Anlam belirsizliği (kapalılık)" }
+  ];
+
   var decks = {
     "kpss-tarih-2026": { label: "KPSS Tarih 2026", short: "KPSS Tarih 2026", cards: kpssTarihCards },
+    "kpss-genel": { label: "KPSS Genel Kültür", short: "KPSS Genel Kültür", cards: kpssGenelCards },
+    "yks": { label: "YKS (TYT-AYT)", short: "YKS", cards: yksCards },
+    "lgs": { label: "LGS", short: "LGS", cards: lgsCards },
+    "sinif-1": { label: "1. Sınıf", short: "1. Sınıf", cards: sinif1Cards },
+    "sinif-2": { label: "2. Sınıf", short: "2. Sınıf", cards: sinif2Cards },
+    "sinif-3": { label: "3. Sınıf", short: "3. Sınıf", cards: sinif3Cards },
+    "sinif-4": { label: "4. Sınıf", short: "4. Sınıf", cards: sinif4Cards },
+    "sinif-5": { label: "5. Sınıf", short: "5. Sınıf", cards: sinif5Cards },
+    "sinif-6": { label: "6. Sınıf", short: "6. Sınıf", cards: sinif6Cards },
+    "sinif-7": { label: "7. Sınıf", short: "7. Sınıf", cards: sinif7Cards },
+    "sinif-8": { label: "8. Sınıf", short: "8. Sınıf", cards: sinif8Cards },
+    "sinif-9": { label: "9. Sınıf", short: "9. Sınıf", cards: sinif9Cards },
+    "sinif-10": { label: "10. Sınıf", short: "10. Sınıf", cards: sinif10Cards },
+    "sinif-11": { label: "11. Sınıf", short: "11. Sınıf", cards: sinif11Cards },
+    "sinif-12": { label: "12. Sınıf", short: "12. Sınıf", cards: sinif12Cards },
     "genel": { label: "Örnek Genel Bilgi", short: "Genel Bilgi", cards: genelCards }
   };
-  var deckOrder = ["kpss-tarih-2026", "genel"];
+  var deckOrder = [
+    "kpss-tarih-2026", "kpss-genel", "yks", "lgs",
+    "sinif-1", "sinif-2", "sinif-3", "sinif-4", "sinif-5", "sinif-6",
+    "sinif-7", "sinif-8", "sinif-9", "sinif-10", "sinif-11", "sinif-12",
+    "genel"
+  ];
 
   function cardsKey(deckId) { return CARDS_KEY_PREFIX + deckId; }
 
@@ -438,7 +1330,7 @@
   var showingBack = false;
   var stage = "question"; // "question" | "confirm"
 
-  var deckTabs = document.getElementById("deckTabs");
+  var deckSelect = document.getElementById("deckSelect");
   var cardForm = document.getElementById("cardForm");
   var cardFrontInput = document.getElementById("cardFront");
   var cardBackInput = document.getElementById("cardBack");
@@ -577,11 +1469,9 @@
     if (mistakesOverlay) mistakesOverlay.classList.add("hidden");
   }
 
-  function renderDeckTabs() {
-    if (!deckTabs) return;
-    deckTabs.querySelectorAll(".tool-btn").forEach(function (btn) {
-      btn.classList.toggle("active", btn.dataset.deck === activeDeckId);
-    });
+  function syncDeckSelect() {
+    if (!deckSelect) return;
+    deckSelect.value = activeDeckId;
   }
 
   function startRound() {
@@ -693,7 +1583,7 @@
     cards = loadCards(activeDeckId);
     mistakes = loadMistakes(activeDeckId);
     renderMistakesCount();
-    renderDeckTabs();
+    syncDeckSelect();
     startRound();
     showToast(decks[activeDeckId].short + " destesi yüklendi.");
   }
@@ -731,11 +1621,9 @@
     showToast("İlerleme sıfırlandı.");
   });
 
-  if (deckTabs) {
-    deckTabs.addEventListener("click", function (e) {
-      var btn = e.target.closest(".tool-btn");
-      if (!btn) return;
-      switchDeck(btn.dataset.deck);
+  if (deckSelect) {
+    deckSelect.addEventListener("change", function () {
+      switchDeck(deckSelect.value);
     });
   }
 
@@ -839,7 +1727,7 @@
   }
 
   renderMistakesCount();
-  renderDeckTabs();
+  syncDeckSelect();
   startRound();
 
   /* ---------- Study timer ---------- */
