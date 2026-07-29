@@ -429,18 +429,22 @@
   }
 
   /* ---------- Flashcards ---------- */
+  var MISTAKES_KEY_PREFIX = "ezberlab.mistakes.";
   var activeDeckId = loadActiveDeckId();
   var cards = loadCards(activeDeckId);
   var queue = [];
   var known = 0;
   var currentIndex = 0;
   var showingBack = false;
+  var stage = "question"; // "question" | "confirm"
 
   var deckTabs = document.getElementById("deckTabs");
   var cardForm = document.getElementById("cardForm");
   var cardFrontInput = document.getElementById("cardFront");
   var cardBackInput = document.getElementById("cardBack");
   var cardCountEl = document.getElementById("cardCount");
+  var mistakesBtn = document.getElementById("mistakesBtn");
+  var mistakesCountEl = document.getElementById("mistakesCount");
   var shuffleBtn = document.getElementById("shuffleBtn");
   var resetProgressBtn = document.getElementById("resetProgressBtn");
   var restoreDeckBtn = document.getElementById("restoreDeckBtn");
@@ -459,9 +463,19 @@
   var remainingStat = document.getElementById("remainingStat");
   var doneScore = document.getElementById("doneScore");
 
+  var flashActionsPrimary = document.getElementById("flashActionsPrimary");
+  var flashActionsConfirm = document.getElementById("flashActionsConfirm");
   var dontKnowBtn = document.getElementById("dontKnowBtn");
   var knowBtn = document.getElementById("knowBtn");
+  var correctBtn = document.getElementById("correctBtn");
+  var wrongBtn = document.getElementById("wrongBtn");
   var restartBtn = document.getElementById("restartBtn");
+
+  var mistakesOverlay = document.getElementById("mistakesOverlay");
+  var mistakesList = document.getElementById("mistakesList");
+  var closeMistakesBtn = document.getElementById("closeMistakesBtn");
+  var clearMistakesBtn = document.getElementById("clearMistakesBtn");
+  var practiceMistakesBtn = document.getElementById("practiceMistakesBtn");
 
   function shuffle(arr) {
     for (var i = arr.length - 1; i > 0; i--) {
@@ -469,6 +483,96 @@
       var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
     }
     return arr;
+  }
+
+  function mistakesKey(deckId) { return MISTAKES_KEY_PREFIX + deckId; }
+
+  function loadMistakes(deckId) {
+    try {
+      var raw = localStorage.getItem(mistakesKey(deckId));
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return [];
+  }
+
+  function saveMistakes(deckId, list) {
+    try { localStorage.setItem(mistakesKey(deckId), JSON.stringify(list)); } catch (e) {}
+  }
+
+  var mistakes = loadMistakes(activeDeckId);
+
+  function renderMistakesCount() {
+    if (mistakesCountEl) mistakesCountEl.textContent = "(" + mistakes.length + ")";
+  }
+
+  function renderMistakesList() {
+    if (!mistakesList) return;
+    mistakesList.innerHTML = "";
+    if (!mistakes.length) {
+      var empty = document.createElement("p");
+      empty.className = "mistakes-empty";
+      empty.textContent = "Henüz yanlış bildiğin bir kart yok. 🎉";
+      mistakesList.appendChild(empty);
+      return;
+    }
+    mistakes.forEach(function (m, i) {
+      var row = document.createElement("div");
+      row.className = "mistake-row";
+
+      var text = document.createElement("div");
+      var q = document.createElement("p");
+      q.className = "mistake-front";
+      q.textContent = m.front;
+      var a = document.createElement("p");
+      a.className = "mistake-back";
+      a.textContent = m.back;
+      text.appendChild(q);
+      text.appendChild(a);
+
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "mistake-remove";
+      removeBtn.setAttribute("aria-label", "Sepetten çıkar");
+      removeBtn.textContent = "✕";
+      removeBtn.addEventListener("click", function () {
+        mistakes.splice(i, 1);
+        saveMistakes(activeDeckId, mistakes);
+        renderMistakesCount();
+        renderMistakesList();
+      });
+
+      row.appendChild(text);
+      row.appendChild(removeBtn);
+      mistakesList.appendChild(row);
+    });
+  }
+
+  function addMistake(card) {
+    var exists = mistakes.some(function (m) { return m.front === card.front; });
+    if (!exists) mistakes.push({ front: card.front, back: card.back });
+    saveMistakes(activeDeckId, mistakes);
+    renderMistakesCount();
+  }
+
+  function removeMistake(card) {
+    var idx = -1;
+    for (var i = 0; i < mistakes.length; i++) {
+      if (mistakes[i].front === card.front) { idx = i; break; }
+    }
+    if (idx !== -1) {
+      mistakes.splice(idx, 1);
+      saveMistakes(activeDeckId, mistakes);
+      renderMistakesCount();
+    }
+  }
+
+  function openMistakes() {
+    renderMistakesList();
+    if (mistakesOverlay) mistakesOverlay.classList.remove("hidden");
+  }
+
+  function closeMistakes() {
+    if (mistakesOverlay) mistakesOverlay.classList.add("hidden");
   }
 
   function renderDeckTabs() {
@@ -489,9 +593,27 @@
 
   function updateHint() {
     if (!flashHint) return;
-    flashHint.textContent = showingBack
-      ? "Cevabı gördün mü? Devam etmek için Biliyorum ya da Bilmiyorum'a tekrar bas."
-      : "Kartı çevirmek için üzerine tıkla ya da Biliyorum / Bilmiyorum'a bas.";
+    if (stage === "confirm") {
+      flashHint.textContent = "Cevabı doğru bildin mi? Aşağıdan seç.";
+    } else if (showingBack) {
+      flashHint.textContent = "Cevabı gördün mü? Devam etmek için Bilmiyorum'a tekrar bas.";
+    } else {
+      flashHint.textContent = "Kartı çevirmek için üzerine tıkla ya da Biliyorum / Bilmiyorum'a bas.";
+    }
+  }
+
+  function showPrimaryActions() {
+    stage = "question";
+    if (flashActionsPrimary) flashActionsPrimary.classList.remove("hidden");
+    if (flashActionsConfirm) flashActionsConfirm.classList.add("hidden");
+    updateHint();
+  }
+
+  function showConfirmActions() {
+    stage = "confirm";
+    if (flashActionsPrimary) flashActionsPrimary.classList.add("hidden");
+    if (flashActionsConfirm) flashActionsConfirm.classList.remove("hidden");
+    updateHint();
   }
 
   function renderStage() {
@@ -528,31 +650,28 @@
 
     knownStat.textContent = known;
     remainingStat.textContent = queue.length - currentIndex;
-    updateHint();
+    showPrimaryActions();
   }
 
   function flipCard() {
-    if (currentIndex >= queue.length) return;
+    if (currentIndex >= queue.length || stage === "confirm") return;
     showingBack = !showingBack;
     flashFront.classList.toggle("hidden", showingBack);
     flashBack.classList.toggle("hidden", !showingBack);
     updateHint();
   }
 
-  function nextCard(markKnown) {
+  function gradeCard(markKnown) {
     if (currentIndex >= queue.length) return;
-    if (markKnown) known++;
+    var card = cards[queue[currentIndex]];
+    if (markKnown) {
+      known++;
+      removeMistake(card);
+    } else {
+      addMistake(card);
+    }
     currentIndex++;
     renderStage();
-  }
-
-  function handleGrade(markKnown) {
-    if (currentIndex >= queue.length) return;
-    if (!showingBack) {
-      flipCard();
-    } else {
-      nextCard(markKnown);
-    }
   }
 
   function switchDeck(deckId) {
@@ -560,14 +679,37 @@
     activeDeckId = deckId;
     saveActiveDeckId(activeDeckId);
     cards = loadCards(activeDeckId);
+    mistakes = loadMistakes(activeDeckId);
+    renderMistakesCount();
     renderDeckTabs();
     startRound();
     showToast(decks[activeDeckId].short + " destesi yüklendi.");
   }
 
   if (flashCard) flashCard.addEventListener("click", flipCard);
-  if (knowBtn) knowBtn.addEventListener("click", function () { handleGrade(true); });
-  if (dontKnowBtn) dontKnowBtn.addEventListener("click", function () { handleGrade(false); });
+
+  if (knowBtn) {
+    knowBtn.addEventListener("click", function () {
+      if (currentIndex >= queue.length) return;
+      if (!showingBack) flipCard();
+      showConfirmActions();
+    });
+  }
+
+  if (dontKnowBtn) {
+    dontKnowBtn.addEventListener("click", function () {
+      if (currentIndex >= queue.length) return;
+      if (!showingBack) {
+        flipCard();
+      } else {
+        gradeCard(false);
+      }
+    });
+  }
+
+  if (correctBtn) correctBtn.addEventListener("click", function () { gradeCard(true); });
+  if (wrongBtn) wrongBtn.addEventListener("click", function () { gradeCard(false); });
+
   if (restartBtn) restartBtn.addEventListener("click", startRound);
   if (resetProgressBtn) resetProgressBtn.addEventListener("click", function () {
     startRound();
@@ -614,6 +756,9 @@
       if (!confirm("Bu deste, eklediğin/sildiğin kartlar dahil varsayılan haline sıfırlanacak. Devam edilsin mi?")) return;
       cards = decks[activeDeckId].cards.slice();
       saveCards(activeDeckId, cards);
+      mistakes = [];
+      saveMistakes(activeDeckId, mistakes);
+      renderMistakesCount();
       startRound();
       showToast(decks[activeDeckId].short + " varsayılana sıfırlandı.");
     });
@@ -625,11 +770,60 @@
       if (!confirm("Bu destedeki tüm kartları silmek istediğine emin misin?")) return;
       cards = [];
       saveCards(activeDeckId, cards);
+      mistakes = [];
+      saveMistakes(activeDeckId, mistakes);
+      renderMistakesCount();
       startRound();
       showToast("Tüm kartlar silindi.");
     });
   }
 
+  if (mistakesBtn) mistakesBtn.addEventListener("click", openMistakes);
+  if (closeMistakesBtn) closeMistakesBtn.addEventListener("click", closeMistakes);
+  if (mistakesOverlay) {
+    mistakesOverlay.addEventListener("click", function (e) {
+      if (e.target === mistakesOverlay) closeMistakes();
+    });
+  }
+
+  if (clearMistakesBtn) {
+    clearMistakesBtn.addEventListener("click", function () {
+      if (!mistakes.length) return;
+      if (!confirm("Yanlış sepetini tamamen temizlemek istediğine emin misin?")) return;
+      mistakes = [];
+      saveMistakes(activeDeckId, mistakes);
+      renderMistakesCount();
+      renderMistakesList();
+      showToast("Yanlış sepeti temizlendi.");
+    });
+  }
+
+  if (practiceMistakesBtn) {
+    practiceMistakesBtn.addEventListener("click", function () {
+      if (!mistakes.length) return;
+      var indices = [];
+      mistakes.forEach(function (m) {
+        var idx = -1;
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].front === m.front) { idx = i; break; }
+        }
+        if (idx !== -1) indices.push(idx);
+      });
+      if (!indices.length) {
+        showToast("Bu kartlar artık destede bulunmuyor.");
+        return;
+      }
+      queue = indices;
+      known = 0;
+      currentIndex = 0;
+      showingBack = false;
+      renderStage();
+      closeMistakes();
+      showToast(indices.length + " yanlış kartla çalışıyorsun.");
+    });
+  }
+
+  renderMistakesCount();
   renderDeckTabs();
   startRound();
 
