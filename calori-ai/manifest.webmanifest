@@ -1,6 +1,6 @@
 {
-  "name": "Calori AI",
-  "short_name": "Calori AI",
+  "name": "Porsiyon AI",
+  "short_name": "Porsiyon AI",
   "description": "Yapay zekâ destekli kalori ve besin takibi: yemek günlüğü, fotoğraftan kalori tahmini ve kişisel hedefler.",
   "start_url": "./index.html",
   "scope": "./",

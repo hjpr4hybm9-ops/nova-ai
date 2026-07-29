@@ -8,7 +8,7 @@
   const AI_CHAT_KEY = "caloriai.aiChat.v1";
   const DEFAULT_GOALS = { kcal: 2000, protein: 100, carbs: 250, fat: 65 };
   const MEAL_LABELS = { kahvalti: "Kahvaltı", ogle: "Öğle Yemeği", aksam: "Akşam Yemeği", atistirmalik: "Atıştırmalık" };
-  const AI_GREETING = 'Merhaba! Ben Calori AI 🥗 Ne yediğini yaz (örn. "1 tabak mercimek çorbası ve 2 dilim ekmek") ya da kameradan fotoğrafını göster, kalorisini tahmin edeyim.';
+  const AI_GREETING = 'Merhaba! Ben Porsiyon AI 🥗 Ne yediğini yaz (örn. "1 tabak mercimek çorbası ve 2 dilim ekmek") ya da kameradan fotoğrafını göster, kalorisini tahmin edeyim.';
 
   const fmtKcal = (n) => Math.round(n || 0).toLocaleString("tr-TR") + " kcal";
   const fmtG = (n) => (Math.round((n || 0) * 10) / 10).toLocaleString("tr-TR") + " g";
@@ -542,7 +542,7 @@
   const cameraCancelBtn = document.getElementById("cameraCancelBtn");
   const clearAiChatBtn = document.getElementById("clearAiChatBtn");
 
-  const SYSTEM_PROMPT = `Sen Calori AI'sın, beslenme ve kalori tahmini konusunda uzmanlaşmış bir yapay zekâ asistanısın.
+  const SYSTEM_PROMPT = `Sen Porsiyon AI'sın, beslenme ve kalori tahmini konusunda uzmanlaşmış bir yapay zekâ asistanısın.
 Türkçe konuş, sıcak ve motive edici bir dille yaz. Kullanıcı bir yemek adı, açıklaması ya da fotoğrafı paylaştığında bu yemeğin YAKLAŞIK besin değerlerini tahmin et.
 Cevabını HER ZAMAN tam olarak aşağıdaki formatta, ayrı satırlar halinde ver (başka başlık ekleme, etiketleri değiştirme):
 
@@ -724,7 +724,7 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
     isThinking = true;
     aiSend.disabled = true;
     aiInput.disabled = true;
-    aiHint.textContent = "Calori AI hesaplıyor...";
+    aiHint.textContent = "Porsiyon AI hesaplıyor...";
 
     const typingRow = addTyping();
 
@@ -763,7 +763,7 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
 
   clearAiChatBtn.addEventListener("click", () => {
     if (isThinking) {
-      showToast("Calori AI hesaplarken sohbet temizlenemez, biraz bekle.");
+      showToast("Porsiyon AI hesaplarken sohbet temizlenemez, biraz bekle.");
       return;
     }
     aiMessages = [{ role: "ai", text: AI_GREETING }];
@@ -1093,7 +1093,7 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "calori-ai-yedek-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.download = "porsiyon-ai-yedek-" + new Date().toISOString().slice(0, 10) + ".json";
     a.click();
     URL.revokeObjectURL(url);
   });
