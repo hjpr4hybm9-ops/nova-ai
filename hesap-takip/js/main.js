@@ -5,6 +5,9 @@
   const NOTES_KEY = "transfer212.notes.v1";
   const THEME_KEY = "transfer212.theme";
   const PUTER_KEY = "transfer212_data";
+  const RATES_KEY = "transfer212.rates.v1";
+
+  const CURRENCY_SYMBOLS = { TRY: "₺", USD: "$", EUR: "€" };
 
   const fmtTRY = (n) =>
     new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(n || 0);
@@ -13,6 +16,18 @@
     const d = new Date(isoDate + "T00:00:00");
     return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
   };
+
+  function fmtForeign(n, currency) {
+    return CURRENCY_SYMBOLS[currency] + n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function fmtTxAmount(t) {
+    if (t.currency && t.currency !== "TRY") {
+      const orig = t.originalAmount != null ? t.originalAmount : t.amount;
+      return `${fmtForeign(orig, t.currency)} (${fmtTRY(t.amount)})`;
+    }
+    return fmtTRY(t.amount);
+  }
 
   function escapeHtml(str) {
     const div = document.createElement("div");
@@ -113,18 +128,40 @@
   txForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const type = document.getElementById("txType").value;
-    const amount = parseFloat(document.getElementById("txAmount").value);
+    const rawAmount = parseFloat(document.getElementById("txAmount").value);
+    const currency = document.getElementById("txCurrency").value;
     const date = document.getElementById("txDate").value;
     const category = document.getElementById("txCategory").value.trim();
     const desc = document.getElementById("txDesc").value.trim();
 
-    if (!amount || amount <= 0 || !date || !category) return;
+    if (!rawAmount || rawAmount <= 0 || !date || !category) return;
+
+    let amount = rawAmount;
+    if (currency !== "TRY") {
+      const rate = exchangeRates[currency];
+      if (!rate) {
+        window.alert(
+          `${currency} kuru girilmedi. Lütfen Hesap Araçları > Döviz Çevirici bölümünden kuru girin veya güncelleyin.`
+        );
+        return;
+      }
+      amount = rawAmount * rate;
+    }
 
     const editId = txEditId.value;
     if (editId) {
       const idx = transactions.findIndex((t) => t.id === editId);
       if (idx !== -1) {
-        transactions[idx] = { ...transactions[idx], type, amount, date, category, desc };
+        transactions[idx] = {
+          ...transactions[idx],
+          type,
+          amount,
+          currency,
+          originalAmount: rawAmount,
+          date,
+          category,
+          desc,
+        };
       }
       exitEditMode();
     } else {
@@ -132,6 +169,8 @@
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
         type,
         amount,
+        currency,
+        originalAmount: rawAmount,
         date,
         category,
         desc,
@@ -195,7 +234,7 @@
         <td>${t.type === "gelir" ? "Gelir" : "Gider"}</td>
         <td>${escapeHtml(t.category)}</td>
         <td>${escapeHtml(t.desc || "—")}</td>
-        <td class="amount-${t.type}">${t.type === "gider" ? "-" : "+"}${fmtTRY(t.amount)}</td>
+        <td class="amount-${t.type}">${t.type === "gider" ? "-" : "+"}${fmtTxAmount(t)}</td>
         <td>
           <button class="edit-btn" data-id="${t.id}" title="Düzenle">✎</button>
           <button class="del-btn" data-id="${t.id}" title="Sil">✕</button>
@@ -209,7 +248,8 @@
         const t = transactions.find((tx) => tx.id === btn.dataset.id);
         if (!t) return;
         document.getElementById("txType").value = t.type;
-        document.getElementById("txAmount").value = t.amount;
+        document.getElementById("txAmount").value = t.originalAmount != null ? t.originalAmount : t.amount;
+        document.getElementById("txCurrency").value = t.currency || "TRY";
         document.getElementById("txDate").value = t.date;
         document.getElementById("txCategory").value = t.category;
         document.getElementById("txDesc").value = t.desc || "";
@@ -258,7 +298,7 @@
           ${escapeHtml(t.category)}
           <div class="recent-meta">${fmtDateTR(t.date)}</div>
         </span>
-        <span class="amount-${t.type}">${t.type === "gider" ? "-" : "+"}${fmtTRY(t.amount)}</span>
+        <span class="amount-${t.type}">${t.type === "gider" ? "-" : "+"}${fmtTxAmount(t)}</span>
       `;
       recentList.appendChild(li);
     });
@@ -805,6 +845,105 @@
     }
     calcRender();
   });
+
+  // ---------- Currency converter (USD/EUR -> TRY) ----------
+  let exchangeRates = { USD: null, EUR: null, updatedAt: null };
+
+  function loadRates() {
+    try {
+      const raw = localStorage.getItem(RATES_KEY);
+      if (raw) exchangeRates = JSON.parse(raw);
+    } catch {
+      // keep defaults
+    }
+  }
+
+  const fxRateUSDInput = document.getElementById("fxRateUSD");
+  const fxRateEURInput = document.getElementById("fxRateEUR");
+  const fxUpdatedAt = document.getElementById("fxUpdatedAt");
+  const fxRefreshBtn = document.getElementById("fxRefreshBtn");
+  const fxSaveRatesBtn = document.getElementById("fxSaveRatesBtn");
+
+  function applyRatesToInputs() {
+    fxRateUSDInput.value = exchangeRates.USD ? exchangeRates.USD.toFixed(4) : "";
+    fxRateEURInput.value = exchangeRates.EUR ? exchangeRates.EUR.toFixed(4) : "";
+    fxUpdatedAt.textContent = exchangeRates.updatedAt
+      ? "Son güncelleme: " + new Date(exchangeRates.updatedAt).toLocaleString("tr-TR")
+      : "Kur bilgisi girilmedi.";
+  }
+
+  function saveRates(rates) {
+    exchangeRates = rates;
+    localStorage.setItem(RATES_KEY, JSON.stringify(exchangeRates));
+    applyRatesToInputs();
+  }
+
+  fxSaveRatesBtn.addEventListener("click", () => {
+    const usd = parseFloat(fxRateUSDInput.value);
+    const eur = parseFloat(fxRateEURInput.value);
+    saveRates({
+      USD: usd > 0 ? usd : exchangeRates.USD,
+      EUR: eur > 0 ? eur : exchangeRates.EUR,
+      updatedAt: new Date().toISOString(),
+    });
+  });
+
+  async function fetchRates(silent) {
+    fxRefreshBtn.disabled = true;
+    const originalLabel = fxRefreshBtn.textContent;
+    if (!silent) fxRefreshBtn.textContent = "Güncelleniyor...";
+    try {
+      const [usdRes, eurRes] = await Promise.all([
+        fetch("https://api.frankfurter.app/latest?from=USD&to=TRY"),
+        fetch("https://api.frankfurter.app/latest?from=EUR&to=TRY"),
+      ]);
+      if (!usdRes.ok || !eurRes.ok) throw new Error("fx fetch failed");
+      const usdData = await usdRes.json();
+      const eurData = await eurRes.json();
+      saveRates({
+        USD: usdData.rates.TRY,
+        EUR: eurData.rates.TRY,
+        updatedAt: new Date().toISOString(),
+      });
+    } catch {
+      if (!silent) {
+        window.alert("Kur bilgisi alınamadı. İnternet bağlantınızı kontrol edin veya kuru elle girip \"Kurları Kaydet\"e basın.");
+      }
+    } finally {
+      fxRefreshBtn.disabled = false;
+      fxRefreshBtn.textContent = originalLabel;
+    }
+  }
+  fxRefreshBtn.addEventListener("click", () => fetchRates(false));
+
+  function convertAmount(amount, from, to) {
+    const rates = { TRY: 1, USD: exchangeRates.USD, EUR: exchangeRates.EUR };
+    if (!rates[from] || !rates[to]) return null;
+    const inTRY = amount * rates[from];
+    return inTRY / rates[to];
+  }
+
+  document.getElementById("fxForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const amount = parseFloat(document.getElementById("fxAmount").value);
+    const from = document.getElementById("fxFrom").value;
+    const to = document.getElementById("fxTo").value;
+    const result = document.getElementById("fxResult");
+    if (!amount) return;
+
+    const converted = convertAmount(amount, from, to);
+    if (converted === null) {
+      result.innerHTML = `<div class="result-row"><span>Kur bilgisi eksik</span><strong>—</strong></div>`;
+      result.classList.add("show");
+      return;
+    }
+    result.innerHTML = `<div class="result-row"><span>Sonuç</span><strong>${fmtForeign(converted, to)}</strong></div>`;
+    result.classList.add("show");
+  });
+
+  loadRates();
+  applyRatesToInputs();
+  fetchRates(true);
 
   // ---------- Puter (giriş yap + bulut yedekleme) ----------
   const puterBtn = document.getElementById("puterBtn");
