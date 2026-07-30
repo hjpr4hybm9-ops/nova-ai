@@ -125,7 +125,12 @@
     txCancelEdit.style.display = "none";
   }
 
-  txForm.addEventListener("submit", (e) => {
+  document.getElementById("txCurrency").addEventListener("change", (e) => {
+    const c = e.target.value;
+    if (c !== "TRY" && !exchangeRates[c]) fetchRates(true);
+  });
+
+  txForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const type = document.getElementById("txType").value;
     const rawAmount = parseFloat(document.getElementById("txAmount").value);
@@ -138,12 +143,17 @@
 
     let amount = rawAmount;
     if (currency !== "TRY") {
-      const rate = exchangeRates[currency];
+      let rate = exchangeRates[currency];
       if (!rate) {
-        window.alert(
-          `${currency} kuru girilmedi. Lütfen Hesap Araçları > Döviz Çevirici bölümünden kuru girin veya güncelleyin.`
-        );
-        return;
+        await fetchRates(true);
+        rate = exchangeRates[currency];
+      }
+      if (!rate) {
+        const manual = window.prompt(`Güncel kur alınamadı. 1 ${currency} kaç TL? (örn: 35.20)`);
+        const manualRate = parseFloat((manual || "").replace(",", "."));
+        if (!manualRate || manualRate <= 0) return;
+        rate = manualRate;
+        saveRates({ ...exchangeRates, [currency]: manualRate, updatedAt: new Date().toISOString() });
       }
       amount = rawAmount * rate;
     }
@@ -848,6 +858,7 @@
 
   // ---------- Currency converter (USD/EUR -> TRY) ----------
   let exchangeRates = { USD: null, EUR: null, updatedAt: null };
+  let ratesFetchPromise = null;
 
   function loadRates() {
     try {
@@ -858,91 +869,75 @@
     }
   }
 
-  const fxRateUSDInput = document.getElementById("fxRateUSD");
-  const fxRateEURInput = document.getElementById("fxRateEUR");
+  const fxRateUSDDisplay = document.getElementById("fxRateUSDDisplay");
+  const fxRateEURDisplay = document.getElementById("fxRateEURDisplay");
   const fxUpdatedAt = document.getElementById("fxUpdatedAt");
   const fxRefreshBtn = document.getElementById("fxRefreshBtn");
-  const fxSaveRatesBtn = document.getElementById("fxSaveRatesBtn");
+  const fxAmountInput = document.getElementById("fxAmount");
+  const fxCurrencySelect = document.getElementById("fxCurrencySelect");
+  const fxResultLive = document.getElementById("fxResultLive");
 
-  function applyRatesToInputs() {
-    fxRateUSDInput.value = exchangeRates.USD ? exchangeRates.USD.toFixed(4) : "";
-    fxRateEURInput.value = exchangeRates.EUR ? exchangeRates.EUR.toFixed(4) : "";
+  function renderRates() {
+    fxRateUSDDisplay.textContent = exchangeRates.USD ? fmtTRY(exchangeRates.USD) : "—";
+    fxRateEURDisplay.textContent = exchangeRates.EUR ? fmtTRY(exchangeRates.EUR) : "—";
     fxUpdatedAt.textContent = exchangeRates.updatedAt
       ? "Son güncelleme: " + new Date(exchangeRates.updatedAt).toLocaleString("tr-TR")
-      : "Kur bilgisi girilmedi.";
+      : "Kur bilgisi henüz alınamadı.";
+    updateLiveConvert();
   }
 
   function saveRates(rates) {
     exchangeRates = rates;
     localStorage.setItem(RATES_KEY, JSON.stringify(exchangeRates));
-    applyRatesToInputs();
+    renderRates();
   }
 
-  fxSaveRatesBtn.addEventListener("click", () => {
-    const usd = parseFloat(fxRateUSDInput.value);
-    const eur = parseFloat(fxRateEURInput.value);
-    saveRates({
-      USD: usd > 0 ? usd : exchangeRates.USD,
-      EUR: eur > 0 ? eur : exchangeRates.EUR,
-      updatedAt: new Date().toISOString(),
-    });
-  });
+  function updateLiveConvert() {
+    const amount = parseFloat(fxAmountInput.value);
+    const currency = fxCurrencySelect.value;
+    const rate = exchangeRates[currency];
+    fxResultLive.textContent = amount && rate ? fmtTRY(amount * rate) : "₺0,00";
+  }
+  fxAmountInput.addEventListener("input", updateLiveConvert);
+  fxCurrencySelect.addEventListener("change", updateLiveConvert);
 
-  async function fetchRates(silent) {
-    fxRefreshBtn.disabled = true;
-    const originalLabel = fxRefreshBtn.textContent;
-    if (!silent) fxRefreshBtn.textContent = "Güncelleniyor...";
-    try {
-      const [usdRes, eurRes] = await Promise.all([
-        fetch("https://api.frankfurter.app/latest?from=USD&to=TRY"),
-        fetch("https://api.frankfurter.app/latest?from=EUR&to=TRY"),
-      ]);
-      if (!usdRes.ok || !eurRes.ok) throw new Error("fx fetch failed");
-      const usdData = await usdRes.json();
-      const eurData = await eurRes.json();
-      saveRates({
-        USD: usdData.rates.TRY,
-        EUR: eurData.rates.TRY,
-        updatedAt: new Date().toISOString(),
-      });
-    } catch {
-      if (!silent) {
-        window.alert("Kur bilgisi alınamadı. İnternet bağlantınızı kontrol edin veya kuru elle girip \"Kurları Kaydet\"e basın.");
+  // Fetches live rates; on failure, keeps whatever is cached. Only one
+  // fetch runs at a time so repeated triggers (page load, currency pick,
+  // refresh button) share the same in-flight request.
+  function fetchRates(silent) {
+    if (ratesFetchPromise) return ratesFetchPromise;
+    fxRefreshBtn.classList.add("spinning");
+    ratesFetchPromise = (async () => {
+      try {
+        const [usdRes, eurRes] = await Promise.all([
+          fetch("https://api.frankfurter.app/latest?from=USD&to=TRY"),
+          fetch("https://api.frankfurter.app/latest?from=EUR&to=TRY"),
+        ]);
+        if (!usdRes.ok || !eurRes.ok) throw new Error("fx fetch failed");
+        const usdData = await usdRes.json();
+        const eurData = await eurRes.json();
+        saveRates({
+          USD: usdData.rates.TRY,
+          EUR: eurData.rates.TRY,
+          updatedAt: new Date().toISOString(),
+        });
+        return true;
+      } catch {
+        if (!silent) {
+          window.alert("Kur bilgisi alınamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.");
+        }
+        return false;
+      } finally {
+        fxRefreshBtn.classList.remove("spinning");
+        ratesFetchPromise = null;
       }
-    } finally {
-      fxRefreshBtn.disabled = false;
-      fxRefreshBtn.textContent = originalLabel;
-    }
+    })();
+    return ratesFetchPromise;
   }
   fxRefreshBtn.addEventListener("click", () => fetchRates(false));
 
-  function convertAmount(amount, from, to) {
-    const rates = { TRY: 1, USD: exchangeRates.USD, EUR: exchangeRates.EUR };
-    if (!rates[from] || !rates[to]) return null;
-    const inTRY = amount * rates[from];
-    return inTRY / rates[to];
-  }
-
-  document.getElementById("fxForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const amount = parseFloat(document.getElementById("fxAmount").value);
-    const from = document.getElementById("fxFrom").value;
-    const to = document.getElementById("fxTo").value;
-    const result = document.getElementById("fxResult");
-    if (!amount) return;
-
-    const converted = convertAmount(amount, from, to);
-    if (converted === null) {
-      result.innerHTML = `<div class="result-row"><span>Kur bilgisi eksik</span><strong>—</strong></div>`;
-      result.classList.add("show");
-      return;
-    }
-    result.innerHTML = `<div class="result-row"><span>Sonuç</span><strong>${fmtForeign(converted, to)}</strong></div>`;
-    result.classList.add("show");
-  });
-
   loadRates();
-  applyRatesToInputs();
+  renderRates();
   fetchRates(true);
 
   // ---------- Puter (giriş yap + bulut yedekleme) ----------

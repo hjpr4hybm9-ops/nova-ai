@@ -113,6 +113,13 @@ body {
 
 .icon-btn:hover { filter: brightness(1.15); }
 
+.icon-btn.spinning svg { animation: icon-spin .8s linear infinite; }
+
+@keyframes icon-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 :root[data-theme="dark"] .icon-moon { display: none; }
 :root[data-theme="light"] .icon-sun { display: none; }
 
@@ -648,6 +655,45 @@ input:focus, select:focus, textarea:focus {
   color: var(--text-dim);
   font-size: 12px;
   margin-top: 10px;
+}
+
+/* Currency converter */
+.fx-rate-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.fx-rate-line strong {
+  color: var(--text);
+}
+
+.fx-quick-convert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.fx-quick-convert input {
+  width: 100px;
+}
+
+.fx-quick-convert select {
+  width: auto;
+}
+
+.fx-equals {
+  color: var(--text-dim);
+  font-weight: 700;
+}
+
+.fx-quick-convert strong {
+  font-size: 18px;
+  color: var(--accent);
 }
 
 /* Calculator */

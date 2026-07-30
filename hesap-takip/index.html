@@ -228,50 +228,29 @@
     <div class="grid-3">
 
       <div class="box">
-        <h3>Döviz Çevirici</h3>
-        <p class="hint-text">Güncel kur otomatik çekilir; internet yoksa kuru elle girebilirsiniz.</p>
-        <div class="field-row">
-          <label>
-            1 USD (₺)
-            <input type="number" id="fxRateUSD" min="0" step="0.0001" placeholder="—">
-          </label>
-          <label>
-            1 EUR (₺)
-            <input type="number" id="fxRateEUR" min="0" step="0.0001" placeholder="—">
-          </label>
+        <div class="box-header">
+          <h3>Döviz Çevirici</h3>
+          <button type="button" class="icon-btn" id="fxRefreshBtn" title="Kurları güncelle" aria-label="Kurları güncelle">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4v5h5M20 20v-5h-5M4.5 9a8 8 0 0 1 14.4-3M19.5 15a8 8 0 0 1-14.4 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
-        <div class="form-actions">
-          <button type="button" class="btn btn-outline btn-sm" id="fxSaveRatesBtn">Kurları Kaydet</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="fxRefreshBtn">Otomatik Güncelle</button>
+        <div class="fx-rate-line">
+          <span>1 USD = <strong id="fxRateUSDDisplay">—</strong></span>
+          <span>1 EUR = <strong id="fxRateEURDisplay">—</strong></span>
         </div>
-        <p class="hint-text" id="fxUpdatedAt">Kur bilgisi girilmedi.</p>
+        <p class="hint-text" id="fxUpdatedAt">Kur bilgisi alınıyor...</p>
 
-        <form id="fxForm" class="tool-form" style="margin-top:16px;">
-          <div class="field-row">
-            <label>
-              Miktar
-              <input type="number" id="fxAmount" min="0" step="0.01" value="1" required>
-            </label>
-            <label>
-              Kimden
-              <select id="fxFrom">
-                <option value="USD" selected>$ USD</option>
-                <option value="EUR">€ EUR</option>
-                <option value="TRY">₺ TRY</option>
-              </select>
-            </label>
-            <label>
-              Kime
-              <select id="fxTo">
-                <option value="TRY" selected>₺ TRY</option>
-                <option value="USD">$ USD</option>
-                <option value="EUR">€ EUR</option>
-              </select>
-            </label>
-          </div>
-          <button type="submit" class="btn btn-outline">Çevir</button>
-        </form>
-        <div class="tool-result" id="fxResult"></div>
+        <div class="fx-quick-convert">
+          <input type="number" id="fxAmount" min="0" step="0.01" value="1">
+          <select id="fxCurrencySelect">
+            <option value="USD" selected>USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+          <span class="fx-equals">=</span>
+          <strong id="fxResultLive">₺0,00</strong>
+        </div>
       </div>
 
       <div class="box">
