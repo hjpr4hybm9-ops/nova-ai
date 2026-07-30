@@ -41,6 +41,7 @@
       <button class="tab-btn active" data-tab="ozet">Genel Bakış</button>
       <button class="tab-btn" data-tab="islemler">İşlemler</button>
       <button class="tab-btn" data-tab="notlar">Notlar</button>
+      <button class="tab-btn" data-tab="borclar">Borçlar</button>
       <button class="tab-btn" data-tab="araclar">Hesap Araçları</button>
       <button class="tab-btn" data-tab="ayarlar">Ayarlar</button>
     </nav>
@@ -223,6 +224,105 @@
     </div>
   </section>
 
+  <!-- BORÇLAR -->
+  <section class="panel" id="panel-borclar">
+    <div class="cards">
+      <div class="card income">
+        <span class="card-label">Toplam Alacak</span>
+        <span class="card-value" id="sumAlacak">₺0,00</span>
+      </div>
+      <div class="card expense">
+        <span class="card-label">Toplam Borç</span>
+        <span class="card-value" id="sumBorc">₺0,00</span>
+      </div>
+      <div class="card balance">
+        <span class="card-label">Net Durum</span>
+        <span class="card-value" id="sumNetBorc">₺0,00</span>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3 id="debtFormTitle">Yeni Borç / Alacak Ekle</h3>
+      <form id="debtForm" class="tx-form">
+        <input type="hidden" id="debtEditId" value="">
+        <div class="field-row">
+          <label>
+            Tür
+            <select id="debtType" required>
+              <option value="alacak">Alacak (Bana borçlu)</option>
+              <option value="borc">Borç (Ben borçluyum)</option>
+            </select>
+          </label>
+          <label>
+            Tutar
+            <input type="number" id="debtAmount" min="0" step="0.01" placeholder="0,00" required>
+          </label>
+          <label>
+            Para Birimi
+            <select id="debtCurrency">
+              <option value="TRY" selected>₺ TRY</option>
+              <option value="USD">$ USD</option>
+              <option value="EUR">€ EUR</option>
+            </select>
+          </label>
+          <label>
+            Tarih
+            <input type="date" id="debtDate" required>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="grow">
+            Kişi / Kurum
+            <input type="text" id="debtPerson" placeholder="Örn. Ahmet, Kredi Kartı" required>
+          </label>
+          <label class="grow">
+            Açıklama (opsiyonel)
+            <input type="text" id="debtDesc" placeholder="Not ekle...">
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="debtSubmitBtn">Kaydet</button>
+          <button type="button" class="btn btn-ghost" id="debtCancelEdit" style="display:none;">İptal</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <h3>Tüm Borçlar / Alacaklar</h3>
+        <div class="filters">
+          <select id="debtFilterType">
+            <option value="">Tümü</option>
+            <option value="alacak">Alacak</option>
+            <option value="borc">Borç</option>
+          </select>
+          <select id="debtFilterStatus">
+            <option value="">Tümü</option>
+            <option value="unpaid">Ödenmedi</option>
+            <option value="paid">Ödendi</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Tür</th>
+              <th>Kişi</th>
+              <th>Açıklama</th>
+              <th>Tutar</th>
+              <th>Durum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="debtTableBody"></tbody>
+        </table>
+      </div>
+      <p class="empty-hint" id="debtEmptyHint">Henüz borç/alacak eklenmedi.</p>
+    </div>
+  </section>
+
   <!-- HESAP ARAÇLARI -->
   <section class="panel" id="panel-araclar">
     <div class="grid-3">
@@ -250,6 +350,17 @@
           </select>
           <span class="fx-equals">=</span>
           <strong id="fxResultLive">₺0,00</strong>
+        </div>
+
+        <div class="fx-quick-convert">
+          <input type="number" id="fxTryAmount" min="0" step="0.01" value="200">
+          <span class="fx-static-currency">₺</span>
+          <span class="fx-equals">=</span>
+          <strong id="fxResultLiveReverse">$0,00</strong>
+          <select id="fxReverseCurrencySelect">
+            <option value="USD" selected>USD</option>
+            <option value="EUR">EUR</option>
+          </select>
         </div>
       </div>
 

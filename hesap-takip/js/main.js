@@ -3,6 +3,7 @@
 
   const STORAGE_KEY = "hesapDefterim.transactions.v1";
   const NOTES_KEY = "transfer212.notes.v1";
+  const DEBTS_KEY = "transfer212.debts.v1";
   const THEME_KEY = "transfer212.theme";
   const PUTER_KEY = "transfer212_data";
   const RATES_KEY = "transfer212.rates.v1";
@@ -64,8 +65,23 @@
     pushToPuter();
   }
 
+  function loadDebts() {
+    try {
+      const raw = localStorage.getItem(DEBTS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveDebts(list) {
+    localStorage.setItem(DEBTS_KEY, JSON.stringify(list));
+    pushToPuter();
+  }
+
   let transactions = loadTx();
   let notes = loadNotes();
+  let debts = loadDebts();
 
   // ---------- Theme ----------
   const themeToggle = document.getElementById("themeToggle");
@@ -141,30 +157,8 @@
 
     if (!rawAmount || rawAmount <= 0 || !date || !category) return;
 
-    let amount = rawAmount;
-    if (currency !== "TRY") {
-      let rate = exchangeRates[currency];
-      if (!rate) {
-        await fetchRates(true);
-        rate = exchangeRates[currency];
-      }
-      if (!rate) {
-        let manualRate = null;
-        while (manualRate === null) {
-          const manual = window.prompt(`Güncel kur alınamadı. 1 ${currency} kaç TL? (örn: 35.20)`);
-          if (manual === null) return; // vazgeçildi
-          const parsed = parseFloat(manual.replace(",", "."));
-          if (isPlausibleRate(parsed)) {
-            manualRate = parsed;
-          } else {
-            window.alert("Geçerli bir kur girin (örn: 35.20). Çok küçük veya çok büyük bir değer girildi.");
-          }
-        }
-        rate = manualRate;
-        saveRates({ ...exchangeRates, [currency]: manualRate, updatedAt: new Date().toISOString() });
-      }
-      amount = rawAmount * rate;
-    }
+    const amount = await resolveTRYAmount(rawAmount, currency);
+    if (amount === null) return; // kullanıcı kuru girmekten vazgeçti
 
     const editId = txEditId.value;
     if (editId) {
@@ -779,6 +773,163 @@
     if (e.key === "Escape" && noteModal.classList.contains("open")) closeNoteModal();
   });
 
+  // ---------- Debts (Borçlar) ----------
+  const debtForm = document.getElementById("debtForm");
+  const debtDate = document.getElementById("debtDate");
+  const debtEditId = document.getElementById("debtEditId");
+  const debtSubmitBtn = document.getElementById("debtSubmitBtn");
+  const debtCancelEdit = document.getElementById("debtCancelEdit");
+  const debtFormTitle = document.getElementById("debtFormTitle");
+  const debtTableBody = document.getElementById("debtTableBody");
+  const debtEmptyHint = document.getElementById("debtEmptyHint");
+  const debtFilterType = document.getElementById("debtFilterType");
+  const debtFilterStatus = document.getElementById("debtFilterStatus");
+  const sumAlacakEl = document.getElementById("sumAlacak");
+  const sumBorcEl = document.getElementById("sumBorc");
+  const sumNetBorcEl = document.getElementById("sumNetBorc");
+  debtDate.valueAsDate = new Date();
+
+  document.getElementById("debtCurrency").addEventListener("change", (e) => {
+    const c = e.target.value;
+    if (c !== "TRY" && !exchangeRates[c]) fetchRates(true);
+  });
+
+  function exitDebtEditMode() {
+    debtEditId.value = "";
+    debtSubmitBtn.textContent = "Kaydet";
+    debtFormTitle.textContent = "Yeni Borç / Alacak Ekle";
+    debtCancelEdit.style.display = "none";
+  }
+
+  debtForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const type = document.getElementById("debtType").value;
+    const rawAmount = parseFloat(document.getElementById("debtAmount").value);
+    const currency = document.getElementById("debtCurrency").value;
+    const date = document.getElementById("debtDate").value;
+    const person = document.getElementById("debtPerson").value.trim();
+    const desc = document.getElementById("debtDesc").value.trim();
+
+    if (!rawAmount || rawAmount <= 0 || !date || !person) return;
+
+    const amount = await resolveTRYAmount(rawAmount, currency);
+    if (amount === null) return;
+
+    const editId = debtEditId.value;
+    if (editId) {
+      const idx = debts.findIndex((d) => d.id === editId);
+      if (idx !== -1) {
+        debts[idx] = { ...debts[idx], type, amount, currency, originalAmount: rawAmount, date, person, desc };
+      }
+      exitDebtEditMode();
+    } else {
+      debts.push({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        type,
+        amount,
+        currency,
+        originalAmount: rawAmount,
+        date,
+        person,
+        desc,
+        paid: false,
+      });
+    }
+    saveDebts(debts);
+    debtForm.reset();
+    debtDate.valueAsDate = new Date();
+    renderDebts();
+  });
+
+  debtCancelEdit.addEventListener("click", () => {
+    debtForm.reset();
+    debtDate.valueAsDate = new Date();
+    exitDebtEditMode();
+  });
+
+  debtFilterType.addEventListener("change", renderDebts);
+  debtFilterStatus.addEventListener("change", renderDebts);
+
+  function filteredDebts() {
+    return debts
+      .filter((d) => (debtFilterType.value ? d.type === debtFilterType.value : true))
+      .filter((d) => {
+        if (!debtFilterStatus.value) return true;
+        return debtFilterStatus.value === "paid" ? d.paid : !d.paid;
+      })
+      .sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  function renderDebts() {
+    const rows = filteredDebts();
+    debtTableBody.innerHTML = "";
+    debtEmptyHint.style.display = rows.length ? "none" : "block";
+
+    rows.forEach((d) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${fmtDateTR(d.date)}</td>
+        <td>${d.type === "alacak" ? "Alacak" : "Borç"}</td>
+        <td>${escapeHtml(d.person)}</td>
+        <td>${escapeHtml(d.desc || "—")}</td>
+        <td class="amount-${d.type === "alacak" ? "gelir" : "gider"}">${fmtTxAmount(d)}</td>
+        <td>
+          <button class="debt-status-badge ${d.paid ? "paid" : "unpaid"}" data-id="${d.id}">
+            ${d.paid ? "Ödendi" : "Ödenmedi"}
+          </button>
+        </td>
+        <td>
+          <button class="edit-btn" data-id="${d.id}" title="Düzenle">✎</button>
+          <button class="del-btn" data-id="${d.id}" title="Sil">✕</button>
+        </td>
+      `;
+      debtTableBody.appendChild(tr);
+    });
+
+    debtTableBody.querySelectorAll(".debt-status-badge").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const d = debts.find((debt) => debt.id === btn.dataset.id);
+        if (!d) return;
+        d.paid = !d.paid;
+        saveDebts(debts);
+        renderDebts();
+      });
+    });
+
+    debtTableBody.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const d = debts.find((debt) => debt.id === btn.dataset.id);
+        if (!d) return;
+        document.getElementById("debtType").value = d.type;
+        document.getElementById("debtAmount").value = d.originalAmount != null ? d.originalAmount : d.amount;
+        document.getElementById("debtCurrency").value = d.currency || "TRY";
+        document.getElementById("debtDate").value = d.date;
+        document.getElementById("debtPerson").value = d.person;
+        document.getElementById("debtDesc").value = d.desc || "";
+        debtEditId.value = d.id;
+        debtSubmitBtn.textContent = "Güncelle";
+        debtFormTitle.textContent = "Borç / Alacağı Düzenle";
+        debtCancelEdit.style.display = "inline-flex";
+        document.querySelector('.tab-btn[data-tab="borclar"]').click();
+        debtForm.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    debtTableBody.querySelectorAll(".del-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        debts = debts.filter((d) => d.id !== btn.dataset.id);
+        saveDebts(debts);
+        renderDebts();
+      });
+    });
+
+    const totalAlacak = debts.filter((d) => d.type === "alacak" && !d.paid).reduce((s, d) => s + d.amount, 0);
+    const totalBorc = debts.filter((d) => d.type === "borc" && !d.paid).reduce((s, d) => s + d.amount, 0);
+    sumAlacakEl.textContent = fmtTRY(totalAlacak);
+    sumBorcEl.textContent = fmtTRY(totalBorc);
+    sumNetBorcEl.textContent = fmtTRY(totalAlacak - totalBorc);
+  }
+
   // ---------- Loan calculator ----------
   document.getElementById("loanForm").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -898,6 +1049,16 @@
   const fxAmountInput = document.getElementById("fxAmount");
   const fxCurrencySelect = document.getElementById("fxCurrencySelect");
   const fxResultLive = document.getElementById("fxResultLive");
+  const fxTryAmountInput = document.getElementById("fxTryAmount");
+  const fxReverseCurrencySelect = document.getElementById("fxReverseCurrencySelect");
+  const fxResultLiveReverse = document.getElementById("fxResultLiveReverse");
+
+  function flashRateChange(el, prev, next) {
+    if (prev == null || next == null || prev === next) return;
+    el.classList.remove("rate-flash-up", "rate-flash-down");
+    void el.offsetWidth; // animasyonu yeniden başlatmak için reflow tetikle
+    el.classList.add(next > prev ? "rate-flash-up" : "rate-flash-down");
+  }
 
   function renderRates() {
     fxRateUSDDisplay.textContent = exchangeRates.USD ? fmtTRY(exchangeRates.USD) : "—";
@@ -906,12 +1067,17 @@
       ? "Son güncelleme: " + new Date(exchangeRates.updatedAt).toLocaleString("tr-TR")
       : "Kur bilgisi henüz alınamadı.";
     updateLiveConvert();
+    updateReverseConvert();
   }
 
   function saveRates(rates) {
+    const prevUSD = exchangeRates.USD;
+    const prevEUR = exchangeRates.EUR;
     exchangeRates = rates;
     localStorage.setItem(RATES_KEY, JSON.stringify(exchangeRates));
     renderRates();
+    flashRateChange(fxRateUSDDisplay, prevUSD, rates.USD);
+    flashRateChange(fxRateEURDisplay, prevEUR, rates.EUR);
   }
 
   function updateLiveConvert() {
@@ -923,10 +1089,19 @@
   fxAmountInput.addEventListener("input", updateLiveConvert);
   fxCurrencySelect.addEventListener("change", updateLiveConvert);
 
+  function updateReverseConvert() {
+    const amount = parseFloat(fxTryAmountInput.value);
+    const currency = fxReverseCurrencySelect.value;
+    const rate = exchangeRates[currency];
+    fxResultLiveReverse.textContent = amount && rate ? fmtForeign(amount / rate, currency) : CURRENCY_SYMBOLS[currency] + "0,00";
+  }
+  fxTryAmountInput.addEventListener("input", updateReverseConvert);
+  fxReverseCurrencySelect.addEventListener("change", updateReverseConvert);
+
   // Fetches live rates; on failure (or an implausible response), keeps
   // whatever is cached instead of overwriting it with garbage. Only one
   // fetch runs at a time so repeated triggers (page load, currency pick,
-  // refresh button) share the same in-flight request.
+  // refresh button, periodic poll) share the same in-flight request.
   function fetchRates(silent) {
     if (ratesFetchPromise) return ratesFetchPromise;
     fxRefreshBtn.classList.add("spinning");
@@ -961,6 +1136,42 @@
   }
   fxRefreshBtn.addEventListener("click", () => fetchRates(false));
 
+  // Kur her an değişebildiği için düzenli aralıklarla ve sekme tekrar
+  // görünür olduğunda sessizce tazele; en ufak (1 kuruş) değişiklik bile
+  // renkli bir "flaş" ile fxRateUSDDisplay/fxRateEURDisplay üzerinde belli olur.
+  setInterval(() => fetchRates(true), 60000);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") fetchRates(true);
+  });
+
+  // İşlem ve borç formlarının ortak para birimi çözümleyicisi: kur
+  // cache'te varsa direkt kullanır, yoksa sessizce tazelemeyi dener,
+  // o da olmazsa kullanıcıya tek seferlik kur sorar (iptal ederse null döner).
+  async function resolveTRYAmount(rawAmount, currency) {
+    if (currency === "TRY") return rawAmount;
+    let rate = exchangeRates[currency];
+    if (!rate) {
+      await fetchRates(true);
+      rate = exchangeRates[currency];
+    }
+    if (!rate) {
+      let manualRate = null;
+      while (manualRate === null) {
+        const manual = window.prompt(`Güncel kur alınamadı. 1 ${currency} kaç TL? (örn: 35.20)`);
+        if (manual === null) return null; // vazgeçildi
+        const parsed = parseFloat(manual.replace(",", "."));
+        if (isPlausibleRate(parsed)) {
+          manualRate = parsed;
+        } else {
+          window.alert("Geçerli bir kur girin (örn: 35.20). Çok küçük veya çok büyük bir değer girildi.");
+        }
+      }
+      rate = manualRate;
+      saveRates({ ...exchangeRates, [currency]: manualRate, updatedAt: new Date().toISOString() });
+    }
+    return rawAmount * rate;
+  }
+
   loadRates();
   renderRates();
   fetchRates(true);
@@ -991,7 +1202,7 @@
   async function pushToPuter() {
     if (!puterSignedIn || typeof puter === "undefined" || !puter.kv) return;
     try {
-      await puter.kv.set(PUTER_KEY, JSON.stringify({ transactions, notes }));
+      await puter.kv.set(PUTER_KEY, JSON.stringify({ transactions, notes, debts }));
     } catch {
       // sessizce yut, yerel veriler zaten kaydedildi
     }
@@ -1005,13 +1216,16 @@
         const data = JSON.parse(remote);
         transactions = Array.isArray(data.transactions) ? data.transactions : transactions;
         notes = Array.isArray(data.notes) ? data.notes : notes;
+        debts = Array.isArray(data.debts) ? data.debts : debts;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
         localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        localStorage.setItem(DEBTS_KEY, JSON.stringify(debts));
       } else {
         await pushToPuter();
       }
       renderAll();
       renderNotes();
+      renderDebts();
     } catch {
       // bağlantı yoksa yerel veriyle devam et
     }
@@ -1158,7 +1372,7 @@
 
   // ---------- Data management ----------
   document.getElementById("exportDataBtn").addEventListener("click", () => {
-    const data = { transactions, notes, exportedAt: new Date().toISOString() };
+    const data = { transactions, notes, debts, exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -1180,10 +1394,13 @@
         const data = JSON.parse(reader.result);
         if (Array.isArray(data.transactions)) transactions = data.transactions;
         if (Array.isArray(data.notes)) notes = data.notes;
+        if (Array.isArray(data.debts)) debts = data.debts;
         saveTx(transactions);
         saveNotes(notes);
+        saveDebts(debts);
         renderAll();
         renderNotes();
+        renderDebts();
         window.alert("Veriler başarıyla içe aktarıldı.");
       } catch {
         window.alert("Dosya okunamadı. Geçerli bir yedek dosyası seçin.");
@@ -1194,13 +1411,16 @@
   });
 
   document.getElementById("clearDataBtn").addEventListener("click", () => {
-    if (!window.confirm("Tüm işlemler ve notlar silinecek. Emin misiniz?")) return;
+    if (!window.confirm("Tüm işlemler, notlar ve borç/alacak kayıtları silinecek. Emin misiniz?")) return;
     transactions = [];
     notes = [];
+    debts = [];
     saveTx(transactions);
     saveNotes(notes);
+    saveDebts(debts);
     renderAll();
     renderNotes();
+    renderDebts();
   });
 
   // ---------- Loading screen ----------
@@ -1218,6 +1438,7 @@
   // ---------- Init ----------
   renderAll();
   renderNotes();
+  renderDebts();
   Promise.race([initPuter(), timeout(3000)]).then(() => {
     hideLoadingScreen();
     checkAppLock();
