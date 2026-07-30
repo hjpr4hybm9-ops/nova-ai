@@ -1,0 +1,11 @@
+{
+  "name": "DamlaSu — Su İçme Hatırlatıcı",
+  "short_name": "DamlaSu",
+  "description": "Günlük su hedefi takibi ve düzenli su içme hatırlatıcısı.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071019",
+  "theme_color": "#071019",
+  "icons": []
+}
