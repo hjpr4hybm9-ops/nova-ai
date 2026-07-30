@@ -696,6 +696,47 @@ input:focus, select:focus, textarea:focus {
   color: var(--accent);
 }
 
+.fx-static-currency {
+  color: var(--text-dim);
+  font-weight: 700;
+}
+
+.rate-flash-up { animation: rate-flash-up 1.6s ease-out; }
+.rate-flash-down { animation: rate-flash-down 1.6s ease-out; }
+
+@keyframes rate-flash-up {
+  0% { color: var(--income); }
+  100% { color: inherit; }
+}
+
+@keyframes rate-flash-down {
+  0% { color: var(--expense); }
+  100% { color: inherit; }
+}
+
+/* Debts */
+.debt-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.debt-status-badge.paid {
+  background: color-mix(in srgb, var(--income) 18%, transparent);
+  color: var(--income);
+}
+
+.debt-status-badge.unpaid {
+  background: color-mix(in srgb, var(--expense) 18%, transparent);
+  color: var(--expense);
+}
+
 /* Calculator */
 .calc-display {
   width: 100%;
