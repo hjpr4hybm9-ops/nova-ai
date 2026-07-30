@@ -149,9 +149,17 @@
         rate = exchangeRates[currency];
       }
       if (!rate) {
-        const manual = window.prompt(`Güncel kur alınamadı. 1 ${currency} kaç TL? (örn: 35.20)`);
-        const manualRate = parseFloat((manual || "").replace(",", "."));
-        if (!manualRate || manualRate <= 0) return;
+        let manualRate = null;
+        while (manualRate === null) {
+          const manual = window.prompt(`Güncel kur alınamadı. 1 ${currency} kaç TL? (örn: 35.20)`);
+          if (manual === null) return; // vazgeçildi
+          const parsed = parseFloat(manual.replace(",", "."));
+          if (isPlausibleRate(parsed)) {
+            manualRate = parsed;
+          } else {
+            window.alert("Geçerli bir kur girin (örn: 35.20). Çok küçük veya çok büyük bir değer girildi.");
+          }
+        }
         rate = manualRate;
         saveRates({ ...exchangeRates, [currency]: manualRate, updatedAt: new Date().toISOString() });
       }
@@ -857,13 +865,27 @@
   });
 
   // ---------- Currency converter (USD/EUR -> TRY) ----------
+  // 1 USD/EUR has been well above 5 TRY and nowhere near 500 TRY for
+  // years; anything outside that band is a bad fetch/typo, not a real
+  // rate, and must never be shown or saved (this is what let "1 USD = 2
+  // TRY" slip through before).
+  function isPlausibleRate(n) {
+    return typeof n === "number" && Number.isFinite(n) && n > 5 && n < 500;
+  }
+
   let exchangeRates = { USD: null, EUR: null, updatedAt: null };
   let ratesFetchPromise = null;
 
   function loadRates() {
     try {
       const raw = localStorage.getItem(RATES_KEY);
-      if (raw) exchangeRates = JSON.parse(raw);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      exchangeRates = {
+        USD: isPlausibleRate(parsed.USD) ? parsed.USD : null,
+        EUR: isPlausibleRate(parsed.EUR) ? parsed.EUR : null,
+        updatedAt: parsed.updatedAt || null,
+      };
     } catch {
       // keep defaults
     }
@@ -901,7 +923,8 @@
   fxAmountInput.addEventListener("input", updateLiveConvert);
   fxCurrencySelect.addEventListener("change", updateLiveConvert);
 
-  // Fetches live rates; on failure, keeps whatever is cached. Only one
+  // Fetches live rates; on failure (or an implausible response), keeps
+  // whatever is cached instead of overwriting it with garbage. Only one
   // fetch runs at a time so repeated triggers (page load, currency pick,
   // refresh button) share the same in-flight request.
   function fetchRates(silent) {
@@ -909,18 +932,20 @@
     fxRefreshBtn.classList.add("spinning");
     ratesFetchPromise = (async () => {
       try {
-        const [usdRes, eurRes] = await Promise.all([
-          fetch("https://api.frankfurter.app/latest?from=USD&to=TRY"),
-          fetch("https://api.frankfurter.app/latest?from=EUR&to=TRY"),
-        ]);
-        if (!usdRes.ok || !eurRes.ok) throw new Error("fx fetch failed");
-        const usdData = await usdRes.json();
-        const eurData = await eurRes.json();
-        saveRates({
-          USD: usdData.rates.TRY,
-          EUR: eurData.rates.TRY,
-          updatedAt: new Date().toISOString(),
-        });
+        // Single request, USD-based: TRY is the USD rate directly, and
+        // EUR/TRY is derived as TRY-per-USD ÷ EUR-per-USD.
+        const res = await fetch("https://open.er-api.com/v6/latest/USD");
+        if (!res.ok) throw new Error("fx fetch failed");
+        const data = await res.json();
+        const usdToTry = data.rates && data.rates.TRY;
+        const usdToEur = data.rates && data.rates.EUR;
+        const eurToTry = usdToEur ? usdToTry / usdToEur : null;
+
+        if (!isPlausibleRate(usdToTry) || !isPlausibleRate(eurToTry)) {
+          throw new Error("fx rate out of range");
+        }
+
+        saveRates({ USD: usdToTry, EUR: eurToTry, updatedAt: new Date().toISOString() });
         return true;
       } catch {
         if (!silent) {
