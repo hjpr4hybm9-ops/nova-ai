@@ -115,6 +115,12 @@
             <input type="number" id="customAmount" min="1" step="1" placeholder="Özel miktar (ml)">
             <button type="submit" class="btn btn-outline">Ekle</button>
           </form>
+
+          <div class="scan-launch">
+            <button type="button" class="btn btn-outline" id="scanGlassBtn">📷 Bardağın Fotoğrafını Çek ve Hesapla</button>
+            <p class="scan-hint">Fotoğraf üzerinde bardağın yüksekliğini ve genişliğini işaretle, yaklaşık hacmini hesaplayalım.</p>
+          </div>
+
           <div class="today-actions">
             <span class="today-count" id="todayCount">Bugün 0 kayıt</span>
             <button type="button" class="tool-btn" id="undoBtn">↩️ Son Eklemeyi Geri Al</button>
@@ -244,6 +250,10 @@
           <summary>Sekmeyi kapatırsam hatırlatıcı çalışmaya devam eder mi?</summary>
           <p>Hayır, hatırlatıcı sekme açık olduğu sürece çalışır. Tarayıcıdan bildirim izni verildiyse sekme arka planda da olsa bildirimler gelmeye devam eder, ancak sekme tamamen kapatılırsa hatırlatıcı durur.</p>
         </details>
+        <details class="faq-item">
+          <summary>Fotoğraftan hacim hesaplama ne kadar doğru?</summary>
+          <p>Bu bir yapay zekâ tahmini değil, geometrik bir hesaplamadır: fotoğrafta işaretlediğin 4 nokta ile bardağın oranlarını, girdiğin gerçek yükseklik (cm) ile de ölçeğini buluruz. Sonuç yalnızca bir yaklaşımdır; bardağın gerçek şekline (dar/geniş taban, kalın cam vb.) göre birkaç yüzde sapabilir. Kesin ölçüm için hazır bardak butonlarını ya da özel miktar alanını kullanabilirsin.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -257,6 +267,69 @@
   </section>
 
 </main>
+
+<div class="scan-overlay hidden" id="scanOverlay">
+  <div class="scan-sheet">
+    <div class="scan-header">
+      <h3>📷 Bardak Hesaplayıcı</h3>
+      <button type="button" class="icon-btn" id="scanCloseBtn" aria-label="Kapat">✕</button>
+    </div>
+
+    <div class="scan-step" id="scanStepCamera">
+      <video id="scanVideo" autoplay playsinline muted></video>
+      <p class="scan-hint">Bardağı tüm yüksekliği ve genişliği görünecek şekilde kameraya göster.</p>
+      <div class="scan-actions">
+        <button type="button" class="btn btn-primary" id="scanCaptureBtn">📸 Çek</button>
+      </div>
+    </div>
+
+    <div class="scan-step hidden" id="scanStepMeasure">
+      <canvas id="scanCanvas"></canvas>
+      <p class="scan-instruction" id="scanInstruction">1/4: Bardağın en üst (ağız) noktasına dokun</p>
+      <div class="scan-actions">
+        <button type="button" class="tool-btn" id="scanResetPointsBtn">↺ Noktaları Sıfırla</button>
+        <button type="button" class="tool-btn" id="scanRetakeBtn">📷 Yeniden Çek</button>
+      </div>
+    </div>
+
+    <div class="scan-step hidden" id="scanStepDetail">
+      <div class="scan-height-field">
+        <label for="scanHeightInput">Bardağın gerçek yüksekliği (cm)</label>
+        <div class="scan-height-presets" id="scanHeightPresets">
+          <button type="button" class="tool-btn" data-cm="8">8 cm</button>
+          <button type="button" class="tool-btn active" data-cm="10">10 cm</button>
+          <button type="button" class="tool-btn" data-cm="12">12 cm</button>
+          <button type="button" class="tool-btn" data-cm="15">15 cm</button>
+          <button type="button" class="tool-btn" data-cm="20">20 cm</button>
+        </div>
+        <input type="number" id="scanHeightInput" min="3" max="40" step="0.5" value="10">
+      </div>
+
+      <div class="scan-result-box">
+        <p class="scan-result-label">Yaklaşık hacim</p>
+        <p class="scan-result-value" id="scanVolumeResult">0 ml</p>
+        <p class="scan-result-note">Bu bir tahmindir; gerçek hacim bardağın şekline göre değişebilir.</p>
+      </div>
+
+      <div class="scan-fill-field">
+        <p class="scan-fill-label">Bardak ne kadar dolu?</p>
+        <div class="scan-fill-presets" id="scanFillPresets">
+          <button type="button" class="tool-btn active" data-fill="100">Tam Dolu</button>
+          <button type="button" class="tool-btn" data-fill="75">%75</button>
+          <button type="button" class="tool-btn" data-fill="50">%50</button>
+          <button type="button" class="tool-btn" data-fill="25">%25</button>
+        </div>
+      </div>
+
+      <form class="custom-add-form" id="scanAddForm">
+        <input type="number" id="scanFinalAmount" min="1" step="1">
+        <button type="submit" class="btn btn-primary">Bu Miktarı Ekle</button>
+      </form>
+
+      <button type="button" class="tool-btn full-btn" id="scanRestartBtn">↺ Baştan Başla</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast hidden" id="toast"></div>
 
