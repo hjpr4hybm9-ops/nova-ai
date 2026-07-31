@@ -1,0 +1,11 @@
+{
+  "name": "Ezan Vakti — Namaz Vakitleri",
+  "short_name": "Ezan Vakti",
+  "description": "Şehrine ya da konumuna göre namaz vakitleri, ezan geri sayımı, aylık takvim ve kıble yönü.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071410",
+  "theme_color": "#071410",
+  "icons": []
+}

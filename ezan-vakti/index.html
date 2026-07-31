@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071410">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("ezanvakti.theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {}
+  })();
+</script>
+<meta name="description" content="Ezan Vakti — şehrine ya da konumuna göre günlük namaz vakitleri, sonraki ezana geri sayım, aylık vakit takvimi ve kıble yönü. Ücretsiz, tarayıcıda çalışır.">
+<title>Ezan Vakti — Namaz Vakitleri ve Ezan Geri Sayımı</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="logo">🕌</span>
+      <span class="brand-name">Ezan Vakti</span>
+    </a>
+
+    <nav class="nav" id="mainNav">
+      <a href="#vakitler">Vakitler</a>
+      <a href="#takvim">Aylık Takvim</a>
+      <a href="#kible">Kıble</a>
+      <a href="#ayarlar">Ayarlar</a>
+      <a href="#sss">SSS</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="#vakitler">Vakitleri Gör</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="wrap hero-inner">
+      <span class="eyebrow">✦ Diyanet vakitlerine göre hesaplanır</span>
+      <h1>Namaz vaktini kaçırma,<br><span class="grad-text">ezana geri sayımı gör.</span></h1>
+      <p class="hero-sub">Şehrini seç ya da konumunu kullan; İmsak, Güneş, Öğle, İkindi, Akşam ve Yatsı vakitlerini, sonraki ezana kalan süreyi, aylık takvimi ve kıble yönünü tek ekranda gör. Kurulum yok, hesap yok — tamamen ücretsiz.</p>
+      <div class="hero-cta">
+        <button type="button" class="btn btn-primary" id="heroGeoBtn">📍 Konumumu Kullan</button>
+        <a class="btn btn-outline" href="#vakitler">Şehir Seç</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>81 il</strong><span>Türkiye geneli destek</span></div>
+        <div><strong>6 vakit</strong><span>İmsak'tan Yatsı'ya</span></div>
+        <div><strong>%100</strong><span>Ücretsiz ve tarayıcıda</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vakitler">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Vakitler</span>
+        <h2>Bugünün namaz vakitleri</h2>
+        <p>Konumunu kullan ya da aşağıdan bir il seç, vakitler otomatik güncellensin.</p>
+      </div>
+
+      <div class="location-panel">
+        <div class="location-row">
+          <div class="location-field">
+            <label for="citySelect">Şehir</label>
+            <select id="citySelect"></select>
+          </div>
+          <button type="button" class="btn btn-outline" id="useGeoBtn">📍 Konumumu Kullan</button>
+        </div>
+        <p class="location-status" id="locationStatus">Bir il seç ya da konumunu paylaş.</p>
+      </div>
+
+      <div class="vakit-panel">
+        <p class="vakit-date" id="vakitDate">—</p>
+        <p class="vakit-hijri" id="vakitHijri"></p>
+
+        <div class="countdown-card" id="countdownCard">
+          <span class="countdown-label" id="countdownLabel">Sonraki vakit</span>
+          <span class="countdown-name" id="countdownName">—</span>
+          <span class="countdown-time" id="countdownTime">--:--:--</span>
+        </div>
+
+        <div class="vakit-grid" id="vakitGrid">
+          <div class="vakit-card" data-key="Imsak"><span class="vakit-icon">🌙</span><span class="vakit-name">İmsak</span><span class="vakit-time">--:--</span></div>
+          <div class="vakit-card" data-key="Sunrise"><span class="vakit-icon">🌅</span><span class="vakit-name">Güneş</span><span class="vakit-time">--:--</span></div>
+          <div class="vakit-card" data-key="Dhuhr"><span class="vakit-icon">☀️</span><span class="vakit-name">Öğle</span><span class="vakit-time">--:--</span></div>
+          <div class="vakit-card" data-key="Asr"><span class="vakit-icon">🌤️</span><span class="vakit-name">İkindi</span><span class="vakit-time">--:--</span></div>
+          <div class="vakit-card" data-key="Maghrib"><span class="vakit-icon">🌇</span><span class="vakit-name">Akşam</span><span class="vakit-time">--:--</span></div>
+          <div class="vakit-card" data-key="Isha"><span class="vakit-icon">🌃</span><span class="vakit-name">Yatsı</span><span class="vakit-time">--:--</span></div>
+        </div>
+
+        <div class="vakit-actions">
+          <button type="button" class="btn btn-outline" id="retryBtn">🔄 Tekrar Dene</button>
+          <span class="vakit-source" id="vakitSource"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="takvim">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Aylık Takvim</span>
+        <h2 id="calendarTitle">Bu ayın vakitleri</h2>
+        <p>Seçili konumun tüm ay boyunca namaz vakitleri.</p>
+      </div>
+
+      <div class="calendar-wrap">
+        <table class="calendar-table" id="calendarTable">
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>İmsak</th>
+              <th>Güneş</th>
+              <th>Öğle</th>
+              <th>İkindi</th>
+              <th>Akşam</th>
+              <th>Yatsı</th>
+            </tr>
+          </thead>
+          <tbody id="calendarBody">
+            <tr><td colspan="7" class="calendar-empty">Vakitler yüklenince takvim burada görünecek.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="kible">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Kıble</span>
+        <h2>Kıble yönünü bul</h2>
+        <p>Konumuna göre Kâbe'nin yönünü ve mesafesini hesaplar.</p>
+      </div>
+
+      <div class="qibla-panel">
+        <div class="compass-wrap">
+          <div class="compass-dial">
+            <span class="compass-n">K</span>
+            <span class="compass-e">D</span>
+            <span class="compass-s">G</span>
+            <span class="compass-w">B</span>
+            <div class="compass-needle" id="compassNeedle">🕋</div>
+          </div>
+        </div>
+        <div class="qibla-info">
+          <p class="qibla-angle" id="qiblaAngle">Kıble açısı: —</p>
+          <p class="qibla-distance" id="qiblaDistance">Kâbe'ye mesafe: —</p>
+          <p class="qibla-hint">Telefonunu düz tutup 🕋 simgesini üste getirdiğinde kıbleye dönmüş olursun.</p>
+          <div class="qibla-actions">
+            <button type="button" class="btn btn-outline" id="qiblaGeoBtn">📍 Konumumla Hesapla</button>
+            <button type="button" class="btn btn-outline" id="compassBtn">🧭 Pusulayı Etkinleştir</button>
+          </div>
+          <p class="qibla-status" id="qiblaStatus"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="ayarlar">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Ayarlar</span>
+        <h2>Bildirimleri ve görünümü ayarla</h2>
+        <p>Hangi vakitlerde bildirim almak istediğini seç. Ayarların tarayıcında saklanır.</p>
+      </div>
+
+      <div class="settings-panel">
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Görünüm</h3>
+            <p>Açık, koyu ya da cihazının ayarını takip eden temayı seç.</p>
+          </div>
+          <div class="settings-control" id="themeOptions">
+            <button type="button" class="tool-btn" data-theme-choice="light">☀️ Açık</button>
+            <button type="button" class="tool-btn" data-theme-choice="dark">🌙 Koyu</button>
+            <button type="button" class="tool-btn" data-theme-choice="system">🖥️ Sistem</button>
+          </div>
+        </div>
+
+        <div class="settings-row notify-row">
+          <div class="settings-info">
+            <h3>Vakit Bildirimleri</h3>
+            <p>Sekme açıkken, vakit girdiğinde tarayıcı bildirimi ve kısa bir sesli uyarı al.</p>
+          </div>
+          <div class="settings-control notify-grid" id="notifyGrid">
+            <label class="notify-toggle" data-key="Imsak"><span>İmsak</span><span class="switch"><input type="checkbox" data-notify="Imsak"><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+            <label class="notify-toggle" data-key="Sunrise"><span>Güneş</span><span class="switch"><input type="checkbox" data-notify="Sunrise"><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+            <label class="notify-toggle" data-key="Dhuhr"><span>Öğle</span><span class="switch"><input type="checkbox" data-notify="Dhuhr"><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+            <label class="notify-toggle" data-key="Asr"><span>İkindi</span><span class="switch"><input type="checkbox" data-notify="Asr"><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+            <label class="notify-toggle" data-key="Maghrib"><span>Akşam</span><span class="switch"><input type="checkbox" data-notify="Maghrib"><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+            <label class="notify-toggle" data-key="Isha"><span>Yatsı</span><span class="switch"><input type="checkbox" data-notify="Isha"><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Bildirim Sesi</h3>
+            <p>Vakit girdiğinde kısa bir sesli uyarı çalsın.</p>
+          </div>
+          <div class="settings-control">
+            <label class="switch">
+              <input type="checkbox" id="soundToggle" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Bildirim İznini Test Et</h3>
+            <p>Tarayıcı bildirim izni ister ve örnek bir vakit bildirimi gösterir.</p>
+          </div>
+          <div class="settings-control">
+            <button type="button" class="btn btn-outline" id="testNotifBtn">🔔 Test Bildirimi Gönder</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Tüm Verileri Sıfırla</h3>
+            <p>Şehir/konum seçimin, bildirim ayarların ve tercihlerin bu tarayıcıdan silinir.</p>
+          </div>
+          <div class="settings-control">
+            <button type="button" class="btn btn-outline btn-negative" id="resetAllBtn">🗑️ Her Şeyi Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sss">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">SSS</span>
+        <h2>Sıkça Sorulan Sorular</h2>
+      </div>
+
+      <div class="faq" id="faq">
+        <details class="faq-item">
+          <summary>Vakitler hangi kaynağa göre hesaplanıyor?</summary>
+          <p>Vakitler, Diyanet İşleri Başkanlığı hesaplama yöntemiyle uyumlu şekilde konumuna göre hesaplanır. Seyahatteysen ya da farklı bir il seçtiysen o bölgenin vaktine göre gösterilir.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Konum bilgim nerede saklanıyor?</summary>
+          <p>Seçtiğin şehir ya da paylaştığın konum yalnızca bu tarayıcıda (localStorage) tutulur, herhangi bir sunucuya kaydedilmez. Vakit verisi almak için yalnızca konum/şehir bilgisi ilgili vakit servisine gönderilir.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Bildirim almak için ne yapmalıyım?</summary>
+          <p>Ayarlar bölümünden istediğin vakitlerin bildirimini aç. Tarayıcın izin isteyecek; izin verirsen vakit girdiğinde bildirim ve sesli uyarı alırsın. Bildirimler yalnızca bu sekme açıkken çalışır.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Kıble yönü nasıl hesaplanıyor?</summary>
+          <p>Konumun ile Kâbe'nin koordinatları arasındaki büyük daire açısı hesaplanır. Pusulayı etkinleştirirsen telefonunun yönü ile karşılaştırılarak 🕋 simgesi gerçek kıble yönünü gösterir.</p>
+        </details>
+        <details class="faq-item">
+          <summary>İnternet olmadan çalışır mı?</summary>
+          <p>Vakitlerin ilk defa yüklenmesi için internet gerekir; son çekilen vakitler tarayıcında saklanır ve bağlantı kesildiğinde en son bilinen veriler gösterilir.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="basla">
+    <div class="wrap cta-inner">
+      <h2>Vaktini kaçırma, şimdi ayarla</h2>
+      <p>Konumunu paylaş, bildirimleri aç — hiçbir kayıt gerekmez.</p>
+      <button type="button" class="btn btn-primary" id="ctaGeoBtn">📍 Konumumu Kullan</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🕌</span>
+      <span class="brand-name">Ezan Vakti</span>
+    </div>
+    <p class="footer-copy">© <span id="year"></span> Ezan Vakti. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
