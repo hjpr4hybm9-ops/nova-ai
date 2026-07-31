@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071019">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("damlasu.theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {}
+  })();
+</script>
+<meta name="description" content="DamlaSu — su içmeyi unutmamanız için ücretsiz, tarayıcıda çalışan hatırlatıcı. Günlük su hedefi belirleyin, bildirimlerle hatırlayın, ilerlemenizi takip edin.">
+<title>DamlaSu — Su İçme Hatırlatıcı</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="logo">💧</span>
+      <span class="brand-name">DamlaSu</span>
+    </a>
+
+    <nav class="nav" id="mainNav">
+      <a href="#bugun">Bugün</a>
+      <a href="#hatirlatici">Hatırlatıcı</a>
+      <a href="#gecmis">Geçmiş</a>
+      <a href="#ayarlar">Ayarlar</a>
+      <a href="#sss">SSS</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="#bugun">Hemen Başla</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="wrap hero-inner">
+      <span class="eyebrow">✦ Sağlıklı bir alışkanlık edinin</span>
+      <h1>Su içmeyi unutma,<br><span class="grad-text">DamlaSu hatırlatsın.</span></h1>
+      <p class="hero-sub">Günlük su hedefini belirle, düzenli aralıklarla bildirim al, içtiğin her bardağı işaretle. Kurulum yok, hesap yok — tamamen tarayıcında, ücretsiz çalışır.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#bugun">Su Takibine Başla</a>
+        <a class="btn btn-outline" href="#hatirlatici">Hatırlatıcıyı Kur</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>8 bardak</strong><span>Günlük önerilen ortalama</span></div>
+        <div><strong>7/24</strong><span>Bildirimle hatırlatma</span></div>
+        <div><strong>%100</strong><span>Ücretsiz ve tarayıcıda</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="bugun">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Bugün</span>
+        <h2>Günlük su takibin</h2>
+        <p>Hedefini belirle, her içtiğinde ekle. İlerlemen anında güncellenir.</p>
+      </div>
+
+      <div class="tracker-panel">
+        <div class="tracker-progress">
+          <div class="progress-ring-wrap">
+            <svg viewBox="0 0 120 120" class="progress-ring">
+              <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <div class="progress-center">
+              <span class="progress-amount" id="progressAmount">0 ml</span>
+              <span class="progress-goal" id="progressGoal">/ 2000 ml</span>
+              <span class="progress-percent" id="progressPercent">%0</span>
+            </div>
+          </div>
+
+          <div class="goal-field">
+            <label for="goalInput">Günlük hedef (ml)</label>
+            <input type="number" id="goalInput" min="500" step="50" value="2000">
+          </div>
+        </div>
+
+        <div class="add-water">
+          <p class="add-water-label">Bir bardak/şişe ekle:</p>
+          <div class="add-water-buttons">
+            <button type="button" class="tool-btn add-btn" data-ml="200">💧 200 ml</button>
+            <button type="button" class="tool-btn add-btn" data-ml="250">🥤 250 ml</button>
+            <button type="button" class="tool-btn add-btn" data-ml="330">🥛 330 ml</button>
+            <button type="button" class="tool-btn add-btn" data-ml="500">🍶 500 ml</button>
+          </div>
+          <form class="custom-add-form" id="customAddForm">
+            <input type="number" id="customAmount" min="1" step="10" placeholder="Özel miktar (ml)">
+            <button type="submit" class="btn btn-outline">Ekle</button>
+          </form>
+          <div class="today-actions">
+            <span class="today-count" id="todayCount">Bugün 0 kayıt</span>
+            <button type="button" class="tool-btn" id="undoBtn">↩️ Son Eklemeyi Geri Al</button>
+            <button type="button" class="tool-btn" id="resetTodayBtn">🗑️ Bugünü Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="hatirlatici">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Hatırlatıcı</span>
+        <h2>Düzenli aralıklarla hatırlat</h2>
+        <p>Sekmeyi açık tuttuğun sürece belirlediğin aralıkla bildirim gönderir.</p>
+      </div>
+
+      <div class="reminder-panel">
+        <div class="reminder-row">
+          <div class="reminder-info">
+            <h3>Hatırlatıcıyı Aç</h3>
+            <p>Aktif olduğunda tarayıcı bildirimi ve sesli uyarı alırsın.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="reminderToggle">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+          </label>
+        </div>
+
+        <div class="interval-presets" id="intervalPresets">
+          <button type="button" class="tool-btn" data-min="30">30 dk</button>
+          <button type="button" class="tool-btn active" data-min="60">60 dk</button>
+          <button type="button" class="tool-btn" data-min="90">90 dk</button>
+          <button type="button" class="tool-btn" data-min="120">120 dk</button>
+        </div>
+
+        <p class="reminder-status" id="reminderStatus">Hatırlatıcı kapalı.</p>
+
+        <div class="reminder-actions">
+          <button type="button" class="btn btn-outline" id="testNotifBtn">🔔 Test Bildirimi Gönder</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="gecmis">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Geçmiş</span>
+        <h2>Son 7 gün</h2>
+        <p>Her günün hedefine göre ne kadar su içtiğini gör.</p>
+      </div>
+
+      <div class="history-panel" id="historyPanel"></div>
+    </div>
+  </section>
+
+  <section class="section alt" id="ayarlar">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Ayarlar</span>
+        <h2>Uygulamayı sana göre ayarla</h2>
+        <p>Görünüm ve ses tercihlerini düzenle. Ayarların tarayıcında saklanır.</p>
+      </div>
+
+      <div class="settings-panel">
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Görünüm</h3>
+            <p>Açık, koyu ya da cihazının ayarını takip eden temayı seç.</p>
+          </div>
+          <div class="settings-control" id="themeOptions">
+            <button type="button" class="tool-btn" data-theme-choice="light">☀️ Açık</button>
+            <button type="button" class="tool-btn" data-theme-choice="dark">🌙 Koyu</button>
+            <button type="button" class="tool-btn" data-theme-choice="system">🖥️ Sistem</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Hatırlatma Sesi</h3>
+            <p>Hatırlatma geldiğinde kısa bir sesli uyarı çalsın.</p>
+          </div>
+          <div class="settings-control">
+            <label class="switch">
+              <input type="checkbox" id="soundToggle" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Tüm Verileri Sıfırla</h3>
+            <p>Günlük kayıtlar, geçmiş ve ayarlar bu tarayıcıdan tamamen silinir.</p>
+          </div>
+          <div class="settings-control">
+            <button type="button" class="btn btn-outline btn-negative" id="resetAllBtn">🗑️ Her Şeyi Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sss">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">SSS</span>
+        <h2>Sıkça Sorulan Sorular</h2>
+      </div>
+
+      <div class="faq" id="faq">
+        <details class="faq-item">
+          <summary>Günde ne kadar su içmeliyim?</summary>
+          <p>Genel öneri günde yaklaşık 2-2.5 litre (8 bardak civarı) olsa da; kilon, aktivite düzeyin ve hava koşullarına göre ihtiyacın değişebilir. Hedefini kendine göre ayarlayabilirsin.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Bildirim almak için ne yapmam gerekir?</summary>
+          <p>Hatırlatıcıyı açtığında tarayıcın bildirim izni isteyecek. İzin verirsen, sekme kapalıyken bile bildirim alırsın. İzin vermezsen sekme açıkken uygulama içi uyarı gösterilir.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Verilerim nerede saklanıyor?</summary>
+          <p>Tüm kayıtların yalnızca bu tarayıcıda (localStorage) tutulur, herhangi bir sunucuya gönderilmez. Farklı bir cihaz ya da tarayıcıya geçersen verilerin görünmez.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Sekmeyi kapatırsam hatırlatıcı çalışmaya devam eder mi?</summary>
+          <p>Hayır, hatırlatıcı sekme açık olduğu sürece çalışır. Tarayıcıdan bildirim izni verildiyse sekme arka planda da olsa bildirimler gelmeye devam eder, ancak sekme tamamen kapatılırsa hatırlatıcı durur.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="basla">
+    <div class="wrap cta-inner">
+      <h2>Su içmeyi alışkanlık hâline getir</h2>
+      <p>Hiçbir kayıt gerekmez, tamamen ücretsiz ve tarayıcında çalışır.</p>
+      <a class="btn btn-primary" href="#bugun">Bugün Su İçmeye Başla</a>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="logo">💧</span>
+      <span class="brand-name">DamlaSu</span>
+    </div>
+    <p class="footer-copy">© <span id="year"></span> DamlaSu. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
