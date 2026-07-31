@@ -18,6 +18,12 @@
   var countdownTimerId = null;
   var nextReminderAt = null;
 
+  var scanStream = null;
+  var scanPoints = [];
+  var scanBaseCanvas = document.createElement("canvas");
+  var scanHeightCm = 10;
+  var scanFillPercent = 100;
+
   function $(id) { return document.getElementById(id); }
 
   function readJSON(key, fallback) {
@@ -314,6 +320,174 @@
     if (isReminderEnabled()) startReminder();
   }
 
+  // ---------- Glass scan (photo volume estimate) ----------
+  function openScanOverlay() {
+    $("scanOverlay").classList.remove("hidden");
+    resetScanState();
+    startScanCamera();
+  }
+
+  function closeScanOverlay() {
+    stopScanCamera();
+    $("scanOverlay").classList.add("hidden");
+  }
+
+  function startScanCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showToast("Bu tarayıcıda kamera erişimi desteklenmiyor.");
+      closeScanOverlay();
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(function (stream) {
+        scanStream = stream;
+        $("scanVideo").srcObject = stream;
+        showScanStep("camera");
+      })
+      .catch(function () {
+        showToast("Kameraya erişilemedi. Tarayıcı izinlerini kontrol et.");
+        closeScanOverlay();
+      });
+  }
+
+  function stopScanCamera() {
+    if (scanStream) {
+      scanStream.getTracks().forEach(function (t) { t.stop(); });
+      scanStream = null;
+    }
+  }
+
+  function showScanStep(step) {
+    ["camera", "measure", "detail"].forEach(function (s) {
+      var el = $("scanStep" + s.charAt(0).toUpperCase() + s.slice(1));
+      if (el) el.classList.toggle("hidden", s !== step);
+    });
+  }
+
+  function resetScanState() {
+    scanPoints = [];
+    scanHeightCm = 10;
+    scanFillPercent = 100;
+    $("scanHeightInput").value = 10;
+    document.querySelectorAll("#scanHeightPresets .tool-btn").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-cm") === "10");
+    });
+    document.querySelectorAll("#scanFillPresets .tool-btn").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-fill") === "100");
+    });
+  }
+
+  function captureScanPhoto() {
+    var video = $("scanVideo");
+    var w = video.videoWidth;
+    var h = video.videoHeight;
+    if (!w || !h) {
+      showToast("Kamera henüz hazır değil, birkaç saniye sonra tekrar dene.");
+      return;
+    }
+    var maxDim = 900;
+    var scaleDown = Math.min(1, maxDim / Math.max(w, h));
+    var cw = Math.round(w * scaleDown);
+    var ch = Math.round(h * scaleDown);
+
+    scanBaseCanvas.width = cw;
+    scanBaseCanvas.height = ch;
+    scanBaseCanvas.getContext("2d").drawImage(video, 0, 0, cw, ch);
+
+    var canvas = $("scanCanvas");
+    canvas.width = cw;
+    canvas.height = ch;
+
+    scanPoints = [];
+    redrawScanCanvas();
+    updateScanInstruction();
+    showScanStep("measure");
+  }
+
+  function redrawScanCanvas() {
+    var canvas = $("scanCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(scanBaseCanvas, 0, 0);
+
+    if (scanPoints.length >= 2) drawScanLine(ctx, scanPoints[0], scanPoints[1], "#38bdf8");
+    if (scanPoints.length >= 4) drawScanLine(ctx, scanPoints[2], scanPoints[3], "#2dd4bf");
+
+    scanPoints.forEach(function (p, i) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = i < 2 ? "#38bdf8" : "#2dd4bf";
+      ctx.stroke();
+      ctx.fillStyle = "#0d1b2a";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(i + 1), p.x, p.y);
+    });
+  }
+
+  function drawScanLine(ctx, p1, p2, color) {
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function updateScanInstruction() {
+    var texts = [
+      "1/4: Bardağın en üst (ağız) noktasına dokun",
+      "2/4: Bardağın en alt (taban) noktasına dokun",
+      "3/4: Bardağın en geniş yerinin sol kenarına dokun",
+      "4/4: Bardağın en geniş yerinin sağ kenarına dokun"
+    ];
+    var el = $("scanInstruction");
+    el.textContent = scanPoints.length < 4 ? texts[scanPoints.length] : "Noktalar işaretlendi. Şimdi yüksekliği gir.";
+  }
+
+  function handleScanCanvasClick(e) {
+    if (scanPoints.length >= 4) return;
+    var canvas = $("scanCanvas");
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    var x = (e.clientX - rect.left) * scaleX;
+    var y = (e.clientY - rect.top) * scaleY;
+    scanPoints.push({ x: x, y: y });
+    redrawScanCanvas();
+    updateScanInstruction();
+    if (scanPoints.length === 4) {
+      computeScanVolume();
+      setTimeout(function () { showScanStep("detail"); }, 200);
+    }
+  }
+
+  function scanDist(p1, p2) {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  }
+
+  function computeScanVolume() {
+    if (scanPoints.length < 4) return;
+    var pixelHeight = scanDist(scanPoints[0], scanPoints[1]) || 1;
+    var pixelWidth = scanDist(scanPoints[2], scanPoints[3]);
+
+    var cmPerPixel = scanHeightCm / pixelHeight;
+    var diameterCm = pixelWidth * cmPerPixel;
+    var radiusCm = diameterCm / 2;
+    var shapeFactor = 0.9; // most drinking glasses taper slightly toward the base
+    var volumeMl = Math.PI * radiusCm * radiusCm * scanHeightCm * shapeFactor;
+    volumeMl = Math.max(0, Math.round(volumeMl / 5) * 5);
+
+    $("scanVolumeResult").textContent = volumeMl + " ml";
+    var finalMl = Math.max(5, Math.round(volumeMl * (scanFillPercent / 100) / 5) * 5);
+    $("scanFinalAmount").value = finalMl;
+  }
+
   // ---------- Init ----------
   function init() {
     $("year").textContent = new Date().getFullYear();
@@ -391,6 +565,67 @@
       btn.addEventListener("click", function () {
         applyThemeChoice(btn.getAttribute("data-theme-choice"));
       });
+    });
+
+    // Glass scan
+    $("scanGlassBtn").addEventListener("click", openScanOverlay);
+    $("scanCloseBtn").addEventListener("click", closeScanOverlay);
+    $("scanCaptureBtn").addEventListener("click", captureScanPhoto);
+    $("scanCanvas").addEventListener("click", handleScanCanvasClick);
+
+    $("scanResetPointsBtn").addEventListener("click", function () {
+      scanPoints = [];
+      redrawScanCanvas();
+      updateScanInstruction();
+      showScanStep("measure");
+    });
+
+    $("scanRetakeBtn").addEventListener("click", function () {
+      showScanStep("camera");
+    });
+
+    $("scanRestartBtn").addEventListener("click", function () {
+      resetScanState();
+      showScanStep("camera");
+    });
+
+    document.querySelectorAll("#scanHeightPresets .tool-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        scanHeightCm = parseFloat(btn.getAttribute("data-cm"));
+        $("scanHeightInput").value = scanHeightCm;
+        document.querySelectorAll("#scanHeightPresets .tool-btn").forEach(function (b) {
+          b.classList.toggle("active", b === btn);
+        });
+        computeScanVolume();
+      });
+    });
+
+    $("scanHeightInput").addEventListener("input", function () {
+      var v = parseFloat($("scanHeightInput").value);
+      if (v > 0) {
+        scanHeightCm = v;
+        document.querySelectorAll("#scanHeightPresets .tool-btn").forEach(function (b) { b.classList.remove("active"); });
+        computeScanVolume();
+      }
+    });
+
+    document.querySelectorAll("#scanFillPresets .tool-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        scanFillPercent = parseInt(btn.getAttribute("data-fill"), 10);
+        document.querySelectorAll("#scanFillPresets .tool-btn").forEach(function (b) {
+          b.classList.toggle("active", b === btn);
+        });
+        computeScanVolume();
+      });
+    });
+
+    $("scanAddForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var ml = parseInt($("scanFinalAmount").value, 10);
+      if (ml > 0) {
+        addWater(ml);
+        closeScanOverlay();
+      }
     });
 
     // Reset all
