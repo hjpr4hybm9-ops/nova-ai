@@ -930,36 +930,6 @@
     sumNetBorcEl.textContent = fmtTRY(totalAlacak - totalBorc);
   }
 
-  // ---------- Loan calculator ----------
-  document.getElementById("loanForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const principal = parseFloat(document.getElementById("loanAmount").value);
-    const annualRate = parseFloat(document.getElementById("loanRate").value);
-    const months = parseInt(document.getElementById("loanMonths").value, 10);
-    const result = document.getElementById("loanResult");
-
-    if (!principal || !months || annualRate < 0) return;
-
-    const monthlyRate = annualRate / 100 / 12;
-    let monthlyPayment;
-    if (monthlyRate === 0) {
-      monthlyPayment = principal / months;
-    } else {
-      monthlyPayment =
-        (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-        (Math.pow(1 + monthlyRate, months) - 1);
-    }
-    const totalPayment = monthlyPayment * months;
-    const totalInterest = totalPayment - principal;
-
-    result.innerHTML = `
-      <div class="result-row"><span>Aylık Taksit</span><strong>${fmtTRY(monthlyPayment)}</strong></div>
-      <div class="result-row"><span>Toplam Geri Ödeme</span><strong>${fmtTRY(totalPayment)}</strong></div>
-      <div class="result-row"><span>Toplam Faiz</span><strong>${fmtTRY(totalInterest)}</strong></div>
-    `;
-    result.classList.add("show");
-  });
-
   // ---------- Budget calculator ----------
   document.getElementById("budgetForm").addEventListener("submit", (e) => {
     e.preventDefault();
