@@ -109,14 +109,43 @@ export function createCarGroup(hex) {
   rearGlass.position.set(-13.5, 12.2, 0);
   group.add(rearGlass);
 
-  const sideGlassGeoR = new THREE.PlaneGeometry(17.5, 7.2);
-  const sideGlassR = new THREE.Mesh(sideGlassGeoR, glassMat);
-  sideGlassR.position.set(-3, 15, 9.85);
-  group.add(sideGlassR);
-  const sideGlassL = sideGlassR.clone();
-  sideGlassL.rotation.y = Math.PI;
-  sideGlassL.position.z = -9.85;
-  group.add(sideGlassL);
+  // Ön kapı camı (büyük) + C sütunu önünde sabit üçgen arka cam (küçük) —
+  // gerçek 3 kapılı 106'daki gibi tek parça değil, iki ayrı pencere.
+  const doorGlassGeo = new THREE.PlaneGeometry(10.2, 7.4);
+  const doorGlassR = new THREE.Mesh(doorGlassGeo, glassMat);
+  doorGlassR.position.set(1, 15.3, 9.85);
+  group.add(doorGlassR);
+  const doorGlassL = doorGlassR.clone();
+  doorGlassL.rotation.y = Math.PI;
+  doorGlassL.position.z = -9.85;
+  group.add(doorGlassL);
+
+  const quarterGlassGeo = new THREE.PlaneGeometry(6.6, 5.6);
+  const quarterGlassR = new THREE.Mesh(quarterGlassGeo, glassMat);
+  quarterGlassR.position.set(-7.6, 14.1, 9.85);
+  group.add(quarterGlassR);
+  const quarterGlassL = quarterGlassR.clone();
+  quarterGlassL.rotation.y = Math.PI;
+  quarterGlassL.position.z = -9.85;
+  group.add(quarterGlassL);
+
+  // Kapı kesim çizgisi (ön/arka pencere arası gövde gölgesi)
+  const doorSeamGeo = new THREE.BoxGeometry(0.2, 18, 0.15);
+  const doorSeamR = new THREE.Mesh(doorSeamGeo, trimMat);
+  doorSeamR.position.set(-4, 10.2, 10.02);
+  group.add(doorSeamR);
+  const doorSeamL = doorSeamR.clone();
+  doorSeamL.position.z = -10.02;
+  group.add(doorSeamL);
+
+  // Kapı kolları
+  const handleGeo = new THREE.BoxGeometry(2.2, 0.55, 0.5);
+  const handleR = new THREE.Mesh(handleGeo, darkMat);
+  handleR.position.set(-1.5, 12.6, 10.05);
+  group.add(handleR);
+  const handleL = handleR.clone();
+  handleL.position.z = -10.05;
+  group.add(handleL);
 
   // --- Çatı / ön cam siyah çıtası ---
   const roofBar = new THREE.Mesh(new THREE.BoxGeometry(10.2, 1, 19.8), trimMat);
@@ -243,14 +272,14 @@ export function createCarGroup(hex) {
   exhaust.position.set(-16.6, 2.2, 6.5);
   group.add(exhaust);
 
-  // --- Tekerlekler (5 kollu jant görünümü) ---
-  const tireGeo = new THREE.CylinderGeometry(4.3, 4.3, 4.8, 20);
+  // --- Tekerlekler (çok kollu alaşım jant görünümü) ---
+  const tireGeo = new THREE.CylinderGeometry(4.3, 4.3, 4.8, 24);
   tireGeo.rotateX(Math.PI / 2);
-  const rimGeo = new THREE.CylinderGeometry(2.7, 2.7, 5, 16);
+  const rimGeo = new THREE.CylinderGeometry(2.6, 2.6, 5.05, 20);
   rimGeo.rotateX(Math.PI / 2);
-  const hubGeo = new THREE.CylinderGeometry(0.8, 0.8, 5.2, 10);
+  const hubGeo = new THREE.CylinderGeometry(0.7, 0.7, 5.3, 10);
   hubGeo.rotateX(Math.PI / 2);
-  const spokeGeo = new THREE.BoxGeometry(0.8, 4.6, 4.9);
+  const spokeGeo = new THREE.BoxGeometry(0.5, 4.4, 5.1);
 
   const wheelPositions = [
     [11.5, 4.3, 9.4],
@@ -264,9 +293,9 @@ export function createCarGroup(hex) {
     const rim = new THREE.Mesh(rimGeo, rimMat);
     const hub = new THREE.Mesh(hubGeo, darkMat);
     w.add(tire, rim, hub);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
       const spoke = new THREE.Mesh(spokeGeo, rimMat);
-      spoke.rotation.x = (i / 5) * Math.PI * 2;
+      spoke.rotation.x = (i / 7) * Math.PI * 2;
       w.add(spoke);
     }
     w.position.set(...p);
