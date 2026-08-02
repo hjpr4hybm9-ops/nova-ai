@@ -54,8 +54,8 @@ function initPreview3D() {
   scene.background = null;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 1, 2000);
-  camera.position.set(70, 42, 62);
-  camera.lookAt(0, 8, 0);
+  camera.position.set(40, 24, 36);
+  camera.lookAt(0, 9, 0);
 
   const hemi = new THREE.HemisphereLight(0xffffff, 0x1a1420, 0.9);
   scene.add(hemi);
