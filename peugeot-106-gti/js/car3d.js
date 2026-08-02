@@ -56,6 +56,31 @@ function glassPane(w, h, rakeDeg, faceUp = true) {
   return geo;
 }
 
+// Yazı/logo dekalları için küçük bir canvas dokusu üretir.
+function textTexture(text, { w = 512, h = 128, font = "700 64px Arial, sans-serif", color = "#eef1f6", bg = null } = {}) {
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (bg) {
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+  }
+  ctx.fillStyle = color;
+  ctx.font = font;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, w / 2, h / 2 + 2);
+  return new THREE.CanvasTexture(canvas);
+}
+
+// Aracın arkasına (-X) veya önüne (+X) bakan düz bir dekal panosu.
+function decalPane(w, h, texture, facingForward) {
+  const geo = new THREE.PlaneGeometry(w, h);
+  geo.rotateY(facingForward ? Math.PI / 2 : -Math.PI / 2);
+  return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false }));
+}
+
 export function createCarGroup(hex) {
   const group = new THREE.Group();
 
@@ -63,10 +88,12 @@ export function createCarGroup(hex) {
   const glassMat = new THREE.MeshStandardMaterial({ color: 0x8fb8d8, roughness: 0.08, metalness: 0.15, transparent: true, opacity: 0.72, side: THREE.DoubleSide });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x111318, roughness: 0.75 });
   const trimMat = new THREE.MeshStandardMaterial({ color: 0x1a1c22, roughness: 0.5, metalness: 0.2 });
-  const rimMat = new THREE.MeshStandardMaterial({ color: 0xcdd3dc, roughness: 0.3, metalness: 0.75 });
-  const headMat = new THREE.MeshStandardMaterial({ color: 0xfff2b0, emissive: 0xffe27a, emissiveIntensity: 0.7 });
+  const rimMat = new THREE.MeshStandardMaterial({ color: 0xe9edf3, roughness: 0.25, metalness: 0.7 });
+  const headMat = new THREE.MeshStandardMaterial({ color: 0xfaf6e8, emissive: 0xfff2c4, emissiveIntensity: 0.55, roughness: 0.15, metalness: 0.1 });
+  const indicatorMat = new THREE.MeshStandardMaterial({ color: 0xffb23e, emissive: 0xff9500, emissiveIntensity: 0.6 });
+  const tailUpperMat = new THREE.MeshStandardMaterial({ color: 0xf2ede2, roughness: 0.3 });
   const tailMat = new THREE.MeshStandardMaterial({ color: 0xff4444, emissive: 0xd81c2c, emissiveIntensity: 0.7 });
-  const gtiMat = new THREE.MeshStandardMaterial({ color: 0xd81c2c, roughness: 0.5 });
+  const plateMat = new THREE.MeshStandardMaterial({ color: 0xf4f4f4, roughness: 0.5 });
 
   // --- Gövde kabuğu ---
   const body = new THREE.Mesh(buildBodyGeometry(), bodyMat);
@@ -91,67 +118,115 @@ export function createCarGroup(hex) {
   sideGlassL.position.z = -9.85;
   group.add(sideGlassL);
 
-  // --- Çatı kenar çıtası ---
-  const roofBar = new THREE.Mesh(new THREE.BoxGeometry(10.2, 1, 19.8), bodyMat);
+  // --- Çatı / ön cam siyah çıtası ---
+  const roofBar = new THREE.Mesh(new THREE.BoxGeometry(10.2, 1, 19.8), trimMat);
   roofBar.position.set(-3, 19.1, 0);
   group.add(roofBar);
 
-  // --- Ön tampon alt dudak / spoiler ---
-  const frontLip = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.6, 19.5), trimMat);
-  frontLip.position.set(17.2, 1.6, 0);
+  // --- Ön ve arka tampon alt (siyah) valans ---
+  const frontValance = new THREE.Mesh(new THREE.BoxGeometry(3.4, 4.2, 17.4), trimMat);
+  frontValance.position.set(16.3, 3.1, 0);
+  group.add(frontValance);
+  const frontLip = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.4, 17.6), darkMat);
+  frontLip.position.set(17.3, 1.3, 0);
   group.add(frontLip);
 
-  // --- Izgara ---
-  const grille = new THREE.Mesh(new THREE.BoxGeometry(1.2, 3.6, 10), trimMat);
-  grille.position.set(17.4, 6.5, 0);
+  const rearValance = new THREE.Mesh(new THREE.BoxGeometry(3, 4, 16.4), trimMat);
+  rearValance.position.set(-16, 3, 0);
+  group.add(rearValance);
+
+  // --- Izgara + Peugeot arslan rozeti ---
+  const grille = new THREE.Mesh(new THREE.BoxGeometry(1.2, 3.2, 9), darkMat);
+  grille.position.set(17.4, 6.3, 0);
   group.add(grille);
+  const badgeTex = textTexture("P", { w: 128, h: 128, font: "700 84px Georgia", color: "#e9edf3" });
+  const frontBadge = decalPane(2.2, 2.2, badgeTex, true);
+  frontBadge.position.set(17.55, 6.3, 0);
+  group.add(frontBadge);
 
   // --- Sis farları ---
   [7.2, -7.2].forEach((z) => {
-    const fog = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.4, 12), headMat);
+    const fog = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.4, 12), darkMat);
     fog.rotation.z = Math.PI / 2;
-    fog.position.set(17, 3.4, z);
+    fog.position.set(17, 2.9, z);
     group.add(fog);
+    const fogLens = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.3, 12), headMat);
+    fogLens.rotation.z = Math.PI / 2;
+    fogLens.position.set(17.6, 2.9, z);
+    group.add(fogLens);
   });
 
-  // --- Farlar (ön/arka) ---
-  const headL = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3, 5), headMat);
-  headL.position.set(16.6, 6.8, 6.6);
-  group.add(headL);
-  const headR = headL.clone();
-  headR.position.z = -6.6;
-  group.add(headR);
+  // --- Farlar (yatık/süpürülmüş, iç köşede turuncu sinyal) ---
+  [1, -1].forEach((side) => {
+    const head = new THREE.Group();
+    const lens = new THREE.Mesh(new THREE.BoxGeometry(2.4, 3, 4.4), headMat);
+    head.add(lens);
+    const ind = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1, 1.4), indicatorMat);
+    ind.position.set(0.1, -1.3, 1.8 * side);
+    head.add(ind);
+    head.rotation.y = -0.22 * side;
+    head.position.set(16.7, 6.8, 6.4 * side);
+    group.add(head);
+  });
 
-  const tailL = new THREE.Mesh(new THREE.BoxGeometry(2, 3.6, 3.4), tailMat);
-  tailL.position.set(-15.7, 7.2, 7.4);
-  group.add(tailL);
-  const tailR = tailL.clone();
-  tailR.position.z = -7.4;
-  group.add(tailR);
+  // --- Arka lambalar (üstte krem, altta kırmızı — köşeye sarılan) ---
+  [1, -1].forEach((side) => {
+    const tail = new THREE.Group();
+    const upper = new THREE.Mesh(new THREE.BoxGeometry(2, 1.4, 3.6), tailUpperMat);
+    upper.position.set(0, 1.3, 0);
+    tail.add(upper);
+    const lower = new THREE.Mesh(new THREE.BoxGeometry(2, 2.6, 3.6), tailMat);
+    lower.position.set(0, -0.6, 0);
+    tail.add(lower);
+    tail.rotation.y = 0.18 * side;
+    tail.position.set(-15.8, 7.6, 7.3 * side);
+    group.add(tail);
+  });
 
-  // --- Arka spoiler (GTI'nin karakteristik çatı spoyleri) ---
-  const spoilerBase = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 18), bodyMat);
+  // --- Arka plaka + Peugeot / GTI yazıları ---
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.5, 4.4), plateMat);
+  plate.position.set(-17.6, 3.4, 0);
+  group.add(plate);
+  const plateTex = textTexture("106 GTI", { w: 480, h: 128, font: "700 66px Arial", color: "#101318" });
+  group.add(decalPane(3.9, 1.1, plateTex, false).translateX(-17.71).translateY(3.4));
+
+  const peugeotTex = textTexture("PEUGEOT", { w: 512, h: 96, font: "700 54px Arial", color: "#f2f4f8" });
+  group.add(decalPane(6.2, 0.9, peugeotTex, false).translateX(-16.62).translateY(5.6));
+
+  const gtiTex = textTexture("GTI", { w: 220, h: 128, font: "800 88px Arial", color: "#ffffff", bg: "#d81c2c" });
+  const gtiBadge = decalPane(1.7, 1, gtiTex, false);
+  gtiBadge.position.set(-16.62, 8, 0);
+  group.add(gtiBadge);
+
+  // --- Arka spoiler (siyah, üçüncü fren lambalı) ---
+  const spoilerBase = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 18), trimMat);
   spoilerBase.position.set(-12, 16.6, 0);
   group.add(spoilerBase);
   const spoilerWing = new THREE.Mesh(new THREE.BoxGeometry(3, 0.6, 18.6), darkMat);
   spoilerWing.position.set(-12.4, 17.5, 0);
   group.add(spoilerWing);
+  const brakeLight = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 10), tailMat);
+  brakeLight.position.set(-13.9, 17.5, 0);
+  group.add(brakeLight);
 
-  // --- Yan marşpiyeller / eşikler ---
-  const skirtR = new THREE.Mesh(new THREE.BoxGeometry(24, 1.4, 0.6), trimMat);
-  skirtR.position.set(0, 1.6, 10.9);
+  // --- Yan marşpiyeller / eşikler (siyah) ---
+  const skirtR = new THREE.Mesh(new THREE.BoxGeometry(24, 1.6, 0.7), trimMat);
+  skirtR.position.set(0, 1.5, 10.9);
   group.add(skirtR);
   const skirtL = skirtR.clone();
   skirtL.position.z = -10.9;
   group.add(skirtL);
 
-  // --- GTI şeridi (eşik üstü ince kırmızı çizgi) ---
-  const stripeR = new THREE.Mesh(new THREE.BoxGeometry(24, 0.5, 0.15), gtiMat);
-  stripeR.position.set(0, 4.2, 11.05);
-  group.add(stripeR);
-  const stripeL = stripeR.clone();
-  stripeL.position.z = -11.05;
-  group.add(stripeL);
+  // --- Ön çamurluk üzerindeki GTI rozeti (dışa, yanlara bakar) ---
+  const fenderBadgeTex = textTexture("GTI", { w: 220, h: 100, font: "700 56px Arial", color: "#d81c2c", bg: "#f2f4f8" });
+  const fenderBadgeGeoR = new THREE.PlaneGeometry(1.6, 0.75); // varsayılan normal +Z
+  const fenderBadgeR = new THREE.Mesh(fenderBadgeGeoR, new THREE.MeshBasicMaterial({ map: fenderBadgeTex, transparent: true, depthWrite: false }));
+  fenderBadgeR.position.set(9.6, 8.4, 10.05);
+  group.add(fenderBadgeR);
+  const fenderBadgeL = fenderBadgeR.clone();
+  fenderBadgeL.rotation.y = Math.PI; // normal -Z
+  fenderBadgeL.position.z = -10.05;
+  group.add(fenderBadgeL);
 
   // --- Dış dikiz aynaları ---
   const mirrorGeo = new THREE.BoxGeometry(1.6, 1.4, 2.4);
