@@ -48,22 +48,22 @@ function colorSwatches() {
   ).join("");
 }
 
-function initPreview3D() {
+async function initPreview3D() {
   const canvas = document.getElementById("carPreviewCanvas");
   const scene = new THREE.Scene();
   scene.background = null;
 
-  const camera = new THREE.PerspectiveCamera(32, 1, 1, 2000);
-  camera.position.set(40, 24, 36);
-  camera.lookAt(0, 9, 0);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 200);
+  camera.position.set(4.2, 2.35, 3.6);
+  camera.lookAt(0, 0.72, 0);
 
   const hemi = new THREE.HemisphereLight(0xffffff, 0x1a1420, 0.9);
   scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffffff, 1.1);
-  sun.position.set(60, 90, 40);
+  sun.position.set(6, 9, 4);
   scene.add(sun);
 
-  previewCar = createCarGroup(State.getCarStats().color.hex);
+  previewCar = await createCarGroup(State.getCarStats().color.hex);
   scene.add(previewCar);
 
   previewRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });

@@ -68,6 +68,7 @@ function formatTime(sec) {
 
 export const Race = (() => {
   const TRACK_X = 340, TRACK_Y = 200, TRACK_R = 90, TRACK_WIDTH = 74;
+  const CAR_SCALE = 9.64; // gerçek metre ölçekli GLB modelini pist birimlerine büyütür
   const W = 900, H = 560;
   const cx = W / 2, cy = H / 2;
 
@@ -185,7 +186,7 @@ export const Race = (() => {
     }
   }
 
-  function init() {
+  async function init() {
     canvas = document.getElementById("raceCanvas");
     const segments = buildSegments(cx, cy, TRACK_X, TRACK_Y, TRACK_R);
     polyline = buildPolyline(segments, 260);
@@ -210,7 +211,8 @@ export const Race = (() => {
     scene.add(buildTrackMesh());
     initSkidPool();
 
-    carMesh = createCarGroup(State.getCarStats().color.hex);
+    carMesh = await createCarGroup(State.getCarStats().color.hex);
+    carMesh.scale.setScalar(CAR_SCALE);
     scene.add(carMesh);
 
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -396,7 +398,7 @@ export const Race = (() => {
     carMesh.rotation.y = -car.angle;
 
     const wheelSpeed = Math.hypot(car.vx, car.vy) * 0.05;
-    carMesh.userData.wheels.forEach((w) => (w.rotation.x += wheelSpeed));
+    carMesh.userData.wheels.forEach((w) => (w.rotation.z += wheelSpeed));
 
     const heading = new THREE.Vector3(Math.cos(car.angle), 0, Math.sin(car.angle));
     const desiredCamPos = new THREE.Vector3(
