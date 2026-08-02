@@ -280,6 +280,11 @@ for side in (1, -1):
 add_box("DoorSeamR", (-0.35, 0.795 - 0.005, 0.72), (0.01, 0.01, 1.28), mat_trim, bevel=False)
 add_box("DoorSeamL", (-0.35, -(0.795 - 0.005), 0.72), (0.01, 0.01, 1.28), mat_trim, bevel=False)
 
+# beltline character line (thin crease running under the windows, front
+# fender to rear quarter — visible in the reference blueprint's side view)
+add_box("CharLineR", (-0.05, 0.795 - 0.003, 0.83), (3.15, 0.006, 0.012), mat_trim, bevel=False)
+add_box("CharLineL", (-0.05, -(0.795 - 0.003), 0.83), (3.15, 0.006, 0.012), mat_trim, bevel=False)
+
 # mirrors
 for side in (1, -1):
     bpy.ops.mesh.primitive_cube_add(location=(0.62, side * 0.87, 0.98))
