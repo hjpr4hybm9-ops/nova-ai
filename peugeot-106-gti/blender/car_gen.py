@@ -217,7 +217,7 @@ bpy.context.collection.objects.link(qg_l)
 
 add_box("RoofTrim", (-0.22, 0, 1.335), (1.10, 1.58, 0.03), mat_trim)
 
-add_box("FrontValance", (1.72, 0, 0.34), (0.34, 1.5, 0.34), mat_black)
+add_box("FrontValance", (1.75, 0, 0.28), (0.28, 1.46, 0.24), mat_black)
 add_box("FrontLip", (1.86, 0, 0.16), (0.20, 1.46, 0.10), mat_trim)
 add_box("RearValance", (-1.70, 0, 0.32), (0.30, 1.42, 0.32), mat_black)
 
@@ -229,20 +229,20 @@ add_box("Grille", (1.87, 0, 0.55), (0.10, 0.58, 0.28), mat_trim)
 for side in (1, -1):
     add_cylinder(f"Fog_{'R' if side>0 else 'L'}", (1.90, side * 0.46, 0.28), 0.07, 0.06, mat_head, rot=(0, math.pi/2, 0), verts=16)
 
-# headlights (angled)
+# headlights (rounded lens units, closer to the reference photos)
 for side in (1, -1):
-    bpy.ops.mesh.primitive_cube_add(location=(1.70, side * 0.42, 0.58))
+    bpy.ops.mesh.primitive_uv_sphere_add(location=(1.68, side * 0.44, 0.58), segments=20, ring_count=12)
     h = bpy.context.object
     h.name = f"Headlamp_{'R' if side>0 else 'L'}"
-    h.scale = (0.10, 0.16, 0.10)
-    h.rotation_euler = (0, 0, -0.30 * side)
+    h.scale = (0.11, 0.17, 0.115)
+    h.rotation_euler = (0, 0, -0.22 * side)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     h.data.materials.append(mat_head)
     shade_smooth_auto(h)
-    bpy.ops.mesh.primitive_cube_add(location=(1.68, side * 0.55, 0.50))
+    bpy.ops.mesh.primitive_uv_sphere_add(location=(1.66, side * 0.57, 0.52), segments=16, ring_count=10)
     ind = bpy.context.object
     ind.name = f"Indicator_{'R' if side>0 else 'L'}"
-    ind.scale = (0.08, 0.05, 0.05)
+    ind.scale = (0.07, 0.055, 0.06)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     ind.data.materials.append(mat_ind)
     shade_smooth_auto(ind)
