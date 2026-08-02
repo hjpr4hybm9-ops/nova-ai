@@ -1,7 +1,7 @@
 // Sabit giriş şifresi — bu sayfayı sadece şifreyi bilen açabilir.
-const APP_PASSWORD = "106GTI2001";
+export const APP_PASSWORD = "106GTI2001";
 
-const BASE_CAR = {
+export const BASE_CAR = {
   name: "Peugeot 106 GTI",
   year: 2001,
   engine: "1.6L 16V",
@@ -9,7 +9,7 @@ const BASE_CAR = {
   weight: 1011,
 };
 
-const PARTS = {
+export const PARTS = {
   engine: {
     label: "Motor",
     icon: "🔧",
@@ -48,7 +48,7 @@ const PARTS = {
   },
 };
 
-const PAINT_COLORS = [
+export const PAINT_COLORS = [
   { id: "rouge", name: "Kırmızı (GTI)", hex: "#d81c2c" },
   { id: "blanc", name: "Beyaz", hex: "#f4f6fb" },
   { id: "bleu", name: "Mavi", hex: "#1c5fd8" },
@@ -57,4 +57,4 @@ const PAINT_COLORS = [
   { id: "vert", name: "Racing Yeşil", hex: "#0f6b3f" },
 ];
 
-const RACE_CONFIG = { laps: 3 };
+export const RACE_CONFIG = { laps: 3 };

@@ -1,5 +1,7 @@
-const STORAGE_KEY = "p106gti.save.v1";
-const REMEMBER_KEY = "p106gti.remember";
+import { PARTS, PAINT_COLORS, BASE_CAR } from "./data.js";
+
+export const STORAGE_KEY = "p106gti.save.v1";
+export const REMEMBER_KEY = "p106gti.remember";
 
 function defaultSave() {
   return {
@@ -11,7 +13,7 @@ function defaultSave() {
   };
 }
 
-const State = (() => {
+export const State = (() => {
   let save = load();
 
   function load() {

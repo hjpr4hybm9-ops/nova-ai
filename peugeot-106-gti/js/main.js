@@ -1,7 +1,9 @@
-function updateMoneyDisplay() {
-  document.getElementById("moneyDisplay").textContent = State.data.money.toLocaleString("tr-TR");
-}
-window.updateMoneyDisplay = updateMoneyDisplay;
+import "./lock.js";
+import { lockNow } from "./lock.js";
+import { State } from "./state.js";
+import { render as renderGarage } from "./garage.js";
+import { Race } from "./race.js";
+import { updateMoneyDisplay } from "./ui.js";
 
 function initTabs() {
   const btns = document.querySelectorAll(".tab-btn");
@@ -20,18 +22,18 @@ function initTabs() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initTabs();
-  Garage.render();
+  renderGarage();
   Race.init();
   updateMoneyDisplay();
 
   document.getElementById("resetBtn").addEventListener("click", () => {
     if (confirm("Tüm ilerleme (bütçe, parçalar, rekorlar) silinecek. Emin misin?")) {
       State.reset();
-      Garage.render();
+      renderGarage();
       updateMoneyDisplay();
       Race.updateBestDisplays();
     }
   });
 
-  document.getElementById("lockAppBtn").addEventListener("click", () => AppLock.lockNow());
+  document.getElementById("lockAppBtn").addEventListener("click", () => lockNow());
 });
