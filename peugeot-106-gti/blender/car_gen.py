@@ -94,46 +94,55 @@ mat_plate  = make_mat("Plate", (0.93, 0.93, 0.93), roughness=0.5)
 # DIMENSIONS (meters, roughly Peugeot 106 GTI)
 # ============================================================
 
-WHEELBASE = 2.385
+WHEELBASE = 2.380
 TRACK = 1.40
 WHEEL_R = 0.28
 WHEEL_W = 0.30
 FRONT_AXLE_X = WHEELBASE / 2
 REAR_AXLE_X = -WHEELBASE / 2
 
-# Body cross-sections (ring loft): x, half_width, z_bottom, z_top
+# Body cross-sections (ring loft): x, hw_lo (rocker), hw_hi (shoulder/widest),
+# hw_top (roof/tumblehome), z0 (sill), z_mid (shoulder height), z1 (roof/top).
+# Each ring is a hexagon that narrows below the shoulder (rocker tuck-under)
+# and above it (tumblehome), instead of a flat-sided rectangle, so the body
+# reads as a rounded car cross-section rather than a van/box.
+# Matched to vector-templates.com "Peugeot 106 Rallye 1.6 (2001)" blueprint:
+# overall length 3560mm, width 1610mm, height 1360mm, wheelbase 2380mm.
 RINGS = [
-    (-1.84, 0.62, 0.26, 0.56),   # rear bumper tip
-    (-1.60, 0.78, 0.18, 0.72),   # rear valance / tailgate bottom
-    (-1.20, 0.795, 0.16, 1.22),  # C-pillar / tailgate top
-    (-0.75, 0.795, 0.16, 1.34),  # roof rear
-    ( 0.30, 0.795, 0.16, 1.34),  # roof front
-    ( 0.72, 0.795, 0.16, 0.86),  # cowl / windshield base
-    ( 1.28, 0.74, 0.20, 0.72),   # hood
-    ( 1.62, 0.66, 0.24, 0.62),   # front fender
-    ( 1.84, 0.58, 0.26, 0.52),   # front bumper tip
+    (-1.78, 0.44, 0.60, 0.54, 0.28, 0.42, 0.56),   # rear bumper tip
+    (-1.55, 0.55, 0.79, 0.76, 0.18, 0.45, 0.78),   # rear valance / tailgate bottom
+    (-1.20, 0.60, 0.805, 0.66, 0.16, 0.55, 1.23),  # C-pillar / tailgate top
+    (-0.75, 0.62, 0.805, 0.64, 0.16, 0.60, 1.36),  # roof rear
+    ( 0.30, 0.62, 0.805, 0.64, 0.16, 0.60, 1.36),  # roof front
+    ( 0.72, 0.62, 0.805, 0.70, 0.16, 0.55, 0.86),  # cowl / windshield base
+    ( 1.25, 0.55, 0.75, 0.73, 0.20, 0.45, 0.72),   # hood
+    ( 1.58, 0.50, 0.67, 0.65, 0.24, 0.40, 0.62),   # front fender
+    ( 1.78, 0.42, 0.58, 0.56, 0.26, 0.38, 0.52),   # front bumper tip
 ]
 
 # ============================================================
-# BODY (ring loft via bmesh)
+# BODY (hexagonal ring loft via bmesh)
 # ============================================================
+
+def hex_points(x, hw_lo, hw_hi, hw_top, z0, z_mid, z1):
+    return [
+        (-hw_lo, z0), (-hw_hi, z_mid), (-hw_top, z1),
+        (hw_top, z1), (hw_hi, z_mid), (hw_lo, z0),
+    ]
 
 def build_body():
     bm = bmesh.new()
     ring_verts = []
-    for (x, hw, z0, z1) in RINGS:
-        v0 = bm.verts.new((x, -hw, z0))
-        v1 = bm.verts.new((x, hw, z0))
-        v2 = bm.verts.new((x, hw, z1))
-        v3 = bm.verts.new((x, -hw, z1))
-        ring_verts.append([v0, v1, v2, v3])
+    for (x, hw_lo, hw_hi, hw_top, z0, z_mid, z1) in RINGS:
+        pts = hex_points(x, hw_lo, hw_hi, hw_top, z0, z_mid, z1)
+        ring_verts.append([bm.verts.new((x, y, z)) for (y, z) in pts])
     n = len(ring_verts)
+    k = 6
     for i in range(n - 1):
         a, b = ring_verts[i], ring_verts[i + 1]
-        bm.faces.new([a[0], b[0], b[1], a[1]])  # bottom
-        bm.faces.new([a[1], b[1], b[2], a[2]])  # +y side
-        bm.faces.new([a[2], b[2], b[3], a[3]])  # top
-        bm.faces.new([a[3], b[3], b[0], a[0]])  # -y side
+        for j in range(k):
+            j2 = (j + 1) % k
+            bm.faces.new([a[j], b[j], b[j2], a[j2]])
     bm.faces.new(list(reversed(ring_verts[0])))
     bm.faces.new(ring_verts[-1])
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
@@ -175,63 +184,65 @@ def glass_panel_diagonal(name, x_a, x_b, z_a, z_b, width):
     p.data.materials.append(mat_glass)
     return p
 
-# windshield: roof-front -> cowl
+# windshield: roof-front -> cowl (use the narrower of the two roof-width values)
 r_roofF, r_cowl = ring_by_x(0.30), ring_by_x(0.72)
-glass_panel_diagonal("Windshield", r_roofF[0], r_cowl[0], r_roofF[3], r_cowl[3], 0.795 * 2 - 0.14)
+glass_panel_diagonal("Windshield", r_roofF[0], r_cowl[0], r_roofF[6], r_cowl[6],
+                      min(r_roofF[3], r_cowl[3]) * 2 - 0.10)
 
 # rear glass: roof-rear -> C-pillar
 r_roofR, r_cpil = ring_by_x(-0.75), ring_by_x(-1.20)
-glass_panel_diagonal("RearGlass", r_roofR[0], r_cpil[0], r_roofR[3], r_cpil[3], 0.795 * 2 - 0.14)
+glass_panel_diagonal("RearGlass", r_roofR[0], r_cpil[0], r_roofR[6], r_cpil[6],
+                      min(r_roofR[3], r_cpil[3]) * 2 - 0.10)
 
 # door glass (flat vertical) between cowl and mid-cabin
-bpy.ops.mesh.primitive_plane_add(location=(0.05, 0.795 - 0.02, 0.98))
+DOOR_GLASS_HW = 0.66 - 0.02
+bpy.ops.mesh.primitive_plane_add(location=(0.05, DOOR_GLASS_HW, 0.98))
 door_glass_r = bpy.context.object
 door_glass_r.name = "DoorGlass_R"
-door_glass_r.scale = (0.62, 0.36, 1)
+door_glass_r.scale = (0.62, 0.34, 1)
 door_glass_r.rotation_euler = (math.pi / 2, 0, 0)
 bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 door_glass_r.data.materials.append(mat_glass)
 door_glass_l = door_glass_r.copy()
 door_glass_l.data = door_glass_r.data.copy()
 door_glass_l.name = "DoorGlass_L"
-door_glass_l.location.y = -(0.795 - 0.02)
+door_glass_l.location.y = -DOOR_GLASS_HW
 bpy.context.collection.objects.link(door_glass_l)
 
 # rear quarter glass
-bpy.ops.mesh.primitive_plane_add(location=(-0.95, 0.795 - 0.02, 0.95))
+QUARTER_GLASS_HW = 0.64 - 0.02
+bpy.ops.mesh.primitive_plane_add(location=(-0.95, QUARTER_GLASS_HW, 0.95))
 qg_r = bpy.context.object
 qg_r.name = "QuarterGlass_R"
-qg_r.scale = (0.35, 0.30, 1)
+qg_r.scale = (0.35, 0.28, 1)
 qg_r.rotation_euler = (math.pi / 2, 0, 0)
 bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 qg_r.data.materials.append(mat_glass)
 qg_l = qg_r.copy()
 qg_l.data = qg_r.data.copy()
 qg_l.name = "QuarterGlass_L"
-qg_l.location.y = -(0.795 - 0.02)
+qg_l.location.y = -QUARTER_GLASS_HW
 bpy.context.collection.objects.link(qg_l)
 
 # ============================================================
 # ROOF TRIM / BUMPER VALANCES / SKIRTS
 # ============================================================
 
-add_box("RoofTrim", (-0.22, 0, 1.335), (1.10, 1.58, 0.03), mat_trim)
+add_box("FrontValance", (1.71, 0, 0.24), (0.22, 1.20, 0.16), mat_black)
+add_box("FrontLip", (1.80, 0, 0.15), (0.16, 1.20, 0.08), mat_trim)
+add_box("RearValance", (-1.66, 0, 0.30), (0.24, 1.20, 0.24), mat_black)
 
-add_box("FrontValance", (1.75, 0, 0.28), (0.28, 1.46, 0.24), mat_black)
-add_box("FrontLip", (1.86, 0, 0.16), (0.20, 1.46, 0.10), mat_trim)
-add_box("RearValance", (-1.70, 0, 0.32), (0.30, 1.42, 0.32), mat_black)
-
-add_box("SkirtR", (0, 0.80, 0.17), (2.6, 0.05, 0.14), mat_trim)
-add_box("SkirtL", (0, -0.80, 0.17), (2.6, 0.05, 0.14), mat_trim)
+add_box("SkirtR", (0, 0.60, 0.17), (2.4, 0.05, 0.12), mat_trim)
+add_box("SkirtL", (0, -0.60, 0.17), (2.4, 0.05, 0.12), mat_trim)
 
 # grille + fog lights
-add_box("Grille", (1.87, 0, 0.55), (0.10, 0.58, 0.28), mat_trim)
+add_box("Grille", (1.82, 0, 0.52), (0.08, 0.46, 0.20), mat_trim)
 for side in (1, -1):
-    add_cylinder(f"Fog_{'R' if side>0 else 'L'}", (1.90, side * 0.46, 0.28), 0.07, 0.06, mat_head, rot=(0, math.pi/2, 0), verts=16)
+    add_cylinder(f"Fog_{'R' if side>0 else 'L'}", (1.84, side * 0.40, 0.26), 0.06, 0.05, mat_head, rot=(0, math.pi/2, 0), verts=16)
 
 # headlights (rounded lens units, closer to the reference photos)
 for side in (1, -1):
-    bpy.ops.mesh.primitive_uv_sphere_add(location=(1.68, side * 0.44, 0.58), segments=20, ring_count=12)
+    bpy.ops.mesh.primitive_uv_sphere_add(location=(1.62, side * 0.44, 0.58), segments=20, ring_count=12)
     h = bpy.context.object
     h.name = f"Headlamp_{'R' if side>0 else 'L'}"
     h.scale = (0.11, 0.17, 0.115)
@@ -239,7 +250,7 @@ for side in (1, -1):
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     h.data.materials.append(mat_head)
     shade_smooth_auto(h)
-    bpy.ops.mesh.primitive_uv_sphere_add(location=(1.66, side * 0.57, 0.52), segments=16, ring_count=10)
+    bpy.ops.mesh.primitive_uv_sphere_add(location=(1.60, side * 0.57, 0.52), segments=16, ring_count=10)
     ind = bpy.context.object
     ind.name = f"Indicator_{'R' if side>0 else 'L'}"
     ind.scale = (0.07, 0.055, 0.06)
@@ -249,7 +260,7 @@ for side in (1, -1):
 
 # taillights (two-tone, wrap corner)
 for side in (1, -1):
-    bpy.ops.mesh.primitive_cube_add(location=(-1.68, side * 0.62, 0.68))
+    bpy.ops.mesh.primitive_cube_add(location=(-1.62, side * 0.62, 0.68))
     tu = bpy.context.object
     tu.name = f"TailUpper_{'R' if side>0 else 'L'}"
     tu.scale = (0.08, 0.14, 0.06)
@@ -257,7 +268,7 @@ for side in (1, -1):
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     tu.data.materials.append(mat_tailU)
     shade_smooth_auto(tu)
-    bpy.ops.mesh.primitive_cube_add(location=(-1.68, side * 0.62, 0.56))
+    bpy.ops.mesh.primitive_cube_add(location=(-1.62, side * 0.62, 0.56))
     tl = bpy.context.object
     tl.name = f"Tail_{'R' if side>0 else 'L'}"
     tl.scale = (0.08, 0.14, 0.10)
@@ -266,28 +277,23 @@ for side in (1, -1):
     tl.data.materials.append(mat_tail)
     shade_smooth_auto(tl)
 
-# third brake light + spoiler
-add_box("SpoilerBase", (-1.15, 0, 1.30), (0.10, 1.30, 0.05), mat_trim)
-add_box("SpoilerWing", (-1.20, 0, 1.36), (0.16, 1.36, 0.035), mat_black)
-add_box("BrakeLight", (-1.28, 0, 1.36), (0.02, 0.70, 0.02), mat_tail)
+# third brake light + spoiler (sits on the tailgate trailing edge, at the
+# C-pillar's roof height — not above the main roofline)
+add_box("SpoilerBase", (-1.18, 0, 1.22), (0.10, 1.10, 0.05), mat_trim)
+add_box("SpoilerWing", (-1.24, 0, 1.27), (0.16, 1.16, 0.035), mat_black)
+add_box("BrakeLight", (-1.30, 0, 1.27), (0.02, 0.60, 0.02), mat_tail)
 
 # license plate
-add_box("Plate", (-1.86, 0, 0.30), (0.02, 0.32, 0.10), mat_plate)
+add_box("Plate", (-1.80, 0, 0.30), (0.02, 0.32, 0.10), mat_plate)
 
-# door handles + seam
+# door handles (positioned at the shoulder/beltline width, not the old
+# uniform body half-width)
 for side in (1, -1):
-    add_box(f"Handle_{'R' if side>0 else 'L'}", (-0.15, side * (0.795 - 0.01), 0.90), (0.16, 0.02, 0.035), mat_trim, bevel=False)
-add_box("DoorSeamR", (-0.35, 0.795 - 0.005, 0.72), (0.01, 0.01, 1.28), mat_trim, bevel=False)
-add_box("DoorSeamL", (-0.35, -(0.795 - 0.005), 0.72), (0.01, 0.01, 1.28), mat_trim, bevel=False)
-
-# beltline character line (thin crease running under the windows, front
-# fender to rear quarter — visible in the reference blueprint's side view)
-add_box("CharLineR", (-0.05, 0.795 - 0.003, 0.83), (3.15, 0.006, 0.012), mat_trim, bevel=False)
-add_box("CharLineL", (-0.05, -(0.795 - 0.003), 0.83), (3.15, 0.006, 0.012), mat_trim, bevel=False)
+    add_box(f"Handle_{'R' if side>0 else 'L'}", (-0.15, side * 0.73, 0.90), (0.16, 0.02, 0.035), mat_trim, bevel=False)
 
 # mirrors
 for side in (1, -1):
-    bpy.ops.mesh.primitive_cube_add(location=(0.62, side * 0.87, 0.98))
+    bpy.ops.mesh.primitive_cube_add(location=(0.62, side * 0.72, 0.98))
     m = bpy.context.object
     m.name = f"Mirror_{'R' if side>0 else 'L'}"
     m.scale = (0.10, 0.05, 0.05)
@@ -413,3 +419,54 @@ bpy.ops.export_scene.gltf(
 )
 
 print("DONE:", out_path)
+
+# ============================================================
+# STUDIO PREVIEW RENDER (3/4 front hero shot)
+# ============================================================
+
+import mathutils
+
+cam_target = mathutils.Vector((0.0, 0.0, 0.55))
+cam_loc = mathutils.Vector((5.2, -4.6, 1.9))
+
+cam_data = bpy.data.cameras.new("PreviewCamData")
+cam_data.lens = 50
+cam = bpy.data.objects.new("PreviewCam", cam_data)
+bpy.context.collection.objects.link(cam)
+cam.location = cam_loc
+direction = cam_target - cam_loc
+cam.rotation_euler = direction.to_track_quat('-Z', 'Y').to_euler()
+scene.camera = cam
+
+world = bpy.data.worlds.get("World") or bpy.data.worlds.new("World")
+scene.world = world
+world.use_nodes = True
+bg = world.node_tree.nodes.get("Background")
+if bg:
+    bg.inputs[0].default_value = (0.80, 0.82, 0.85, 1.0)
+    bg.inputs[1].default_value = 1.0
+
+sun_data = bpy.data.lights.new("SunLight", type='SUN')
+sun_data.energy = 3.5
+sun = bpy.data.objects.new("SunLight", sun_data)
+bpy.context.collection.objects.link(sun)
+sun.rotation_euler = (math.radians(55), 0, math.radians(35))
+
+fill_data = bpy.data.lights.new("FillLight", type='AREA')
+fill_data.energy = 500
+fill_data.size = 3
+fill = bpy.data.objects.new("FillLight", fill_data)
+bpy.context.collection.objects.link(fill)
+fill.location = (-3, 3, 2.5)
+
+scene.render.engine = 'CYCLES'
+scene.cycles.samples = 64
+scene.cycles.use_denoising = False
+scene.cycles.device = 'CPU'
+scene.render.resolution_x = 1600
+scene.render.resolution_y = 1000
+scene.render.image_settings.file_format = 'PNG'
+render_path = os.path.join(out_dir, "preview.png")
+scene.render.filepath = render_path
+bpy.ops.render.render(write_still=True)
+print("RENDERED:", render_path)
