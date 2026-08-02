@@ -303,6 +303,16 @@ export function createCarGroup(hex) {
     return w;
   });
 
+  // --- Kaporta rengi çamurluk kabartmaları (flare) — GTI'nin karakteristik
+  // dolgun çamurluk hattı, tekerleğin üstünü yarım halka gibi sarar.
+  const flareGeo = new THREE.TorusGeometry(5.3, 0.55, 6, 16, THREE.MathUtils.degToRad(210));
+  wheelPositions.forEach((p) => {
+    const flare = new THREE.Mesh(flareGeo, bodyMat);
+    flare.position.set(p[0], p[1], Math.sign(p[2]) * 10.3);
+    flare.rotation.z = THREE.MathUtils.degToRad(-15);
+    group.add(flare);
+  });
+
   const shadow = new THREE.Mesh(
     new THREE.CircleGeometry(23, 24),
     new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 })
