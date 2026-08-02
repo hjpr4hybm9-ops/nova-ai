@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0d13">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Peugeot 106 GTI 2001 temalı, şifre korumalı garaj &amp; drift/yarış oyunu.">
+<title>106 GTI — Garaj &amp; Pist</title>
+<link rel="stylesheet" href="css/style.css?v=2">
+<script type="importmap">
+{ "imports": { "three": "./js/vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-emblem">🏁</div>
+    <h1>106 GTI</h1>
+    <p class="lock-sub">Peugeot 106 GTI 2001 · Garaj &amp; Pist</p>
+    <p class="lock-intro">Bu alan özeldir. Devam etmek için şifreni gir.</p>
+    <input type="password" id="lockInput" inputmode="text" autocomplete="off" placeholder="Şifre" maxlength="30">
+    <label class="remember"><input type="checkbox" id="rememberMe" checked> Bu cihazda beni hatırla</label>
+    <button type="button" class="btn btn-primary" id="unlockBtn" style="width:100%">Giriş Yap</button>
+    <p class="lock-error hidden" id="lockError">Hatalı şifre, tekrar dene.</p>
+  </div>
+</div>
+
+<div class="app hidden" id="app">
+
+  <header class="topbar">
+    <div class="brand">🏁 106 GTI <span>'01</span></div>
+    <nav class="tabs">
+      <button type="button" class="tab-btn active" data-tab="garage">Garaj</button>
+      <button type="button" class="tab-btn" data-tab="track">Pist</button>
+      <button type="button" class="tab-btn" data-tab="settings">Ayarlar</button>
+    </nav>
+    <div class="money">💰 <span id="moneyDisplay">0</span> ₺</div>
+    <button type="button" class="icon-btn" id="lockAppBtn" title="Kilitle">🔒</button>
+  </header>
+
+  <main>
+    <section id="tab-garage" class="tab-pane active"></section>
+
+    <section id="tab-track" class="tab-pane">
+      <div class="track-hud">
+        <div class="hud-item"><span>Tur</span><strong id="lapDisplay">0/3</strong></div>
+        <div class="hud-item"><span>Süre</span><strong id="timeDisplay">00:00.00</strong></div>
+        <div class="hud-item"><span>Drift</span><strong id="driftScoreDisplay">0</strong></div>
+        <div class="hud-item"><span>En iyi tur</span><strong id="bestLapDisplay">--:--</strong></div>
+        <div class="hud-item"><span>En iyi drift</span><strong id="bestDriftDisplay">0</strong></div>
+        <div class="hud-actions">
+          <button type="button" class="btn btn-primary" id="startRaceBtn">Yarışı Başlat</button>
+          <button type="button" class="btn btn-outline" id="cancelRaceBtn">Sıfırla</button>
+        </div>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="raceCanvas" width="1280" height="800"></canvas>
+        <div class="countdown-overlay hidden" id="countdownOverlay"></div>
+      </div>
+      <p class="race-hint">Yön tuşları / WASD: sür · Boşluk: el freni (drift) · R: baştan başlat</p>
+      <div class="race-result hidden" id="raceResult"></div>
+    </section>
+
+    <section id="tab-settings" class="tab-pane">
+      <div class="settings-box">
+        <h3>Peugeot 106 GTI (2001)</h3>
+        <p>1.6L 16V motor, 118 HP fabrika gücü, ~1011 kg — döneminin en sevilen hot-hatch'lerinden biri. Garajda parça takarak gücünü, tutuşunu ve frenini artırabilir; piste çıkıp zaman turu ve drift puanı için yarışabilirsin.</p>
+      </div>
+      <div class="settings-box">
+        <h3>Erişim</h3>
+        <p>Bu site şifre ile korunur. "Bu cihazda beni hatırla" seçiliyse bir daha şifre sorulmaz; sağ üstteki 🔒 ile istediğin an tekrar kilitleyebilirsin.</p>
+      </div>
+      <div class="settings-box">
+        <h3>İlerlemeyi Sıfırla</h3>
+        <p>Bütçe, takılı parçalar ve rekorlar bu tarayıcıda saklanır. Aşağıdaki buton tüm ilerlemeni siler.</p>
+        <button type="button" class="btn danger-btn" id="resetBtn">İlerlemeyi Sıfırla</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="js/main.js?v=2"></script>
+</body>
+</html>
