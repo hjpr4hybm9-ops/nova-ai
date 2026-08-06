@@ -20,7 +20,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 
@@ -374,32 +374,6 @@
     </div>
 
     <div class="box">
-      <h3>Uygulama Kilidi</h3>
-      <p class="hint-text">Uygulamayı bir PIN kodu ile koru. Sekmeyi her açtığında PIN sorulur.</p>
-      <div class="settings-row">
-        <span>PIN Kilidi</span>
-        <label class="switch">
-          <input type="checkbox" id="appLockSwitch">
-          <span class="switch-track"></span>
-        </label>
-      </div>
-      <div class="set-pin-panel" id="setPinPanel" style="display:none;">
-        <div class="field-row">
-          <label>
-            Yeni PIN
-            <input type="password" id="newPinInput" inputmode="numeric" maxlength="6" placeholder="4-6 hane">
-          </label>
-          <label>
-            PIN (Tekrar)
-            <input type="password" id="confirmPinInput" inputmode="numeric" maxlength="6" placeholder="4-6 hane">
-          </label>
-        </div>
-        <button type="button" class="btn btn-primary btn-sm" id="savePinBtn">PIN'i Kaydet</button>
-        <p class="pin-error" id="pinError" style="display:none;"></p>
-      </div>
-    </div>
-
-    <div class="box">
       <h3>Veri Yönetimi</h3>
       <div class="settings-row">
         <span>Verilerimi Dışa Aktar</span>
@@ -424,15 +398,6 @@
 
 </main>
 
-<div class="lock-screen" id="lockScreen">
-  <div class="lock-box">
-    <img src="icons/icon-192.png" alt="Porsiyon AI" class="lock-logo" width="56" height="56">
-    <p>Devam etmek için PIN kodunu girin</p>
-    <input type="password" id="lockPinInput" inputmode="numeric" maxlength="6" class="lock-pin-input" placeholder="••••">
-    <button type="button" class="btn btn-primary" id="lockUnlockBtn">Kilidi Aç</button>
-    <p class="lock-error" id="lockError" style="display:none;">Yanlış PIN, tekrar deneyin.</p>
-  </div>
-</div>
 
 <footer class="site-footer">
   <div class="wrap">
@@ -441,6 +406,6 @@
 </footer>
 
 <script src="https://js.puter.com/v2/"></script>
-<script src="js/main.js?v=3"></script>
+<script src="js/main.js?v=4"></script>
 </body>
 </html>
