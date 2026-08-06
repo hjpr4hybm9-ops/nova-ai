@@ -1061,78 +1061,6 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
   });
   updateGreeting();
 
-  // ---------- App lock (PIN) ----------
-  const APPLOCK_KEY = "caloriai.applock";
-  const PIN_KEY = "caloriai.pin";
-  const appLockSwitch = document.getElementById("appLockSwitch");
-  const setPinPanel = document.getElementById("setPinPanel");
-  const newPinInput = document.getElementById("newPinInput");
-  const confirmPinInput = document.getElementById("confirmPinInput");
-  const pinError = document.getElementById("pinError");
-
-  appLockSwitch.checked = localStorage.getItem(APPLOCK_KEY) === "1";
-
-  appLockSwitch.addEventListener("change", () => {
-    if (appLockSwitch.checked) {
-      setPinPanel.style.display = "block";
-    } else {
-      localStorage.removeItem(APPLOCK_KEY);
-      localStorage.removeItem(PIN_KEY);
-      setPinPanel.style.display = "none";
-    }
-  });
-
-  document.getElementById("savePinBtn").addEventListener("click", () => {
-    const pin = newPinInput.value.trim();
-    const confirmPin = confirmPinInput.value.trim();
-    pinError.style.display = "none";
-
-    if (!/^\d{4,6}$/.test(pin)) {
-      pinError.textContent = "PIN 4-6 haneli rakamlardan oluşmalı.";
-      pinError.style.display = "block";
-      return;
-    }
-    if (pin !== confirmPin) {
-      pinError.textContent = "PIN'ler eşleşmiyor.";
-      pinError.style.display = "block";
-      return;
-    }
-
-    localStorage.setItem(PIN_KEY, pin);
-    localStorage.setItem(APPLOCK_KEY, "1");
-    setPinPanel.style.display = "none";
-    newPinInput.value = "";
-    confirmPinInput.value = "";
-  });
-
-  const lockScreen = document.getElementById("lockScreen");
-  const lockPinInput = document.getElementById("lockPinInput");
-  const lockError = document.getElementById("lockError");
-
-  function checkAppLock() {
-    if (localStorage.getItem(APPLOCK_KEY) === "1" && localStorage.getItem(PIN_KEY)) {
-      lockScreen.classList.add("show");
-      lockPinInput.focus();
-    }
-  }
-
-  function tryUnlock() {
-    const storedPin = localStorage.getItem(PIN_KEY);
-    if (lockPinInput.value === storedPin) {
-      lockScreen.classList.remove("show");
-      lockPinInput.value = "";
-      lockError.style.display = "none";
-    } else {
-      lockError.style.display = "block";
-      lockPinInput.value = "";
-    }
-  }
-
-  document.getElementById("lockUnlockBtn").addEventListener("click", tryUnlock);
-  lockPinInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") tryUnlock();
-  });
-
   // ---------- Data management ----------
   document.getElementById("exportDataBtn").addEventListener("click", () => {
     const data = { entries, goals, exportedAt: new Date().toISOString() };
@@ -1198,6 +1126,5 @@ Porsiyon belirtilmemişse ortalama bir porsiyon varsay ve bunu Not kısmında be
   renderAiChat();
   Promise.race([initPuter(), timeout(3000)]).then(() => {
     hideLoadingScreen();
-    checkAppLock();
   });
 })();

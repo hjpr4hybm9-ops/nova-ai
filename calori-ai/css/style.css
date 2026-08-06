@@ -825,7 +825,7 @@ input:focus, select:focus, textarea:focus {
   outline-offset: 2px;
 }
 
-/* PIN set panel / secondary panel */
+/* Secondary inline panel (used by the manual goal entry form) */
 .set-pin-panel {
   margin-top: 12px;
   padding-top: 12px;
@@ -833,58 +833,6 @@ input:focus, select:focus, textarea:focus {
 }
 
 .set-pin-panel .field-row label { min-width: 120px; }
-
-.pin-error {
-  color: var(--over);
-  font-size: 13px;
-  margin-top: 8px;
-}
-
-/* App lock screen */
-.lock-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 400;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-}
-
-.lock-screen.show { display: flex; }
-
-.lock-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 32px;
-  text-align: center;
-}
-
-.lock-logo {
-  height: 56px;
-  width: 56px;
-  border-radius: 16px;
-}
-
-.lock-box p {
-  color: var(--text-dim);
-  font-size: 14px;
-  margin: 0;
-}
-
-.lock-pin-input {
-  width: 160px;
-  text-align: center;
-  font-size: 22px;
-  letter-spacing: .3em;
-}
-
-.lock-error {
-  color: var(--over) !important;
-  font-size: 13px;
-}
 
 @media (max-width: 640px) {
   .header-inner { flex-direction: column; align-items: stretch; }
