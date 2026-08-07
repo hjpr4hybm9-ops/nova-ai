@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0e1a">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("hizoku.theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {}
+  })();
+</script>
+<meta name="description" content="HızOku — RSVP tekniğiyle okuma hızını katla. Metnini yapıştır, hızını ayarla, kelimeler tek bir odak noktasında akışla önünden geçsin. Ücretsiz, tarayıcıda çalışır.">
+<title>HızOku — Hızlı Okuma Antrenörü</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="logo">⚡</span>
+      <span class="brand-name">HızOku</span>
+    </a>
+
+    <nav class="nav" id="mainNav">
+      <a href="#neden">Neden Hızlı Okuma</a>
+      <a href="#nasil-calisir">Nasıl Çalışır</a>
+      <a href="#okuyucu">Okuyucu</a>
+      <a href="#istatistik">İstatistik</a>
+      <a href="#ayarlar">Ayarlar</a>
+      <a href="#sss">SSS</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="#okuyucu">Hemen Dene</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="wrap hero-inner">
+      <span class="eyebrow">✦ RSVP tekniğiyle bilimsel hızlı okuma</span>
+      <h1>Gözünü yormadan,<br><span class="grad-text">3 kat daha hızlı oku.</span></h1>
+      <p class="hero-sub">Metnini yapıştır, kelimeler göz hareketi gerektirmeden tam odak noktanda tek tek akışla geçsin. Satır satır gezinme, geri sıçrama ve iç sesle okuma yavaşlığı tarihe karışsın.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#okuyucu">Okumaya Başla</a>
+        <a class="btn btn-outline" href="#nasil-calisir">Nasıl Çalışır?</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>4×</strong><span>Ortalama hız artışı</span></div>
+        <div><strong>60 sn</strong><span>İlk sonucu görme süresi</span></div>
+        <div><strong>%100</strong><span>Ücretsiz ve tarayıcıda</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="neden">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Neden Hızlı Okuma</span>
+        <h2>Yavaş okumanın gerçek nedeni</h2>
+        <p>Normal okumada zamanının çoğu gözünü satırda gezdirmeye ve kelimeleri içinden seslendirmeye gider — anlamaya değil.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-icon">👁️</div>
+          <h3>Göz Sıçramalarını Yok Et</h3>
+          <p>Gözün normalde satır boyunca sürekli sıçrar ve geri döner (sakad). RSVP'de kelimeler sabit tek bir noktada akar, gözün hiç hareket etmesine gerek kalmaz.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤫</div>
+          <h3>İç Sesi Yavaşlat</h3>
+          <p>Çoğu insan okurken kelimeleri zihninde sessizce telaffuz eder (subvokalizasyon). Yüksek hızda akan kelimeler bu alışkanlığı doğal olarak azaltır.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎯</div>
+          <h3>Odağını Sabit Tut</h3>
+          <p>Her kelimenin "optimum tanıma noktası" (ORP) otomatik olarak vurgulanır ve ortalanır; gözün doğru harfe her seferinde tam isabet eder.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="nasil-calisir">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Nasıl Çalışır</span>
+        <h2>3 adımda hızlı okumaya başla</h2>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Metni getir</h3>
+          <p>Kendi metnini yapıştır ya da hazır örnek metinlerden birini seç.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Hızını ayarla</h3>
+          <p>Dakikadaki kelime sayısını (WPM) ve tek seferde gösterilecek kelime grubunu seç.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Tek noktaya odaklan</h3>
+          <p>Gözünü ortadaki vurgulu harfe sabitle, kelimeler akarken sadece izle — satır aramana gerek yok.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="okuyucu">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Okuyucu</span>
+        <h2>Hızlı Okuma Aracı</h2>
+        <p>Bir örnek metin seç ya da kendi metnini yapıştır, hızını belirle ve başlat.</p>
+      </div>
+
+      <div class="reader-panel">
+        <div class="reader-source" id="readerSource">
+          <div class="sample-select-wrap">
+            <label for="sampleSelect">📚 Örnek metin seç ya da kendi metnini yapıştır</label>
+            <select id="sampleSelect" class="sample-select">
+              <option value="">— Kendi metnimi yapıştıracağım —</option>
+              <option value="sample1">📰 Kısa Haber — Uzay Teknolojisi</option>
+              <option value="sample2">💡 Motivasyon — Yeni Alışkanlıklar</option>
+              <option value="sample3">🕰️ Bilgi — Kısa Türk Tarihi Notu</option>
+              <option value="sample4">🧠 Bilgi — Beyin ve Öğrenme</option>
+            </select>
+          </div>
+
+          <textarea id="textInput" rows="7" placeholder="Okumak istediğin metni buraya yapıştır..."></textarea>
+
+          <div class="reader-source-actions">
+            <span class="word-count" id="wordCount">0 kelime</span>
+            <button type="button" class="btn btn-primary" id="loadTextBtn">▶️ Okumaya Başla</button>
+          </div>
+        </div>
+
+        <div class="reader-stage hidden" id="readerStage">
+          <div class="rsvp-display" id="rsvpDisplay">
+            <span class="rsvp-word" id="rsvpWord">
+              <span class="orp-before" id="orpBefore"></span><span class="orp-letter" id="orpLetter"></span><span class="orp-after" id="orpAfter">Hazır</span>
+            </span>
+          </div>
+
+          <div class="reader-progress-track">
+            <div class="reader-progress-fill" id="readerProgressFill"></div>
+          </div>
+          <div class="reader-progress-meta">
+            <span id="readerPosition">0 / 0 kelime</span>
+            <span id="readerTimeLeft">Kalan: 0:00</span>
+          </div>
+
+          <div class="reader-controls">
+            <button type="button" class="icon-btn" id="rewindBtn" title="10 kelime geri" aria-label="Geri sar">⏮️</button>
+            <button type="button" class="btn btn-primary btn-lg" id="playPauseBtn">▶️ Başlat</button>
+            <button type="button" class="icon-btn" id="forwardBtn" title="10 kelime ileri" aria-label="İleri sar">⏭️</button>
+            <button type="button" class="tool-btn" id="restartReaderBtn">↺ Baştan</button>
+            <button type="button" class="tool-btn" id="editTextBtn">✏️ Metni Değiştir</button>
+          </div>
+
+          <div class="reader-settings-row">
+            <div class="speed-field">
+              <label for="wpmSlider">Hız: <strong id="wpmValue">400</strong> kelime/dk</label>
+              <input type="range" id="wpmSlider" min="100" max="1000" step="25" value="400">
+              <div class="speed-presets" id="speedPresets">
+                <button type="button" class="tool-btn" data-wpm="250">250</button>
+                <button type="button" class="tool-btn active" data-wpm="400">400</button>
+                <button type="button" class="tool-btn" data-wpm="600">600</button>
+                <button type="button" class="tool-btn" data-wpm="800">800</button>
+              </div>
+            </div>
+            <div class="chunk-field">
+              <label>Kelime grubu</label>
+              <div class="chunk-presets" id="chunkPresets">
+                <button type="button" class="tool-btn active" data-chunk="1">1 kelime</button>
+                <button type="button" class="tool-btn" data-chunk="2">2 kelime</button>
+                <button type="button" class="tool-btn" data-chunk="3">3 kelime</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reader-done hidden" id="readerDone">
+          <p class="reader-done-title">🎉 Metni tamamladın!</p>
+          <p class="reader-done-stats" id="doneStats"></p>
+          <div class="reader-done-actions">
+            <button type="button" class="btn btn-outline" id="rereadBtn">↺ Tekrar Oku</button>
+            <button type="button" class="btn btn-primary" id="newTextBtn">📄 Yeni Metin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="istatistik">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">İstatistik</span>
+        <h2>Okuma geçmişin</h2>
+        <p>Tamamladığın her okuma turu burada birikir.</p>
+      </div>
+
+      <div class="stats-summary" id="statsSummary"></div>
+      <div class="history-panel" id="historyPanel"></div>
+    </div>
+  </section>
+
+  <section class="section" id="ayarlar">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Ayarlar</span>
+        <h2>Uygulamayı sana göre ayarla</h2>
+        <p>Görünüm ve ses tercihlerini düzenle. Ayarların tarayıcında saklanır.</p>
+      </div>
+
+      <div class="settings-panel">
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Görünüm</h3>
+            <p>Açık, koyu ya da cihazının ayarını takip eden temayı seç.</p>
+          </div>
+          <div class="settings-control" id="themeOptions">
+            <button type="button" class="tool-btn" data-theme-choice="light">☀️ Açık</button>
+            <button type="button" class="tool-btn" data-theme-choice="dark">🌙 Koyu</button>
+            <button type="button" class="tool-btn" data-theme-choice="system">🖥️ Sistem</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Bitiş Sesi</h3>
+            <p>Bir metni tamamladığında kısa bir sesli uyarı çalsın.</p>
+          </div>
+          <div class="settings-control">
+            <label class="switch">
+              <input type="checkbox" id="soundToggle" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-info">
+            <h3>Tüm Verileri Sıfırla</h3>
+            <p>Okuma geçmişin ve ayarların bu tarayıcıdan tamamen silinir.</p>
+          </div>
+          <div class="settings-control">
+            <button type="button" class="btn btn-outline btn-negative" id="resetAllBtn">🗑️ Her Şeyi Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="sss">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">SSS</span>
+        <h2>Sıkça Sorulan Sorular</h2>
+      </div>
+
+      <div class="faq" id="faq">
+        <details class="faq-item">
+          <summary>RSVP nedir, klasik okumadan farkı ne?</summary>
+          <p>RSVP (Rapid Serial Visual Presentation), kelimelerin tek bir sabit noktada, sırayla ve otomatik olarak gösterildiği bir okuma yöntemidir. Gözünün satır boyunca hareket etmesine gerek kalmadığı için okuma hızın belirgin şekilde artar.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Bu kadar hızlı okurken anlama düşer mi?</summary>
+          <p>Başta biraz düşebilir, çünkü beynin yeni bir okuma ritmine alışması gerekir. Düşük bir hızdan (250-350 kelime/dk) başlayıp kademeli olarak artırmak, hem hızını hem anlama oranını en iyi şekilde dengeler.</p>
+        </details>
+        <details class="faq-item">
+          <summary>ORP (optimum tanıma noktası) ne işe yarar?</summary>
+          <p>Her kelimede belirli bir harf, o kelimeyi en hızlı tanımanı sağlayan noktadır. Bu harfi vurgulayıp ekranın hep aynı yerinde sabitleyerek gözünün her kelime için yeniden odaklanmasını gerektirmeyiz.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Hangi hızdan başlamalıyım?</summary>
+          <p>Ortalama bir okuyucu dakikada 200-250 kelime okur. 250-300 kelime/dk ile başlayıp her gün biraz artırarak birkaç hafta içinde 500-600 kelime/dk seviyesine rahatça ulaşabilirsin.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Verilerim nerede saklanıyor?</summary>
+          <p>Yapıştırdığın metinler ve okuma geçmişin yalnızca bu tarayıcıda (localStorage) tutulur, herhangi bir sunucuya gönderilmez.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="basla">
+    <div class="wrap cta-inner">
+      <h2>İlk hızlı okuma turunu şimdi yap</h2>
+      <p>Hiçbir kayıt gerekmez, tamamen ücretsiz ve tarayıcında çalışır.</p>
+      <a class="btn btn-primary" href="#okuyucu">Okuyucuya Git</a>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="logo">⚡</span>
+      <span class="brand-name">HızOku</span>
+    </div>
+    <p class="footer-copy">© <span id="year"></span> HızOku. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
