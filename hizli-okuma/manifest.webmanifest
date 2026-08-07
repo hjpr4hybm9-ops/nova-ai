@@ -1,0 +1,11 @@
+{
+  "name": "HızOku — Hızlı Okuma Antrenörü",
+  "short_name": "HızOku",
+  "description": "RSVP tekniğiyle okuma hızını artıran ücretsiz, tarayıcıda çalışan hızlı okuma antrenörü.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
+  "icons": []
+}
