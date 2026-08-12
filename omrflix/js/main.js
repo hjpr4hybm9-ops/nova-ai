@@ -3,6 +3,8 @@
 
   var LS_LINKS = "omrflix.links";
   var LS_THEME = "omrflix.theme";
+  var LS_APIKEYS = "omrflix.apikeys";
+  var LS_CHATS = "omrflix.chats";
 
   var DEFAULT_SECTIONS = [
     { id: "ev", title: "Ev", desc: "Başlangıç ekranın", icon: "home", href: "#top", grad: "linear-gradient(135deg,#1e3a5f,#0b1526)" },
@@ -169,7 +171,7 @@
 
     var text = document.createElement("span");
     text.className = "ai-portal-text";
-    text.innerHTML = '<span class="ai-portal-title">Yapay Zekâlarım</span><span class="ai-portal-sub">' + AI_TOOLS.length + " asistana tek noktadan eriş</span>";
+    text.innerHTML = '<span class="ai-portal-title">Yapay Zekâlarım</span><span class="ai-portal-sub">Kendi API anahtarınla gerçek sohbet aç</span>';
     card.appendChild(text);
 
     var arrow = document.createElement("span");
@@ -177,28 +179,303 @@
     arrow.textContent = "→";
     card.appendChild(arrow);
 
-    card.addEventListener("click", openAiPicker);
+    card.addEventListener("click", openAiChat);
     els.aiPortalWrap.appendChild(card);
   }
 
-  function renderAiPickerGrid() {
-    els.aiPickerGrid.innerHTML = "";
-    AI_TOOLS.forEach(function (tool) {
-      var a = document.createElement("a");
-      a.className = "ai-card";
-      a.href = tool.url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.innerHTML =
-        '<span class="ai-badge">' + aiBadgeSvg(tool.key) + "</span>" +
-        '<span class="ai-name">' + escapeHtml(tool.name) + "</span>" +
-        '<span class="ai-desc">' + escapeHtml(tool.desc) + "</span>";
-      els.aiPickerGrid.appendChild(a);
+  /* ---------- Gerçek AI Sohbet (kendi API anahtarınla, BYOK) ---------- */
+  var CHAT_PROVIDERS = [
+    { key: "claude", name: "Claude", defaultModel: "claude-sonnet-5", chatCapable: true, keyPlaceholder: "sk-ant-...", keyHelp: "Anahtarını console.anthropic.com üzerinden alabilirsin." },
+    { key: "chatgpt", name: "ChatGPT", defaultModel: "gpt-4o-mini", chatCapable: true, keyPlaceholder: "sk-...", keyHelp: "Anahtarını platform.openai.com üzerinden alabilirsin. Not: OpenAI bazı tarayıcı isteklerini (CORS) engelleyebilir — çalışmazsa bu, anahtarınla ilgili değildir." },
+    { key: "gemini", name: "Gemini", defaultModel: "gemini-flash-latest", chatCapable: true, keyPlaceholder: "AIza...", keyHelp: "Anahtarını aistudio.google.com üzerinden alabilirsin." },
+    { key: "deepseek", name: "DeepSeek", defaultModel: "deepseek-chat", chatCapable: true, keyPlaceholder: "sk-...", keyHelp: "Anahtarını platform.deepseek.com üzerinden alabilirsin. Not: bazı tarayıcılarda doğrudan bağlantı çalışmayabilir." },
+    { key: "kumru", name: "Kumru", chatCapable: false }
+  ];
+
+  var chatState = { provider: "claude", keys: {}, chats: {}, sending: false, editing: {} };
+
+  function loadApiKeys() { return loadJSON(LS_APIKEYS, {}); }
+  function saveApiKeys() { saveJSON(LS_APIKEYS, chatState.keys); }
+  function loadChats() { return loadJSON(LS_CHATS, {}); }
+  function saveChats() { saveJSON(LS_CHATS, chatState.chats); }
+
+  function findProvider(key) {
+    var found = null;
+    CHAT_PROVIDERS.forEach(function (p) { if (p.key === key) found = p; });
+    return found;
+  }
+
+  function openAiChat() {
+    els.aiChatModal.classList.remove("hidden");
+    renderChatTabs();
+    renderChatBody();
+  }
+  function closeAiChat() { els.aiChatModal.classList.add("hidden"); }
+
+  function renderChatTabs() {
+    els.chatTabs.innerHTML = "";
+    CHAT_PROVIDERS.forEach(function (p) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chat-tab" + (chatState.provider === p.key ? " active" : "");
+      b.innerHTML = '<span class="chat-tab-badge">' + aiBadgeSvg(p.key) + "</span>" + escapeHtml(p.name);
+      b.addEventListener("click", function () { selectProvider(p.key); });
+      els.chatTabs.appendChild(b);
     });
   }
 
-  function openAiPicker() { els.aiPickerModal.classList.remove("hidden"); }
-  function closeAiPicker() { els.aiPickerModal.classList.add("hidden"); }
+  function selectProvider(key) {
+    chatState.provider = key;
+    renderChatTabs();
+    renderChatBody();
+  }
+
+  function renderChatBody() {
+    var provider = findProvider(chatState.provider);
+    els.chatBody.innerHTML = "";
+    if (!provider.chatCapable) {
+      renderKumruPanel();
+      return;
+    }
+    var saved = chatState.keys[provider.key];
+    if (!saved || !saved.key || chatState.editing[provider.key]) {
+      renderChatSetup(provider, saved);
+    } else {
+      renderChatConversation(provider, saved);
+    }
+  }
+
+  function renderKumruPanel() {
+    var wrap = document.createElement("div");
+    wrap.className = "chat-kumru";
+    wrap.innerHTML =
+      '<span class="ai-badge">' + aiBadgeSvg("kumru") + "</span>" +
+      "<h4>Kumru için henüz herkese açık bir API yok</h4>" +
+      "<p>Kumru şu an bireysel geliştiricilere açık bir API sunmuyor, daha çok kurumsal kullanım için geliştiriliyor. Bu yüzden burada gerçek sohbet açamıyoruz — sohbet etmek için resmi siteye gidebilirsin.</p>" +
+      '<a class="btn btn-primary" href="https://kumru.ai" target="_blank" rel="noopener">Kumru.ai’ye Git</a>';
+    els.chatBody.appendChild(wrap);
+  }
+
+  function renderChatSetup(provider, saved) {
+    var wrap = document.createElement("div");
+    wrap.className = "chat-setup";
+    wrap.innerHTML =
+      '<p class="chat-setup-info">' + escapeHtml(provider.name) + " ile sohbet etmek için kendi API anahtarını gir. " + escapeHtml(provider.keyHelp || "") + "</p>" +
+      '<label class="field"><span>API Anahtarı</span><input type="password" id="chatKeyInput" autocomplete="off" placeholder="' + escapeHtml(provider.keyPlaceholder || "API anahtarını yapıştır") + '"></label>' +
+      '<label class="field"><span>Model (istersen değiştir)</span><input type="text" id="chatModelInput"></label>' +
+      '<div class="chat-setup-actions"><button type="button" class="btn btn-primary" id="chatSaveKeyBtn">Kaydet ve Sohbete Başla</button></div>';
+    els.chatBody.appendChild(wrap);
+
+    $("chatKeyInput").value = saved ? saved.key : "";
+    $("chatModelInput").value = (saved && saved.model) || provider.defaultModel;
+
+    if (saved) {
+      var cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "btn btn-outline";
+      cancelBtn.textContent = "İptal";
+      cancelBtn.addEventListener("click", function () {
+        chatState.editing[provider.key] = false;
+        renderChatBody();
+      });
+      wrap.querySelector(".chat-setup-actions").insertBefore(cancelBtn, $("chatSaveKeyBtn"));
+    }
+
+    $("chatSaveKeyBtn").addEventListener("click", function () {
+      var key = $("chatKeyInput").value.trim();
+      var model = $("chatModelInput").value.trim() || provider.defaultModel;
+      if (!key) { showToast("Önce API anahtarını gir."); return; }
+      chatState.keys[provider.key] = { key: key, model: model };
+      chatState.editing[provider.key] = false;
+      saveApiKeys();
+      renderChatBody();
+    });
+  }
+
+  function renderChatConversation(provider, saved) {
+    var wrap = document.createElement("div");
+    wrap.className = "chat-convo";
+
+    var hint = document.createElement("div");
+    hint.className = "chat-key-hint";
+    var modelSpan = document.createElement("span");
+    modelSpan.textContent = "Model: " + saved.model;
+    hint.appendChild(modelSpan);
+    var changeBtn = document.createElement("button");
+    changeBtn.type = "button";
+    changeBtn.textContent = "Anahtarı / modeli değiştir";
+    changeBtn.addEventListener("click", function () {
+      chatState.editing[provider.key] = true;
+      renderChatBody();
+    });
+    hint.appendChild(changeBtn);
+    wrap.appendChild(hint);
+
+    var msgsBox = document.createElement("div");
+    msgsBox.className = "chat-messages";
+    wrap.appendChild(msgsBox);
+
+    var inputRow = document.createElement("div");
+    inputRow.className = "chat-input-row";
+    inputRow.innerHTML =
+      '<textarea id="chatInput" rows="1" placeholder="' + escapeHtml(provider.name) + "’a bir şey sor...\"></textarea>" +
+      '<button type="button" class="btn btn-primary chat-send-btn" id="chatSendBtn">Gönder</button>';
+    wrap.appendChild(inputRow);
+
+    els.chatBody.appendChild(wrap);
+    els.chatMessages = msgsBox;
+    renderChatMessages(provider);
+
+    $("chatSendBtn").addEventListener("click", function () { sendChatMessage(provider, saved); });
+    $("chatInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(provider, saved); }
+    });
+  }
+
+  function renderChatMessages(provider) {
+    var list = chatState.chats[provider.key] || [];
+    els.chatMessages.innerHTML = "";
+    if (!list.length) {
+      var empty = document.createElement("p");
+      empty.className = "chat-empty-hint";
+      empty.textContent = escapeHtml(provider.name) + " ile sohbete başla.";
+      els.chatMessages.appendChild(empty);
+    }
+    list.forEach(function (m) {
+      var div = document.createElement("div");
+      div.className = "chat-msg " + (m.role === "user" ? "user" : (m.error ? "error" : "assistant"));
+      div.textContent = m.content;
+      els.chatMessages.appendChild(div);
+    });
+    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  }
+
+  function describeChatError(provider, err) {
+    var raw = (err && err.message) || String(err);
+    if (err instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(raw)) {
+      return provider.name + "’e tarayıcıdan doğrudan bağlanılamadı. Bu genelde sağlayıcının tarayıcı isteklerini (CORS) engellemesinden kaynaklanır — anahtarınla ilgili bir sorun olmayabilir.";
+    }
+    return "Hata: " + raw;
+  }
+
+  function sendChatMessage(provider, saved) {
+    if (chatState.sending) return;
+    var input = $("chatInput");
+    var text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+
+    if (!chatState.chats[provider.key]) chatState.chats[provider.key] = [];
+    var list = chatState.chats[provider.key];
+    list.push({ role: "user", content: text });
+    saveChats();
+    renderChatMessages(provider);
+
+    var loading = document.createElement("div");
+    loading.className = "chat-msg loading";
+    loading.textContent = provider.name + " yazıyor...";
+    els.chatMessages.appendChild(loading);
+    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+
+    chatState.sending = true;
+    $("chatSendBtn").disabled = true;
+
+    var historyForApi = list.slice(-20).map(function (m) { return { role: m.role, content: m.content }; });
+
+    callProvider(provider.key, saved.key, saved.model, historyForApi)
+      .then(function (reply) {
+        list.push({ role: "assistant", content: reply });
+        saveChats();
+      })
+      .catch(function (err) {
+        list.push({ role: "assistant", content: describeChatError(provider, err), error: true });
+        saveChats();
+      })
+      .then(function () {
+        chatState.sending = false;
+        var btn = $("chatSendBtn");
+        if (btn) btn.disabled = false;
+        renderChatMessages(provider);
+      });
+  }
+
+  function handleJsonResponse(res) {
+    return res.text().then(function (text) {
+      var data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (e) {}
+      if (!res.ok) {
+        var msg = (data.error && (data.error.message || data.error)) || ("HTTP " + res.status);
+        throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
+      }
+      return data;
+    });
+  }
+
+  function sendToClaude(apiKey, model, messages) {
+    return fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({ model: model, max_tokens: 1024, messages: messages })
+    }).then(handleJsonResponse).then(function (data) {
+      var block = null;
+      (data.content || []).forEach(function (b) { if (!block && b.type === "text") block = b; });
+      if (!block) throw new Error("Yanıt alınamadı.");
+      return block.text;
+    });
+  }
+
+  function sendToChatGPT(apiKey, model, messages) {
+    return fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+      body: JSON.stringify({ model: model, messages: messages })
+    }).then(handleJsonResponse).then(function (data) {
+      var choice = data.choices && data.choices[0];
+      if (!choice) throw new Error("Yanıt alınamadı.");
+      return choice.message.content;
+    });
+  }
+
+  function sendToGemini(apiKey, model, messages) {
+    var contents = messages.map(function (m) {
+      return { role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] };
+    });
+    return fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(apiKey), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ contents: contents })
+    }).then(handleJsonResponse).then(function (data) {
+      var cand = data.candidates && data.candidates[0];
+      var part = cand && cand.content && cand.content.parts && cand.content.parts[0];
+      if (!part) throw new Error("Yanıt alınamadı.");
+      return part.text;
+    });
+  }
+
+  function sendToDeepSeek(apiKey, model, messages) {
+    return fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
+      body: JSON.stringify({ model: model, messages: messages })
+    }).then(handleJsonResponse).then(function (data) {
+      var choice = data.choices && data.choices[0];
+      if (!choice) throw new Error("Yanıt alınamadı.");
+      return choice.message.content;
+    });
+  }
+
+  function callProvider(key, apiKey, model, messages) {
+    if (key === "claude") return sendToClaude(apiKey, model, messages);
+    if (key === "chatgpt") return sendToChatGPT(apiKey, model, messages);
+    if (key === "gemini") return sendToGemini(apiKey, model, messages);
+    if (key === "deepseek") return sendToDeepSeek(apiKey, model, messages);
+    return Promise.reject(new Error("Desteklenmeyen sağlayıcı."));
+  }
 
   /* ---------- Real site logos ---------- */
   function faviconUrl(url) {
@@ -584,8 +861,9 @@
     els.quicknav = $("quicknav");
     els.sectionsGrid = $("sectionsGrid");
     els.aiPortalWrap = $("aiPortalWrap");
-    els.aiPickerModal = $("aiPickerModal");
-    els.aiPickerGrid = $("aiPickerGrid");
+    els.aiChatModal = $("aiChatModal");
+    els.chatTabs = $("chatTabs");
+    els.chatBody = $("chatBody");
     els.linksGrid = $("linksGrid");
     els.linksEmptyHint = $("linksEmptyHint");
     els.catFilters = $("catFilters");
@@ -601,11 +879,12 @@
 
     state.links = loadJSON(LS_LINKS, null) || DEFAULT_LINKS.slice();
     if (!loadJSON(LS_LINKS, null)) saveLinks();
+    chatState.keys = loadApiKeys();
+    chatState.chats = loadChats();
 
     applyThemeUI();
     renderSections();
     renderAiPortal();
-    renderAiPickerGrid();
     renderQuicknav();
     renderCatFilters();
     renderLinks();
@@ -621,8 +900,8 @@
     $("linkForm").addEventListener("submit", handleLinkSubmit);
     $("deleteLinkBtn").addEventListener("click", handleDeleteLink);
 
-    $("aiPickerCloseBtn").addEventListener("click", closeAiPicker);
-    els.aiPickerModal.addEventListener("click", function (e) { if (e.target === els.aiPickerModal) closeAiPicker(); });
+    $("aiChatCloseBtn").addEventListener("click", closeAiChat);
+    els.aiChatModal.addEventListener("click", function (e) { if (e.target === els.aiChatModal) closeAiChat(); });
 
     $("micModalCloseBtn").addEventListener("click", closeMicModal);
     els.micModal.addEventListener("click", function (e) { if (e.target === els.micModal) closeMicModal(); });

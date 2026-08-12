@@ -135,13 +135,15 @@
   </div>
 </div>
 
-<div class="modal-overlay hidden" id="aiPickerModal">
-  <div class="modal-sheet">
+<div class="modal-overlay hidden" id="aiChatModal">
+  <div class="modal-sheet chat-sheet">
     <div class="modal-header">
-      <h3>Yapay Zeka Seç</h3>
-      <button type="button" class="icon-btn" id="aiPickerCloseBtn" aria-label="Kapat">✕</button>
+      <h3>💬 AI Sohbet</h3>
+      <button type="button" class="icon-btn" id="aiChatCloseBtn" aria-label="Kapat">✕</button>
     </div>
-    <div class="grid ai-grid" id="aiPickerGrid"></div>
+    <p class="chat-disclaimer">Kendi API anahtarınla konuşuyorsun. Anahtar yalnızca bu tarayıcıda saklanır, mesajların doğrudan ilgili şirketin sunucusuna gider ve kullanım o hesabın kendi API bakiyesinden/kotasından düşer — ChatGPT Plus, Claude Pro gibi aboneliklerden ayrıdır.</p>
+    <div class="chat-tabs" id="chatTabs"></div>
+    <div class="chat-body" id="chatBody"></div>
   </div>
 </div>
 
