@@ -255,6 +255,13 @@ a { color: inherit; }
 .mg-dright { grid-column: 3; grid-row: 2; }
 .mg-ddown { grid-column: 2; grid-row: 2; }
 
+.mg-fire {
+  display: block; margin: 0 auto 16px; padding: 10px 26px; border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a1a, #d9450a); border: none; color: #fff;
+  font-weight: 800; font-size: 14px; cursor: pointer;
+}
+.mg-fire:active { filter: brightness(1.15); }
+
 /* 2048 */
 .mg-2048-board {
   position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;

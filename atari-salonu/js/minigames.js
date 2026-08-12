@@ -485,6 +485,371 @@
     return stopper;
   }
 
+  function actionButton(parent, label) {
+    var btn = el("button", "mg-fire", parent, label);
+    btn.type = "button";
+    return btn;
+  }
+
+  /* ================= Uzay İstilası (Space Invaders tarzı) ================= */
+  function startInvaders(container) {
+    container.innerHTML = "";
+    var wrap = el("div", "mg-wrap", container);
+    var bar = el("div", "mg-bar", wrap);
+    var scoreEl = el("span", "mg-score", bar);
+    el("span", "mg-hint", bar, "◀ ▶ hareket, ▲ / ateş düğmesiyle vur");
+    var stage = el("div", "mg-stage", wrap);
+    var canvas = el("canvas", "mg-canvas", stage);
+    var ctx = canvas.getContext("2d");
+    var W = 420, H = 480;
+    canvas.width = W; canvas.height = H;
+    var stopper = makeStopper();
+
+    var ship, bullets, enemyBullets, enemies, enemyDir, score, lives, state, left = false, right = false, raf;
+
+    function initEnemies() {
+      enemies = [];
+      for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 7; c++) {
+          enemies.push({ x: 30 + c * 48, y: 40 + r * 36, alive: true });
+        }
+      }
+      enemyDir = 1;
+    }
+    function reset() {
+      ship = { x: W / 2 - 16, w: 32, h: 14 };
+      bullets = []; enemyBullets = [];
+      initEnemies();
+      score = 0; lives = 3; state = "play";
+      updateBar();
+    }
+    function updateBar() { scoreEl.textContent = "Skor: " + score + " · Can: " + lives; }
+    function fire() {
+      if (state !== "play") { reset(); return; }
+      if (bullets.length < 3) bullets.push({ x: ship.x + ship.w / 2 - 2, y: H - 40 });
+    }
+    function step() {
+      if (state === "play") {
+        if (left) ship.x -= 5;
+        if (right) ship.x += 5;
+        ship.x = Math.max(0, Math.min(W - ship.w, ship.x));
+
+        bullets.forEach(function (b) { b.y -= 7; });
+        bullets = bullets.filter(function (b) { return b.y > -10; });
+        enemyBullets.forEach(function (b) { b.y += 4; });
+        enemyBullets = enemyBullets.filter(function (b) { return b.y < H + 10; });
+
+        var edge = false;
+        enemies.forEach(function (en) {
+          if (!en.alive) return;
+          en.x += enemyDir * 0.6;
+          if (en.x < 10 || en.x > W - 40) edge = true;
+        });
+        if (edge) {
+          enemyDir *= -1;
+          enemies.forEach(function (en) { en.y += 14; });
+        }
+        if (Math.random() < 0.02) {
+          var alive = enemies.filter(function (e) { return e.alive; });
+          if (alive.length) {
+            var shooter = alive[(Math.random() * alive.length) | 0];
+            enemyBullets.push({ x: shooter.x + 14, y: shooter.y + 20 });
+          }
+        }
+
+        bullets.forEach(function (b) {
+          enemies.forEach(function (en) {
+            if (en.alive && b.y < en.y + 20 && b.y > en.y && b.x > en.x && b.x < en.x + 28) {
+              en.alive = false; b.y = -100; score += 10; updateBar();
+            }
+          });
+        });
+        enemyBullets.forEach(function (b) {
+          if (b.x > ship.x && b.x < ship.x + ship.w && b.y > H - 40 && b.y < H - 26) {
+            b.y = H + 100; lives--; updateBar();
+            if (lives <= 0) state = "over";
+          }
+        });
+        if (enemies.some(function (en) { return en.alive && en.y > H - 80; })) state = "over";
+        if (enemies.every(function (en) { return !en.alive; })) state = "win";
+      }
+      draw();
+      raf = requestAnimationFrame(step);
+    }
+    function draw() {
+      ctx.fillStyle = "#0a0710"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#4ade80";
+      enemies.forEach(function (en) { if (en.alive) ctx.fillRect(en.x, en.y, 28, 20); });
+      ctx.fillStyle = "#fbbf24";
+      bullets.forEach(function (b) { ctx.fillRect(b.x, b.y, 4, 10); });
+      ctx.fillStyle = "#ff5566";
+      enemyBullets.forEach(function (b) { ctx.fillRect(b.x, b.y, 4, 10); });
+      ctx.fillStyle = "#ff7a1a";
+      ctx.fillRect(ship.x, H - 40, ship.w, ship.h);
+      if (state !== "play") {
+        ctx.fillStyle = "rgba(0,0,0,0.65)"; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "bold 20px sans-serif";
+        ctx.fillText(state === "win" ? "Kazandın!" : "Oyun Bitti", W / 2, H / 2 - 8);
+        ctx.font = "13px sans-serif";
+        ctx.fillText("Ateş/dokun ile yeniden başla", W / 2, H / 2 + 16);
+      }
+    }
+    function onKeyDown(e) {
+      if (e.key === "ArrowLeft") { left = true; e.preventDefault(); }
+      if (e.key === "ArrowRight") { right = true; e.preventDefault(); }
+      if (e.key === "ArrowUp" || e.key === " ") { fire(); e.preventDefault(); }
+    }
+    function onKeyUp(e) {
+      if (e.key === "ArrowLeft") left = false;
+      if (e.key === "ArrowRight") right = false;
+    }
+    canvas.addEventListener("click", fire);
+
+    reset();
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    dpad(wrap, { left: function () { left = true; setTimeout(function () { left = false; }, 140); }, right: function () { right = true; setTimeout(function () { right = false; }, 140); } });
+    actionButton(wrap, "🔥 ATEŞ").addEventListener("click", fire);
+    raf = requestAnimationFrame(step);
+
+    stopper.add(function () { cancelAnimationFrame(raf); });
+    stopper.add(function () { window.removeEventListener("keydown", onKeyDown); });
+    stopper.add(function () { window.removeEventListener("keyup", onKeyUp); });
+    return stopper;
+  }
+
+  /* ================= Asteroit (Asteroids tarzı) ================= */
+  function startAsteroids(container) {
+    container.innerHTML = "";
+    var wrap = el("div", "mg-wrap", container);
+    var bar = el("div", "mg-bar", wrap);
+    var scoreEl = el("span", "mg-score", bar);
+    el("span", "mg-hint", bar, "◀ ▶ dön, ▲ ilerle, ateş düğmesiyle vur");
+    var stage = el("div", "mg-stage", wrap);
+    var canvas = el("canvas", "mg-canvas", stage);
+    var ctx = canvas.getContext("2d");
+    var W = 460, H = 460;
+    canvas.width = W; canvas.height = H;
+    var stopper = makeStopper();
+
+    var ship, bullets, rocks, score, lives, state, left = false, right = false, thrust = false, raf;
+
+    function wrap2(v, max) { return (v + max) % max; }
+    function makeRocks(n, size) {
+      var arr = [];
+      for (var i = 0; i < n; i++) {
+        var x, y;
+        do { x = Math.random() * W; y = Math.random() * H; } while (Math.hypot(x - W / 2, y - H / 2) < 100);
+        arr.push({ x: x, y: y, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, r: size, ang: Math.random() * 7 });
+      }
+      return arr;
+    }
+    function reset() {
+      ship = { x: W / 2, y: H / 2, vx: 0, vy: 0, ang: -Math.PI / 2 };
+      bullets = [];
+      rocks = makeRocks(5, 26);
+      score = 0; lives = 3; state = "play";
+      updateBar();
+    }
+    function updateBar() { scoreEl.textContent = "Skor: " + score + " · Can: " + lives; }
+    function fire() {
+      if (state !== "play") { reset(); return; }
+      bullets.push({ x: ship.x, y: ship.y, vx: Math.cos(ship.ang) * 6, vy: Math.sin(ship.ang) * 6, life: 60 });
+    }
+    function step() {
+      if (state === "play") {
+        if (left) ship.ang -= 0.06;
+        if (right) ship.ang += 0.06;
+        if (thrust) { ship.vx += Math.cos(ship.ang) * 0.12; ship.vy += Math.sin(ship.ang) * 0.12; }
+        ship.vx *= 0.995; ship.vy *= 0.995;
+        ship.x = wrap2(ship.x + ship.vx, W); ship.y = wrap2(ship.y + ship.vy, H);
+
+        bullets.forEach(function (b) { b.x = wrap2(b.x + b.vx, W); b.y = wrap2(b.y + b.vy, H); b.life--; });
+        bullets = bullets.filter(function (b) { return b.life > 0; });
+
+        rocks.forEach(function (r) { r.x = wrap2(r.x + r.vx, W); r.y = wrap2(r.y + r.vy, H); });
+
+        var newRocks = [];
+        rocks.forEach(function (r) {
+          var hitBullet = bullets.find(function (b) { return Math.hypot(b.x - r.x, b.y - r.y) < r.r; });
+          if (hitBullet) {
+            hitBullet.life = 0;
+            score += 20; updateBar();
+            if (r.r > 12) {
+              for (var i = 0; i < 2; i++) newRocks.push({ x: r.x, y: r.y, vx: (Math.random() - 0.5) * 3, vy: (Math.random() - 0.5) * 3, r: r.r / 2, ang: Math.random() * 7 });
+            }
+          } else {
+            newRocks.push(r);
+            if (Math.hypot(ship.x - r.x, ship.y - r.y) < r.r + 8) {
+              lives--; updateBar();
+              ship.x = W / 2; ship.y = H / 2; ship.vx = 0; ship.vy = 0;
+              if (lives <= 0) state = "over";
+            }
+          }
+        });
+        rocks = newRocks;
+        bullets = bullets.filter(function (b) { return b.life > 0; });
+        if (!rocks.length) state = "win";
+      }
+      draw();
+      raf = requestAnimationFrame(step);
+    }
+    function draw() {
+      ctx.fillStyle = "#0a0710"; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = "#a855f7"; ctx.lineWidth = 1.5;
+      rocks.forEach(function (r) {
+        ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 7); ctx.stroke();
+      });
+      ctx.fillStyle = "#fbbf24";
+      bullets.forEach(function (b) { ctx.beginPath(); ctx.arc(b.x, b.y, 2, 0, 7); ctx.fill(); });
+      ctx.save();
+      ctx.translate(ship.x, ship.y); ctx.rotate(ship.ang);
+      ctx.fillStyle = "#ff7a1a";
+      ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-10, 8); ctx.lineTo(-10, -8); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      if (state !== "play") {
+        ctx.fillStyle = "rgba(0,0,0,0.65)"; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "bold 20px sans-serif";
+        ctx.fillText(state === "win" ? "Kazandın!" : "Oyun Bitti", W / 2, H / 2 - 8);
+        ctx.font = "13px sans-serif";
+        ctx.fillText("Ateş/dokun ile yeniden başla", W / 2, H / 2 + 16);
+      }
+    }
+    function onKeyDown(e) {
+      if (e.key === "ArrowLeft") { left = true; e.preventDefault(); }
+      if (e.key === "ArrowRight") { right = true; e.preventDefault(); }
+      if (e.key === "ArrowUp") { thrust = true; e.preventDefault(); }
+      if (e.key === " ") { fire(); e.preventDefault(); }
+    }
+    function onKeyUp(e) {
+      if (e.key === "ArrowLeft") left = false;
+      if (e.key === "ArrowRight") right = false;
+      if (e.key === "ArrowUp") thrust = false;
+    }
+    canvas.addEventListener("click", fire);
+
+    reset();
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    dpad(wrap, {
+      left: function () { left = true; setTimeout(function () { left = false; }, 140); },
+      right: function () { right = true; setTimeout(function () { right = false; }, 140); },
+      up: function () { thrust = true; setTimeout(function () { thrust = false; }, 180); }
+    });
+    actionButton(wrap, "🔥 ATEŞ").addEventListener("click", fire);
+    raf = requestAnimationFrame(step);
+
+    stopper.add(function () { cancelAnimationFrame(raf); });
+    stopper.add(function () { window.removeEventListener("keydown", onKeyDown); });
+    stopper.add(function () { window.removeEventListener("keyup", onKeyUp); });
+    return stopper;
+  }
+
+  /* ================= Füze Savunması (Missile Command tarzı) ================= */
+  function startMissileCommand(container) {
+    container.innerHTML = "";
+    var wrap = el("div", "mg-wrap", container);
+    var bar = el("div", "mg-bar", wrap);
+    var scoreEl = el("span", "mg-score", bar);
+    el("span", "mg-hint", bar, "Şehirleri korumak için ekrana dokun/tıkla");
+    var stage = el("div", "mg-stage", wrap);
+    var canvas = el("canvas", "mg-canvas", stage);
+    var ctx = canvas.getContext("2d");
+    var W = 460, H = 420;
+    canvas.width = W; canvas.height = H;
+    var stopper = makeStopper();
+
+    var cities, missiles, interceptors, explosions, score, state, raf, spawnTimer;
+
+    function reset() {
+      cities = [60, 160, 260, 360].map(function (x) { return { x: x, alive: true }; });
+      missiles = []; interceptors = []; explosions = [];
+      score = 0; state = "play"; spawnTimer = 0;
+      updateBar();
+    }
+    function updateBar() { scoreEl.textContent = "Skor: " + score + " · Şehir: " + cities.filter(function (c) { return c.alive; }).length; }
+    function spawnMissile() {
+      var targetCity = cities[(Math.random() * cities.length) | 0];
+      missiles.push({ x: Math.random() * W, y: 0, tx: targetCity.x + 10, ty: H - 20, speed: 0.9 + Math.random() * 0.5 });
+    }
+    function fireAt(x, y) {
+      if (state !== "play") { reset(); return; }
+      interceptors.push({ x: W / 2, y: H - 10, tx: x, ty: y, speed: 6 });
+    }
+    function step() {
+      if (state === "play") {
+        spawnTimer++;
+        if (spawnTimer > 70) { spawnTimer = 0; spawnMissile(); }
+
+        missiles.forEach(function (m) {
+          var dx = m.tx - m.x, dy = m.ty - m.y, dist = Math.hypot(dx, dy);
+          if (dist < m.speed) { m.hitGround = true; }
+          else { m.x += (dx / dist) * m.speed; m.y += (dy / dist) * m.speed; }
+        });
+        missiles.filter(function (m) { return m.hitGround; }).forEach(function (m) {
+          explosions.push({ x: m.x, y: m.y, r: 4, max: 26 });
+          var city = cities.find(function (c) { return Math.abs(c.x + 10 - m.x) < 30 && c.alive; });
+          if (city) { city.alive = false; updateBar(); }
+        });
+        missiles = missiles.filter(function (m) { return !m.hitGround; });
+
+        interceptors.forEach(function (m) {
+          var dx = m.tx - m.x, dy = m.ty - m.y, dist = Math.hypot(dx, dy);
+          if (dist < m.speed) { explosions.push({ x: m.tx, y: m.ty, r: 4, max: 34 }); m.done = true; }
+          else { m.x += (dx / dist) * m.speed; m.y += (dy / dist) * m.speed; }
+        });
+        interceptors = interceptors.filter(function (m) { return !m.done; });
+
+        explosions.forEach(function (ex) { ex.r += 1.6; });
+        explosions.forEach(function (ex) {
+          missiles.forEach(function (m) {
+            if (Math.hypot(m.x - ex.x, m.y - ex.y) < ex.r) { m.hitGround = false; m.dead = true; score += 15; updateBar(); }
+          });
+        });
+        missiles = missiles.filter(function (m) { return !m.dead; });
+        explosions = explosions.filter(function (ex) { return ex.r < ex.max; });
+
+        if (cities.every(function (c) { return !c.alive; })) state = "over";
+      }
+      draw();
+      raf = requestAnimationFrame(step);
+    }
+    function draw() {
+      ctx.fillStyle = "#0a0710"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#4ade80";
+      cities.forEach(function (c) { if (c.alive) ctx.fillRect(c.x, H - 22, 20, 16); });
+      ctx.strokeStyle = "#ff5566"; ctx.lineWidth = 2;
+      missiles.forEach(function (m) {
+        ctx.beginPath(); ctx.moveTo(m.tx, m.ty); ctx.lineTo(m.x, m.y); ctx.stroke();
+      });
+      ctx.strokeStyle = "#38bdf8";
+      interceptors.forEach(function (m) {
+        ctx.beginPath(); ctx.moveTo(W / 2, H - 10); ctx.lineTo(m.x, m.y); ctx.stroke();
+      });
+      explosions.forEach(function (ex) {
+        ctx.fillStyle = "rgba(251,191,36,0.55)";
+        ctx.beginPath(); ctx.arc(ex.x, ex.y, ex.r, 0, 7); ctx.fill();
+      });
+      if (state !== "play") {
+        ctx.fillStyle = "rgba(0,0,0,0.65)"; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "bold 20px sans-serif";
+        ctx.fillText("Oyun Bitti — Skor: " + score, W / 2, H / 2 - 8);
+        ctx.font = "13px sans-serif";
+        ctx.fillText("Yeniden başlamak için dokun", W / 2, H / 2 + 16);
+      }
+    }
+    canvas.addEventListener("click", function (e) {
+      var rect = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+      fireAt((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
+    });
+
+    reset();
+    raf = requestAnimationFrame(step);
+    stopper.add(function () { cancelAnimationFrame(raf); });
+    return stopper;
+  }
+
   /* ================= Hafıza (Memory) ================= */
   function startMemory(container) {
     container.innerHTML = "";
@@ -556,6 +921,9 @@
     snake: { title: "Yılan", start: startSnake },
     pong: { title: "Pong", start: startPong },
     breakout: { title: "Tuğla Kırma", start: startBreakout },
+    invaders: { title: "Uzay İstilası", start: startInvaders },
+    asteroids: { title: "Asteroit", start: startAsteroids },
+    missile: { title: "Füze Savunması", start: startMissileCommand },
     twenty48: { title: "2048", start: startTwenty48 },
     memory: { title: "Hafıza", start: startMemory }
   };
