@@ -80,11 +80,11 @@
         </div>
         <button type="button" class="btn btn-primary btn-sm" id="addLinkBtn">＋ Bağlantı Ekle</button>
       </div>
+      <div class="cat-filters" id="catFilters"></div>
       <div class="grid links-grid" id="linksGrid"></div>
-      <p class="empty-hint hidden" id="linksEmptyHint">Aramanla eşleşen bağlantı yok.</p>
+      <p class="empty-hint hidden" id="linksEmptyHint">Bu kategoride henüz bağlantı yok. “＋ Bağlantı Ekle” ile ekleyebilirsin.</p>
     </div>
   </section>
-
 
 </main>
 
@@ -108,11 +108,60 @@
         <span>Simge (emoji)</span>
         <input type="text" id="linkIcon" maxlength="4" placeholder="🔗">
       </label>
+      <label class="field">
+        <span>Kategori</span>
+        <select id="linkCategory">
+          <option value="genel">Genel</option>
+          <option value="ai">Yapay Zeka</option>
+          <option value="kod">Kod</option>
+          <option value="gorsel">Görsel Oluşturma</option>
+        </select>
+      </label>
       <div class="modal-actions">
         <button type="button" class="btn btn-outline" id="deleteLinkBtn">🗑️ Sil</button>
         <button type="submit" class="btn btn-primary">Kaydet</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="micModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h3>🎙️ Mikrofon</h3>
+      <button type="button" class="icon-btn" id="micModalCloseBtn" aria-label="Kapat">✕</button>
+    </div>
+    <p class="tool-hint" id="micHint">Dinlemeye başla, konuş; söylediklerin aşağıda yazıya dökülsün.</p>
+    <div class="mic-transcript-box">
+      <p id="micTranscript" class="mic-transcript" data-empty="Konuşman burada görünecek...">Konuşman burada görünecek...</p>
+    </div>
+    <div class="tool-actions">
+      <button type="button" class="btn btn-primary" id="micToggleBtn">🎙️ Dinlemeye Başla</button>
+      <button type="button" class="btn btn-outline" id="micCopyBtn">📋 Kopyala</button>
+    </div>
+    <p class="field-hint">Kaydı bir yapay zekâya sormak için önce kopyala, sonra aşağıdakilerden birine git ve yapıştır:</p>
+    <div class="tool-ai-links" id="micAiLinks"></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="camModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h3>📷 Kamera</h3>
+      <button type="button" class="icon-btn" id="camModalCloseBtn" aria-label="Kapat">✕</button>
+    </div>
+    <p class="tool-hint" id="camHint">Anlık fotoğraf çek; indir ya da panoya kopyala, istediğin yapay zekâya sen yükle.</p>
+    <div class="cam-view-box">
+      <video id="camVideo" autoplay playsinline muted></video>
+      <canvas id="camCanvas" class="hidden"></canvas>
+      <img id="camPhoto" class="hidden" alt="Çekilen fotoğraf">
+    </div>
+    <div class="tool-actions">
+      <button type="button" class="btn btn-primary" id="camShootBtn">📸 Çek</button>
+      <button type="button" class="btn btn-outline hidden" id="camRetakeBtn">↺ Yeniden Çek</button>
+      <button type="button" class="btn btn-outline hidden" id="camDownloadBtn">⬇️ İndir</button>
+      <button type="button" class="btn btn-outline hidden" id="camCopyBtn">📋 Panoya Kopyala</button>
+    </div>
   </div>
 </div>
 

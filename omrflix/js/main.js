@@ -7,23 +7,49 @@
   var DEFAULT_SECTIONS = [
     { id: "ev", title: "Ev", desc: "Başlangıç ekranın", emoji: "🏠", href: "#top", grad: "linear-gradient(135deg,#1e3a5f,#0b1526)" },
     { id: "oyun", title: "Oyun", desc: "Atari Salonu'na git", emoji: "🕹️", href: "../atari-salonu/index.html", grad: "linear-gradient(135deg,#3b1f5f,#0b1526)" },
+    { id: "yapayzeka", title: "Yapay Zeka", desc: "Claude, ChatGPT, Gemini...", emoji: "🤖", href: "#baglantilar", filterCat: "ai", grad: "linear-gradient(135deg,#1f3d5f,#0b1526)" },
+    { id: "kod", title: "Kod", desc: "Geliştirme araçların", emoji: "💻", href: "#baglantilar", filterCat: "kod", grad: "linear-gradient(135deg,#243a2e,#0b1526)" },
+    { id: "gorsel", title: "Görsel Oluşturma", desc: "Yapay zekayla görsel üret", emoji: "🎨", href: "#baglantilar", filterCat: "gorsel", grad: "linear-gradient(135deg,#5f2a1f,#0b1526)" },
+    { id: "mikrofon", title: "Mikrofon", desc: "Sesle yaz, soru sor", emoji: "🎙️", action: "mikrofon", grad: "linear-gradient(135deg,#4a1f5f,#0b1526)" },
+    { id: "kamera", title: "Kamera", desc: "Anlık fotoğraf çek", emoji: "📷", action: "kamera", grad: "linear-gradient(135deg,#1f5f5a,#0b1526)" },
     { id: "video", title: "Video", desc: "İzleme listesi", emoji: "🎬", href: "#baglantilar", grad: "linear-gradient(135deg,#1f5f4a,#0b1526)" },
     { id: "blog", title: "Blog", desc: "Notlar ve yazılar", emoji: "📝", href: "#baglantilar", grad: "linear-gradient(135deg,#5f3a1f,#0b1526)" },
     { id: "projeler", title: "Projeler", desc: "Kişisel projelerin", emoji: "🗂️", href: "#baglantilar", grad: "linear-gradient(135deg,#5f1f3d,#0b1526)" }
   ];
 
+  var CATEGORIES = [
+    { id: "all", label: "Hepsi" },
+    { id: "genel", label: "Genel" },
+    { id: "ai", label: "Yapay Zeka" },
+    { id: "kod", label: "Kod" },
+    { id: "gorsel", label: "Görsel Oluşturma" }
+  ];
+
+  var AI_TOOLS = [
+    { name: "Claude", url: "https://claude.ai", icon: "✳️" },
+    { name: "ChatGPT", url: "https://chatgpt.com", icon: "💬" },
+    { name: "Gemini", url: "https://gemini.google.com", icon: "✨" },
+    { name: "DeepSeek", url: "https://chat.deepseek.com", icon: "🌊" },
+    { name: "Kumru", url: "https://kumru.ai", icon: "🐦" }
+  ];
+
   var DEFAULT_LINKS = [
-    { id: "instagram", name: "Instagram", url: "https://instagram.com", icon: "📸" },
-    { id: "youtube", name: "YouTube", url: "https://youtube.com", icon: "▶️" },
-    { id: "telegram", name: "Telegram", url: "https://telegram.org", icon: "✈️" },
-    { id: "chatgpt", name: "ChatGPT", url: "https://chat.openai.com", icon: "💬" },
-    { id: "deepseek", name: "DeepSeek", url: "https://chat.deepseek.com", icon: "🌊" },
-    { id: "google", name: "Google", url: "https://google.com", icon: "🔎" },
-    { id: "donanim", name: "Donanım Haber", url: "https://donanimhaber.com", icon: "💻" }
+    { id: "instagram", name: "Instagram", url: "https://instagram.com", icon: "📸", cat: "genel" },
+    { id: "youtube", name: "YouTube", url: "https://youtube.com", icon: "▶️", cat: "genel" },
+    { id: "telegram", name: "Telegram", url: "https://telegram.org", icon: "✈️", cat: "genel" },
+    { id: "google", name: "Google", url: "https://google.com", icon: "🔎", cat: "genel" },
+    { id: "donanim", name: "Donanım Haber", url: "https://donanimhaber.com", icon: "💻", cat: "genel" },
+    { id: "claude", name: "Claude", url: "https://claude.ai", icon: "✳️", cat: "ai" },
+    { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com", icon: "💬", cat: "ai" },
+    { id: "gemini", name: "Gemini", url: "https://gemini.google.com", icon: "✨", cat: "ai" },
+    { id: "deepseek", name: "DeepSeek", url: "https://chat.deepseek.com", icon: "🌊", cat: "ai" },
+    { id: "kumru", name: "Kumru", url: "https://kumru.ai", icon: "🐦", cat: "ai" },
+    { id: "github", name: "GitHub", url: "https://github.com", icon: "🐙", cat: "kod" },
+    { id: "vscode", name: "VS Code Web", url: "https://vscode.dev", icon: "🧩", cat: "kod" }
   ];
 
   var els = {};
-  var state = { links: [], search: "" };
+  var state = { links: [], search: "", category: "all" };
 
   function $(id) { return document.getElementById(id); }
 
@@ -73,13 +99,20 @@
       if (q && s.title.toLowerCase().indexOf(q) === -1 && s.desc.toLowerCase().indexOf(q) === -1) return;
       var a = document.createElement("a");
       a.className = "section-card";
-      a.href = s.href;
+      a.href = s.action ? "#" : s.href;
       a.innerHTML =
         '<span class="sc-bg" style="--sc-grad:' + s.grad + '"></span>' +
         '<span class="sc-emoji">' + s.emoji + "</span>" +
         '<span class="sc-body"><span class="sc-title">' + escapeHtml(s.title) + '</span>' +
         '<span class="sc-desc">' + escapeHtml(s.desc) + "</span></span>";
       a.style.setProperty("--sc-grad", s.grad);
+      if (s.action === "mikrofon") {
+        a.addEventListener("click", function (e) { e.preventDefault(); openMicModal(); });
+      } else if (s.action === "kamera") {
+        a.addEventListener("click", function (e) { e.preventDefault(); openCamModal(); });
+      } else if (s.filterCat) {
+        a.addEventListener("click", function () { setCategory(s.filterCat); });
+      }
       els.sectionsGrid.appendChild(a);
     });
   }
@@ -104,11 +137,33 @@
     });
   }
 
+  function renderCatFilters() {
+    els.catFilters.innerHTML = "";
+    CATEGORIES.forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "cat-chip" + (state.category === c.id ? " active" : "");
+      b.textContent = c.label;
+      b.addEventListener("click", function () { setCategory(c.id); });
+      els.catFilters.appendChild(b);
+    });
+  }
+
+  function setCategory(cat) {
+    state.category = cat;
+    renderCatFilters();
+    renderLinks();
+    var target = $("baglantilar");
+    if (target) target.scrollIntoView({ behavior: "smooth" });
+  }
+
   function renderLinks() {
     var q = state.search.trim().toLowerCase();
     els.linksGrid.innerHTML = "";
     var filtered = state.links.filter(function (l) {
-      return !q || l.name.toLowerCase().indexOf(q) !== -1;
+      var matchesCat = state.category === "all" || (l.cat || "genel") === state.category;
+      var matchesSearch = !q || l.name.toLowerCase().indexOf(q) !== -1;
+      return matchesCat && matchesSearch;
     });
     els.linksEmptyHint.classList.toggle("hidden", filtered.length > 0);
 
@@ -143,6 +198,7 @@
     $("linkName").value = link ? link.name : "";
     $("linkUrl").value = link ? link.url : "";
     $("linkIcon").value = link ? (link.icon || "") : "";
+    $("linkCategory").value = link ? (link.cat || "genel") : (state.category !== "all" ? state.category : "genel");
     $("deleteLinkBtn").classList.toggle("hidden", !link);
     els.linkModal.classList.remove("hidden");
     $("linkName").focus();
@@ -157,14 +213,15 @@
     var name = $("linkName").value.trim();
     var url = $("linkUrl").value.trim();
     var icon = $("linkIcon").value.trim();
+    var cat = $("linkCategory").value;
     if (!name || !url) return;
     if (!/^https?:\/\//i.test(url)) url = "https://" + url;
 
     if (id) {
       var existing = state.links.find(function (l) { return l.id === id; });
-      if (existing) { existing.name = name; existing.url = url; existing.icon = icon; }
+      if (existing) { existing.name = name; existing.url = url; existing.icon = icon; existing.cat = cat; }
     } else {
-      state.links.push({ id: uid(), name: name, url: url, icon: icon });
+      state.links.push({ id: uid(), name: name, url: url, icon: icon, cat: cat });
     }
     saveLinks();
     renderLinks();
@@ -182,6 +239,196 @@
     renderQuicknav();
     closeLinkModal();
     showToast("Bağlantı silindi.");
+  }
+
+  /* ---------- Mikrofon (ses -> yazı) ---------- */
+  var micState = { recognition: null, listening: false, transcript: "" };
+
+  function renderMicAiLinks() {
+    els.micAiLinks.innerHTML = "";
+    AI_TOOLS.forEach(function (tool) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tool-ai-link";
+      b.textContent = tool.icon + " " + tool.name;
+      b.addEventListener("click", function () {
+        var text = micState.transcript.trim();
+        if (text && navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(function () {
+            showToast("Metin kopyalandı — " + tool.name + " içine yapıştırabilirsin.");
+          });
+        }
+        window.open(tool.url, "_blank", "noopener");
+      });
+      els.micAiLinks.appendChild(b);
+    });
+  }
+
+  function getSpeechRecognition() {
+    return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+  }
+
+  function openMicModal() {
+    els.micModal.classList.remove("hidden");
+    var SR = getSpeechRecognition();
+    if (!SR) {
+      $("micHint").textContent = "Tarayıcın sesle yazıya çevirmeyi desteklemiyor. Chrome veya Edge ile dene.";
+      $("micToggleBtn").disabled = true;
+      return;
+    }
+    $("micToggleBtn").disabled = false;
+  }
+
+  function closeMicModal() {
+    stopListening();
+    els.micModal.classList.add("hidden");
+  }
+
+  function stopListening() {
+    if (micState.recognition && micState.listening) {
+      micState.recognition.stop();
+    }
+  }
+
+  function toggleListening() {
+    var SR = getSpeechRecognition();
+    if (!SR) return;
+
+    if (micState.listening) {
+      stopListening();
+      return;
+    }
+
+    if (!micState.recognition) {
+      micState.recognition = new SR();
+      micState.recognition.lang = "tr-TR";
+      micState.recognition.continuous = true;
+      micState.recognition.interimResults = true;
+
+      micState.recognition.onresult = function (e) {
+        var finalText = "";
+        var interimText = "";
+        for (var i = 0; i < e.results.length; i++) {
+          var chunk = e.results[i][0].transcript;
+          if (e.results[i].isFinal) finalText += chunk + " ";
+          else interimText += chunk;
+        }
+        micState.transcript = finalText.trim();
+        var display = (finalText + interimText).trim() || els.micTranscript.dataset.empty;
+        els.micTranscript.textContent = display;
+      };
+      micState.recognition.onerror = function () {
+        showToast("Mikrofon erişimi alınamadı ya da izin verilmedi.");
+        setListeningUI(false);
+      };
+      micState.recognition.onend = function () {
+        setListeningUI(false);
+      };
+    }
+
+    try {
+      micState.recognition.start();
+      setListeningUI(true);
+    } catch (e) {
+      showToast("Mikrofon başlatılamadı.");
+    }
+  }
+
+  function setListeningUI(on) {
+    micState.listening = on;
+    $("micToggleBtn").textContent = on ? "⏹️ Dinlemeyi Durdur" : "🎙️ Dinlemeye Başla";
+  }
+
+  function copyMicTranscript() {
+    var text = micState.transcript.trim();
+    if (!text) { showToast("Önce bir şey söyle."); return; }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function () { showToast("Kopyalandı."); });
+    }
+  }
+
+  /* ---------- Kamera (fotoğraf çek) ---------- */
+  var camState = { stream: null, photoDataUrl: null };
+
+  function openCamModal() {
+    els.camModal.classList.remove("hidden");
+    resetCamView();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      $("camHint").textContent = "Tarayıcın kameraya erişimi desteklemiyor.";
+      $("camShootBtn").disabled = true;
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (stream) {
+        camState.stream = stream;
+        els.camVideo.srcObject = stream;
+      })
+      .catch(function () {
+        $("camHint").textContent = "Kameraya erişilemedi ya da izin verilmedi.";
+        $("camShootBtn").disabled = true;
+      });
+  }
+
+  function closeCamModal() {
+    stopCamStream();
+    els.camModal.classList.add("hidden");
+  }
+
+  function stopCamStream() {
+    if (camState.stream) {
+      camState.stream.getTracks().forEach(function (t) { t.stop(); });
+      camState.stream = null;
+    }
+  }
+
+  function resetCamView() {
+    camState.photoDataUrl = null;
+    els.camVideo.classList.remove("hidden");
+    els.camPhoto.classList.add("hidden");
+    $("camShootBtn").classList.remove("hidden");
+    $("camRetakeBtn").classList.add("hidden");
+    $("camDownloadBtn").classList.add("hidden");
+    $("camCopyBtn").classList.add("hidden");
+  }
+
+  function shootPhoto() {
+    var video = els.camVideo;
+    var canvas = els.camCanvas;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    camState.photoDataUrl = canvas.toDataURL("image/png");
+
+    els.camPhoto.src = camState.photoDataUrl;
+    els.camVideo.classList.add("hidden");
+    els.camPhoto.classList.remove("hidden");
+    $("camShootBtn").classList.add("hidden");
+    $("camRetakeBtn").classList.remove("hidden");
+    $("camDownloadBtn").classList.remove("hidden");
+    $("camCopyBtn").classList.remove("hidden");
+  }
+
+  function downloadPhoto() {
+    if (!camState.photoDataUrl) return;
+    var a = document.createElement("a");
+    a.href = camState.photoDataUrl;
+    a.download = "fotograf-" + Date.now() + ".png";
+    a.click();
+  }
+
+  function copyPhoto() {
+    if (!camState.photoDataUrl || !navigator.clipboard || !window.ClipboardItem) {
+      showToast("Bu tarayıcıda panoya kopyalama desteklenmiyor, indirmeyi dene.");
+      return;
+    }
+    fetch(camState.photoDataUrl)
+      .then(function (res) { return res.blob(); })
+      .then(function (blob) {
+        return navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      })
+      .then(function () { showToast("Fotoğraf panoya kopyalandı."); })
+      .catch(function () { showToast("Panoya kopyalanamadı."); });
   }
 
   /* ---------- Search / edit mode / nav ---------- */
@@ -208,8 +455,16 @@
     els.sectionsGrid = $("sectionsGrid");
     els.linksGrid = $("linksGrid");
     els.linksEmptyHint = $("linksEmptyHint");
+    els.catFilters = $("catFilters");
     els.toast = $("toast");
     els.linkModal = $("linkModal");
+    els.micModal = $("micModal");
+    els.micTranscript = $("micTranscript");
+    els.micAiLinks = $("micAiLinks");
+    els.camModal = $("camModal");
+    els.camVideo = $("camVideo");
+    els.camCanvas = $("camCanvas");
+    els.camPhoto = $("camPhoto");
 
     state.links = loadJSON(LS_LINKS, null) || DEFAULT_LINKS.slice();
     if (!loadJSON(LS_LINKS, null)) saveLinks();
@@ -217,7 +472,9 @@
     applyThemeUI();
     renderSections();
     renderQuicknav();
+    renderCatFilters();
     renderLinks();
+    renderMicAiLinks();
 
     $("themeToggle").addEventListener("click", toggleTheme);
     $("editModeBtn").addEventListener("click", toggleEditMode);
@@ -228,6 +485,18 @@
     els.linkModal.addEventListener("click", function (e) { if (e.target === els.linkModal) closeLinkModal(); });
     $("linkForm").addEventListener("submit", handleLinkSubmit);
     $("deleteLinkBtn").addEventListener("click", handleDeleteLink);
+
+    $("micModalCloseBtn").addEventListener("click", closeMicModal);
+    els.micModal.addEventListener("click", function (e) { if (e.target === els.micModal) closeMicModal(); });
+    $("micToggleBtn").addEventListener("click", toggleListening);
+    $("micCopyBtn").addEventListener("click", copyMicTranscript);
+
+    $("camModalCloseBtn").addEventListener("click", closeCamModal);
+    els.camModal.addEventListener("click", function (e) { if (e.target === els.camModal) closeCamModal(); });
+    $("camShootBtn").addEventListener("click", shootPhoto);
+    $("camRetakeBtn").addEventListener("click", function () { resetCamView(); if (camState.stream) els.camVideo.srcObject = camState.stream; });
+    $("camDownloadBtn").addEventListener("click", downloadPhoto);
+    $("camCopyBtn").addEventListener("click", copyPhoto);
 
     $("year").textContent = new Date().getFullYear();
   }
