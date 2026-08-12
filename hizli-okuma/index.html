@@ -33,6 +33,7 @@
       <a href="#neden">Neden Hızlı Okuma</a>
       <a href="#nasil-calisir">Nasıl Çalışır</a>
       <a href="#okuyucu">Okuyucu</a>
+      <a href="#kitaplik">Kitaplık</a>
       <a href="#istatistik">İstatistik</a>
       <a href="#ayarlar">Ayarlar</a>
       <a href="#sss">SSS</a>
@@ -217,7 +218,32 @@
     </div>
   </section>
 
-  <section class="section alt" id="istatistik">
+  <section class="section alt" id="kitaplik">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Kitaplık</span>
+        <h2>Telifsiz Klasikler Kitaplığın</h2>
+        <p>Telif süresi dolmuş (kamu malı) eserleri kitaplığına ekle, dilediğin an tek tıkla hızlı okuma antrenmanına başla. Kitapların yalnızca bu tarayıcında saklanır.</p>
+      </div>
+
+      <div class="library-panel">
+        <div class="library-list" id="libraryList"></div>
+
+        <details class="library-add" id="libraryAddDetails">
+          <summary>➕ Kitaplığa yeni eser ekle</summary>
+          <form class="library-add-form" id="libraryAddForm">
+            <input id="bookTitle" type="text" maxlength="120" autocomplete="off" placeholder="Eser adı (örn: Forsa)" required>
+            <input id="bookAuthor" type="text" maxlength="80" autocomplete="off" placeholder="Yazar (örn: Ömer Seyfettin)" required>
+            <textarea id="bookText" rows="6" placeholder="Telifsiz eserin tam metnini buraya yapıştır..." required></textarea>
+            <p class="library-add-hint">Yazarın ölümünün üzerinden 70 yıldan fazla geçmiş, kamu malı olmuş eserleri; Vikikaynak (tr.wikisource.org) gibi kaynaklardan kopyalayıp buraya yapıştırabilirsin.</p>
+            <button type="submit" class="btn btn-primary">Kitaplığa Ekle</button>
+          </form>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="istatistik">
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">İstatistik</span>
@@ -230,7 +256,7 @@
     </div>
   </section>
 
-  <section class="section" id="ayarlar">
+  <section class="section alt" id="ayarlar">
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">Ayarlar</span>
@@ -277,7 +303,7 @@
     </div>
   </section>
 
-  <section class="section alt" id="sss">
+  <section class="section" id="sss">
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">SSS</span>
@@ -303,7 +329,11 @@
         </details>
         <details class="faq-item">
           <summary>Verilerim nerede saklanıyor?</summary>
-          <p>Yapıştırdığın metinler ve okuma geçmişin yalnızca bu tarayıcıda (localStorage) tutulur, herhangi bir sunucuya gönderilmez.</p>
+          <p>Yapıştırdığın metinler, kitaplığın ve okuma geçmişin yalnızca bu tarayıcıda (localStorage) tutulur, herhangi bir sunucuya gönderilmez.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Kitaplığa hangi eserleri ekleyebilirim?</summary>
+          <p>Türkiye'de bir eser, yazarının ölümünün üzerinden 70 yıl geçtiğinde telif korumasından çıkar ve kamu malı olur (örn. Ömer Seyfettin, Mehmet Akif Ersoy, Ahmet Mithat Efendi gibi yazarların eserleri). Bu eserlerin tam metinlerini Vikikaynak (tr.wikisource.org) gibi kaynaklardan bulup kitaplığına ekleyebilirsin. HızOku kendisi internete bağlanıp içerik indirmez; eklemeyi sen yaparsın.</p>
         </details>
       </div>
     </div>

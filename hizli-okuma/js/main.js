@@ -6,12 +6,22 @@
     wpm: "hizoku.wpm",
     chunk: "hizoku.chunk",
     sound: "hizoku.sound",
-    history: "hizoku.history"
+    history: "hizoku.history",
+    library: "hizoku.library"
   };
 
   var DEFAULT_WPM = 400;
   var DEFAULT_CHUNK = 1;
   var MAX_HISTORY = 30;
+
+  var DEFAULT_LIBRARY = [
+    {
+      id: "istiklal-marsi",
+      title: "İstiklal Marşı",
+      author: "Mehmet Akif Ersoy (1921) — kamu malı",
+      text: "Korkma, sönmez bu şafaklarda yüzen al sancak; Sönmeden yurdumun üstünde tüten en son ocak. O benim milletimin yıldızıdır, parlayacak; O benimdir, o benim milletimindir ancak.\n\nÇatma, kurban olayım, çehreni ey nazlı hilal! Kahraman ırkıma bir gül! Ne bu şiddet, bu celal? Sana olmaz dökülen kanlarımız sonra helal… Hakkıdır, Hakk'a tapan, milletimin istiklal!\n\nBen ezelden beridir hür yaşadım, hür yaşarım. Hangi çılgın bana zincir vuracakmış? Şaşarım! Kükremiş sel gibiyim, bendimi çiğner, aşarım. Yırtarım dağları, enginlere sığmam, taşarım.\n\nGarbın afakını sarmışsa çelik zırhlı duvar, Benim iman dolu göğsüm gibi serhaddim var. Ulusun, korkma! Nasıl böyle bir imanı boğar, 'Medeniyet!' dediğin tek dişi kalmış canavar?\n\nArkadaş! Yurduma alçakları uğratma sakın. Siper et gövdeni, dursun bu hayâsızca akın. Doğacaktır sana va'dettiği günler Hakk'ın… Kim bilir, belki yarın, belki yarından da yakın.\n\nBastığın yerleri 'toprak!' diyerek geçme, tanı: Düşün altındaki binlerce kefensiz yatanı. Sen şehit oğlusun, incitme, yazıktır, atanı: Verme, dünyaları alsan da, bu cennet vatanı.\n\nKim bu cennet vatanın uğruna olmaz ki feda? Şüheda fışkıracak toprağı sıksan, şüheda! Canı, cananı, bütün varımı alsın da Hüda, Etmesin tek vatanımdan beni dünyada cüda.\n\nRuhumun senden İlahi, şudur ancak emeli: Değmesin mabedimin göğsüne namahrem eli. Bu ezanlar-ki şehadetleri dinin temeli, Ebedi yurdumun üstünde benim inlemeli.\n\nO zaman vecd ile bin secde eder -varsa- taşım, Her cerihamdan, İlahi, boşanıp kanlı yaşım, Fışkırır ruh-ı mücerret gibi yerden na'şım; O zaman yükselerek arşa değer belki başım.\n\nDalgalan sen de şafaklar gibi ey şanlı hilal! Olsun artık dökülen kanlarımın hepsi helal. Ebediyen sana yok, ırkıma yok izmihlal: Hakkıdır, hür yaşamış bayrağımın hürriyet; Hakkıdır, Hakk'a tapan milletimin istiklal!"
+    }
+  ];
 
   var SAMPLE_TEXTS = {
     sample1: "Bilim insanları, düşük yörüngeye daha hafif ve daha ucuz uydular göndermeyi hedefleyen yeni bir fırlatma sistemi üzerinde çalışıyor. Yeni sistem, geleneksel roketlere kıyasla yüzde kırk daha az yakıt tüketiyor ve tekrar kullanılabilir parçalar sayesinde fırlatma maliyetlerini önemli ölçüde düşürüyor. Uzmanlar, bu teknolojinin önümüzdeki on yıl içinde uydu internetine erişimi kırsal bölgelere kadar yaygınlaştırabileceğini belirtiyor. Ayrıca yörüngedeki uzay çöpünü azaltmaya yönelik yeni nesil sensörler de sisteme entegre edildi. Proje ekibi, ilk test fırlatmasının önümüzdeki yıl gerçekleştirilmesini planlıyor. Bu gelişme, uzay araştırmalarında maliyet engelini aşmak isteyen küçük ölçekli girişimler için de yeni kapılar açabilir.",
@@ -330,6 +340,81 @@
     });
   }
 
+  // ---------- Library ----------
+  function loadLibrary() {
+    var raw = localStorage.getItem(STORAGE.library);
+    if (raw === null) {
+      writeJSON(STORAGE.library, DEFAULT_LIBRARY);
+      return DEFAULT_LIBRARY.slice();
+    }
+    try {
+      return JSON.parse(raw) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveLibrary(library) { writeJSON(STORAGE.library, library); }
+
+  function addBook(title, author, text) {
+    var library = loadLibrary();
+    library.push({
+      id: "book-" + Date.now(),
+      title: title,
+      author: author,
+      text: text
+    });
+    saveLibrary(library);
+    renderLibrary();
+    showToast("📚 \"" + title + "\" kitaplığa eklendi.");
+  }
+
+  function deleteBook(id) {
+    var library = loadLibrary().filter(function (b) { return b.id !== id; });
+    saveLibrary(library);
+    renderLibrary();
+    showToast("Kitap kitaplıktan kaldırıldı.");
+  }
+
+  function readBook(id) {
+    var book = loadLibrary().filter(function (b) { return b.id === id; })[0];
+    if (!book) return;
+    $("textInput").value = book.text;
+    updateWordCount();
+    document.getElementById("okuyucu").scrollIntoView({ behavior: "smooth", block: "start" });
+    startReadingFromText(book.text);
+  }
+
+  function renderLibrary() {
+    var library = loadLibrary();
+    var list = $("libraryList");
+    list.innerHTML = "";
+
+    if (!library.length) {
+      list.innerHTML = '<p class="library-empty">Kitaplığın boş. Aşağıdan telifsiz bir eser ekleyebilirsin.</p>';
+      return;
+    }
+
+    library.forEach(function (book) {
+      var wc = splitWords(book.text).length;
+      var card = document.createElement("div");
+      card.className = "book-card";
+      card.innerHTML =
+        '<div class="book-info"><h3></h3><p></p></div>' +
+        '<div class="book-actions">' +
+        '<button type="button" class="btn btn-outline btn-sm" data-read>▶️ Oku</button>' +
+        '<button type="button" class="icon-btn" data-delete title="Kaldır" aria-label="Kaldır">🗑️</button>' +
+        '</div>';
+      card.querySelector(".book-info h3").textContent = book.title;
+      card.querySelector(".book-info p").textContent = book.author + " · " + wc + " kelime";
+      card.querySelector("[data-read]").addEventListener("click", function () { readBook(book.id); });
+      card.querySelector("[data-delete]").addEventListener("click", function () {
+        if (confirm('"' + book.title + '" kitaplıktan kaldırılsın mı?')) deleteBook(book.id);
+      });
+      list.appendChild(card);
+    });
+  }
+
   // ---------- Settings persistence ----------
   function getSavedWpm() {
     var v = parseInt(localStorage.getItem(STORAGE.wpm), 10);
@@ -395,6 +480,19 @@
       startReadingFromText($("textInput").value);
     });
     $("newTextBtn").addEventListener("click", backToSource);
+
+    // Library
+    renderLibrary();
+    $("libraryAddForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var title = $("bookTitle").value.trim();
+      var author = $("bookAuthor").value.trim();
+      var text = $("bookText").value.trim();
+      if (!title || !author || !text) return;
+      addBook(title, author, text);
+      $("libraryAddForm").reset();
+      $("libraryAddDetails").removeAttribute("open");
+    });
 
     document.addEventListener("keydown", function (e) {
       if ($("readerStage").classList.contains("hidden")) return;
