@@ -24,6 +24,9 @@
   var BUILTIN_PLATFORM = { id: "builtin", label: "Mini Oyun", core: null, emoji: "🎮", grad: "linear-gradient(135deg,#1e5f3a,#150c22)" };
 
   var BUILTIN_GAMES = [
+    { id: "builtin-invaders", title: "Uzay İstilası", platform: "builtin", builtin: "invaders", romName: "Yerleşik oyun" },
+    { id: "builtin-asteroids", title: "Asteroit", platform: "builtin", builtin: "asteroids", romName: "Yerleşik oyun" },
+    { id: "builtin-missile", title: "Füze Savunması", platform: "builtin", builtin: "missile", romName: "Yerleşik oyun" },
     { id: "builtin-snake", title: "Yılan", platform: "builtin", builtin: "snake", romName: "Yerleşik oyun" },
     { id: "builtin-pong", title: "Pong", platform: "builtin", builtin: "pong", romName: "Yerleşik oyun" },
     { id: "builtin-breakout", title: "Tuğla Kırma", platform: "builtin", builtin: "breakout", romName: "Yerleşik oyun" },
@@ -31,7 +34,8 @@
     { id: "builtin-memory", title: "Hafıza", platform: "builtin", builtin: "memory", romName: "Yerleşik oyun" }
   ];
   var BUILTIN_ICONS = {
-    snake: "🐍", pong: "🏓", breakout: "🧱", twenty48: "🔢", memory: "🍀"
+    snake: "🐍", pong: "🏓", breakout: "🧱", twenty48: "🔢", memory: "🍀",
+    invaders: "👾", asteroids: "☄️", missile: "🚀"
   };
 
   var els = {};
