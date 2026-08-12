@@ -61,7 +61,7 @@
     <div class="wrap hero-inner">
       <span class="eyebrow">🪙 Bir oyun seç, jetonu at, başla</span>
       <h1>Kendi <span class="grad-text">retro galerin.</span></h1>
-      <p class="hero-sub">ROM dosyalarını sadece bu tarayıcıya (IndexedDB) yüklersin — hiçbir şey bir sunucuya gönderilmez. Yalnızca yasal olarak sahip olduğun oyunları ekle.</p>
+      <p class="hero-sub">5 yerleşik mini oyunla hemen oyna; istersen kendi ROM dosyalarını da sadece bu tarayıcıya (IndexedDB) yükle — hiçbir şey bir sunucuya gönderilmez.</p>
 
       <div class="search-box">
         <span class="search-icon">🔍</span>
@@ -76,10 +76,10 @@
     <div class="wrap">
       <div class="games-grid" id="gamesGrid"></div>
       <div class="empty-state hidden" id="emptyState">
-        <p class="empty-emoji">🕹️</p>
-        <h3>Kütüphanen boş</h3>
-        <p>Sağ üstteki <strong>“＋ Oyun Ekle”</strong> butonuyla kendi ROM dosyanı ekleyip oynamaya başla.</p>
-        <button type="button" class="btn btn-primary" id="emptyAddBtn">＋ İlk Oyununu Ekle</button>
+        <p class="empty-emoji">🔍</p>
+        <h3>Eşleşen oyun yok</h3>
+        <p>Arama ya da platform filtresini değiştir, ya da sağ üstteki <strong>“＋ Oyun Ekle”</strong> butonuyla kendi ROM dosyanı ekle.</p>
+        <button type="button" class="btn btn-primary" id="emptyAddBtn">＋ Oyun Ekle</button>
       </div>
     </div>
   </section>
@@ -117,6 +117,10 @@
         <h2>Sıkça Sorulan Sorular</h2>
       </div>
       <div class="faq" id="faq">
+        <details class="faq-item">
+          <summary>Yerleşik mini oyunlar nereden geliyor?</summary>
+          <p>Yılan, Pong, Tuğla Kırma, 2048 ve Hafıza — bu 5 oyun tamamen orijinal, sıfırdan yazılmış ve telifsizdir. Hiçbir ROM ya da dış dosya gerektirmez, doğrudan tarayıcında çalışır.</p>
+        </details>
         <details class="faq-item">
           <summary>ROM dosyalarım nerede saklanıyor?</summary>
           <p>Tamamen bu tarayıcının IndexedDB deposunda, cihazında. Hiçbir dosya herhangi bir sunucuya yüklenmez ya da gönderilmez.</p>
@@ -204,6 +208,7 @@
 </footer>
 
 <script src="js/db.js"></script>
+<script src="js/minigames.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

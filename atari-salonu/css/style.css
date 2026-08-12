@@ -230,6 +230,66 @@ a { color: inherit; }
 .player-actions { display: flex; gap: 8px; flex-shrink: 0; }
 #gameContainer { flex: 1; position: relative; background: #000; }
 
+/* Mini games */
+.mg-wrap { display: flex; flex-direction: column; height: 100%; color: #f5eefc; }
+.mg-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; background: #150c22; border-bottom: 1px solid #2c1e42; flex-shrink: 0; flex-wrap: wrap;
+}
+.mg-score { font-weight: 800; font-size: 13.5px; }
+.mg-hint { font-size: 12px; color: #a596bd; }
+.mg-stage { flex: 1; display: flex; align-items: center; justify-content: center; padding: 14px; min-height: 0; }
+.mg-canvas { max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); cursor: pointer; }
+
+.mg-dpad {
+  flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 44px);
+  gap: 6px; justify-content: center; padding: 10px 0 16px;
+}
+.mg-dbtn {
+  background: #1c1230; border: 1px solid #2c1e42; border-radius: 10px; color: #f5eefc;
+  font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.mg-dbtn:active { background: #ff7a1a; border-color: #ff7a1a; }
+.mg-dup { grid-column: 2; grid-row: 1; }
+.mg-dleft { grid-column: 1; grid-row: 2; }
+.mg-dright { grid-column: 3; grid-row: 2; }
+.mg-ddown { grid-column: 2; grid-row: 2; }
+
+/* 2048 */
+.mg-2048-board {
+  position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  width: min(90vw, 380px); aspect-ratio: 1; background: #150c22; padding: 8px; border-radius: 12px;
+}
+.mg-2048-cell {
+  display: flex; align-items: center; justify-content: center; border-radius: 8px;
+  background: #241533; font-weight: 800; font-size: clamp(14px, 5vw, 24px); color: #f5eefc;
+}
+.mg-2048-cell[data-v="2"] { background: #2c1e42; }
+.mg-2048-cell[data-v="4"] { background: #3a2352; }
+.mg-2048-cell[data-v="8"] { background: #6b2fa0; color: #fff; }
+.mg-2048-cell[data-v="16"] { background: #8b3fc9; color: #fff; }
+.mg-2048-cell[data-v="32"] { background: #a855f7; color: #fff; }
+.mg-2048-cell[data-v="64"] { background: #c076ff; color: #fff; }
+.mg-2048-cell[data-v="128"], .mg-2048-cell[data-v="256"], .mg-2048-cell[data-v="512"] { background: #ff7a1a; color: #fff; }
+.mg-2048-cell[data-v="1024"], .mg-2048-cell[data-v="2048"] { background: #f9a825; color: #150c22; }
+.mg-2048-msg {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
+  background: rgba(10,7,16,0.85); color: #fff; font-weight: 700; font-size: 14px; padding: 20px; border-radius: 12px;
+}
+
+/* Memory */
+.mg-memory-board {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  width: min(90vw, 380px);
+}
+.mg-memory-card {
+  aspect-ratio: 1; border-radius: 10px; border: 1px solid #2c1e42; background: #1c1230;
+  font-size: clamp(18px, 6vw, 28px); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform .15s ease, background .15s ease;
+}
+.mg-memory-card.flipped { background: #2c1e42; transform: scale(1.03); }
+.mg-memory-card:disabled { cursor: default; }
+
 /* Toast */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg);
