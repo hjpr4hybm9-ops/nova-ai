@@ -1,0 +1,11 @@
+{
+  "name": "ERSFLIX — Kişisel Başlangıç Sayfası",
+  "short_name": "ERSFLIX",
+  "description": "Tüm bağlantılarının ve bölümlerinin toplandığı kişisel başlangıç sayfası.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050b16",
+  "theme_color": "#050b16",
+  "icons": []
+}
