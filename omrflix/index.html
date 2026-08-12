@@ -75,10 +75,10 @@
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">Yapay Zeka</span>
-        <h2>Tüm asistanların tek yerde</h2>
-        <p>Kullandığın yapay zekâlardan birine dokun, yeni sekmede açılsın.</p>
+        <h2>Tüm asistanların tek noktada</h2>
+        <p>Dokun, kullanmak istediğin yapay zekâyı seç.</p>
       </div>
-      <div class="grid ai-grid" id="aiGrid"></div>
+      <div class="ai-portal-wrap" id="aiPortalWrap"></div>
     </div>
   </section>
 
@@ -132,6 +132,16 @@
         <button type="submit" class="btn btn-primary">Kaydet</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="aiPickerModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h3>Yapay Zeka Seç</h3>
+      <button type="button" class="icon-btn" id="aiPickerCloseBtn" aria-label="Kapat">✕</button>
+    </div>
+    <div class="grid ai-grid" id="aiPickerGrid"></div>
   </div>
 </div>
 

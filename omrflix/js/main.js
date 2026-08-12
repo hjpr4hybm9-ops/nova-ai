@@ -150,9 +150,39 @@
     });
   }
 
-  /* ---------- Yapay Zeka bölümü ---------- */
-  function renderAiSection() {
-    els.aiGrid.innerHTML = "";
+  /* ---------- Yapay Zeka bölümü (tek nokta) ---------- */
+  function renderAiPortal() {
+    els.aiPortalWrap.innerHTML = "";
+    var card = document.createElement("button");
+    card.type = "button";
+    card.className = "ai-portal-card";
+
+    var stack = document.createElement("span");
+    stack.className = "ai-portal-stack";
+    AI_TOOLS.forEach(function (tool) {
+      var badge = document.createElement("span");
+      badge.className = "ai-portal-mini";
+      badge.innerHTML = aiBadgeSvg(tool.key);
+      stack.appendChild(badge);
+    });
+    card.appendChild(stack);
+
+    var text = document.createElement("span");
+    text.className = "ai-portal-text";
+    text.innerHTML = '<span class="ai-portal-title">Yapay Zekâlarım</span><span class="ai-portal-sub">' + AI_TOOLS.length + " asistana tek noktadan eriş</span>";
+    card.appendChild(text);
+
+    var arrow = document.createElement("span");
+    arrow.className = "ai-portal-arrow";
+    arrow.textContent = "→";
+    card.appendChild(arrow);
+
+    card.addEventListener("click", openAiPicker);
+    els.aiPortalWrap.appendChild(card);
+  }
+
+  function renderAiPickerGrid() {
+    els.aiPickerGrid.innerHTML = "";
     AI_TOOLS.forEach(function (tool) {
       var a = document.createElement("a");
       a.className = "ai-card";
@@ -163,9 +193,12 @@
         '<span class="ai-badge">' + aiBadgeSvg(tool.key) + "</span>" +
         '<span class="ai-name">' + escapeHtml(tool.name) + "</span>" +
         '<span class="ai-desc">' + escapeHtml(tool.desc) + "</span>";
-      els.aiGrid.appendChild(a);
+      els.aiPickerGrid.appendChild(a);
     });
   }
+
+  function openAiPicker() { els.aiPickerModal.classList.remove("hidden"); }
+  function closeAiPicker() { els.aiPickerModal.classList.add("hidden"); }
 
   /* ---------- Real site logos ---------- */
   function faviconUrl(url) {
@@ -550,7 +583,9 @@
   function init() {
     els.quicknav = $("quicknav");
     els.sectionsGrid = $("sectionsGrid");
-    els.aiGrid = $("aiGrid");
+    els.aiPortalWrap = $("aiPortalWrap");
+    els.aiPickerModal = $("aiPickerModal");
+    els.aiPickerGrid = $("aiPickerGrid");
     els.linksGrid = $("linksGrid");
     els.linksEmptyHint = $("linksEmptyHint");
     els.catFilters = $("catFilters");
@@ -569,7 +604,8 @@
 
     applyThemeUI();
     renderSections();
-    renderAiSection();
+    renderAiPortal();
+    renderAiPickerGrid();
     renderQuicknav();
     renderCatFilters();
     renderLinks();
@@ -584,6 +620,9 @@
     els.linkModal.addEventListener("click", function (e) { if (e.target === els.linkModal) closeLinkModal(); });
     $("linkForm").addEventListener("submit", handleLinkSubmit);
     $("deleteLinkBtn").addEventListener("click", handleDeleteLink);
+
+    $("aiPickerCloseBtn").addEventListener("click", closeAiPicker);
+    els.aiPickerModal.addEventListener("click", function (e) { if (e.target === els.aiPickerModal) closeAiPicker(); });
 
     $("micModalCloseBtn").addEventListener("click", closeMicModal);
     els.micModal.addEventListener("click", function (e) { if (e.target === els.micModal) closeMicModal(); });
