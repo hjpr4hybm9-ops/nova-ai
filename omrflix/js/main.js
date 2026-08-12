@@ -7,7 +7,7 @@
   var DEFAULT_SECTIONS = [
     { id: "ev", title: "Ev", desc: "Başlangıç ekranın", icon: "home", href: "#top", grad: "linear-gradient(135deg,#1e3a5f,#0b1526)" },
     { id: "oyun", title: "Oyun", desc: "Atari Salonu'na git", icon: "gamepad", href: "../atari-salonu/index.html", grad: "linear-gradient(135deg,#3b1f5f,#0b1526)" },
-    { id: "yapayzeka", title: "Yapay Zeka", desc: "Claude, ChatGPT, Gemini...", icon: "ai", href: "#baglantilar", filterCat: "ai", grad: "linear-gradient(135deg,#1f3d5f,#0b1526)" },
+    { id: "yapayzeka", title: "Yapay Zeka", desc: "Claude, ChatGPT, Gemini...", icon: "ai", href: "#yapayzeka", grad: "linear-gradient(135deg,#1f3d5f,#0b1526)" },
     { id: "kod", title: "Kod", desc: "Geliştirme araçların", icon: "code", href: "#baglantilar", filterCat: "kod", grad: "linear-gradient(135deg,#243a2e,#0b1526)" },
     { id: "gorsel", title: "Görsel Oluşturma", desc: "Yapay zekayla görsel üret", icon: "image", href: "#baglantilar", filterCat: "gorsel", grad: "linear-gradient(135deg,#5f2a1f,#0b1526)" },
     { id: "mikrofon", title: "Mikrofon", desc: "Sesle yaz, soru sor", icon: "mic", action: "mikrofon", grad: "linear-gradient(135deg,#4a1f5f,#0b1526)" },
@@ -38,30 +38,45 @@
   var CATEGORIES = [
     { id: "all", label: "Hepsi" },
     { id: "genel", label: "Genel" },
-    { id: "ai", label: "Yapay Zeka" },
     { id: "kod", label: "Kod" },
     { id: "gorsel", label: "Görsel Oluşturma" }
   ];
 
   var AI_TOOLS = [
-    { name: "Claude", url: "https://claude.ai", icon: "✳️" },
-    { name: "ChatGPT", url: "https://chatgpt.com", icon: "💬" },
-    { name: "Gemini", url: "https://gemini.google.com", icon: "✨" },
-    { name: "DeepSeek", url: "https://chat.deepseek.com", icon: "🌊" },
-    { name: "Kumru", url: "https://kumru.ai", icon: "🐦" }
+    { key: "claude", name: "Claude", url: "https://claude.ai", desc: "Anthropic'in yapay zekâ asistanı" },
+    { key: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com", desc: "OpenAI'nin sohbet asistanı" },
+    { key: "gemini", name: "Gemini", url: "https://gemini.google.com", desc: "Google'ın yapay zekâ asistanı" },
+    { key: "deepseek", name: "DeepSeek", url: "https://chat.deepseek.com", desc: "DeepSeek sohbet asistanı" },
+    { key: "kumru", name: "Kumru", url: "https://kumru.ai", desc: "Türkçe yerli yapay zekâ" }
   ];
+
+  var AI_BADGE_DEFS = {
+    claude: { from: "#ffb088", to: "#d9622c", mark: '<path d="M20 8v24M8 20h24M12.3 12.3l15.4 15.4M27.7 12.3L12.3 27.7" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>' },
+    chatgpt: { from: "#1fcf9d", to: "#0d5f4b", mark: '<circle cx="20" cy="20" r="7" stroke="#fff" stroke-width="2.4" fill="none"/><circle cx="20" cy="10.5" r="3.4" fill="#fff"/><circle cx="28.2" cy="25.2" r="3.4" fill="#fff"/><circle cx="11.8" cy="25.2" r="3.4" fill="#fff"/>' },
+    gemini: { from: "#7c9bff", to: "#b57bf0", mark: '<path d="M20 8c0 7-5 12-12 12 7 0 12 5 12 12 0-7 5-12 12-12-7 0-12-5-12-12z" fill="#fff"/>' },
+    deepseek: { from: "#5aa9ff", to: "#1450a8", mark: '<path d="M9 24c3-9 8-13 11-13 4 0 6 3 6 3s3-2 6 1c2 2 2 5 1 7-3-2-6-2-8 0-2-3-5-3-7-1-2 2-3 3-3 3s-4-1-6 0z" fill="#fff"/>' },
+    kumru: { from: "#f5a6c9", to: "#a86ad9", mark: '<path d="M11 24c3-8 9-12 15-10-2 1-3 2-3 4 3 0 5 1 6 3-3 0-5 1-6 3-3 4-8 5-12 3 2 0 4-1 5-3-3 1-5 1-5 0z" fill="#fff"/><circle cx="24" cy="16.5" r="1.3" fill="#0a0f1a"/>' }
+  };
+  var aiBadgeCounter = 0;
+  function aiBadgeSvg(key) {
+    var def = AI_BADGE_DEFS[key];
+    if (!def) return "";
+    aiBadgeCounter++;
+    var gid = "aig" + aiBadgeCounter;
+    return '<svg viewBox="0 0 40 40" width="100%" height="100%">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0" stop-color="' + def.from + '"/><stop offset="1" stop-color="' + def.to + '"/>' +
+      '</linearGradient></defs>' +
+      '<circle cx="20" cy="20" r="20" fill="url(#' + gid + ')"/>' +
+      def.mark +
+      "</svg>";
+  }
 
   var DEFAULT_LINKS = [
     { id: "instagram", name: "Instagram", url: "https://instagram.com", icon: "📸", cat: "genel" },
     { id: "youtube", name: "YouTube", url: "https://youtube.com", icon: "▶️", cat: "genel" },
-    { id: "telegram", name: "Telegram", url: "https://telegram.org", icon: "✈️", cat: "genel" },
     { id: "google", name: "Google", url: "https://google.com", icon: "🔎", cat: "genel" },
     { id: "donanim", name: "Donanım Haber", url: "https://donanimhaber.com", icon: "💻", cat: "genel" },
-    { id: "claude", name: "Claude", url: "https://claude.ai", icon: "✳️", cat: "ai" },
-    { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com", icon: "💬", cat: "ai" },
-    { id: "gemini", name: "Gemini", url: "https://gemini.google.com", icon: "✨", cat: "ai" },
-    { id: "deepseek", name: "DeepSeek", url: "https://chat.deepseek.com", icon: "🌊", cat: "ai" },
-    { id: "kumru", name: "Kumru", url: "https://kumru.ai", icon: "🐦", cat: "ai" },
     { id: "github", name: "GitHub", url: "https://github.com", icon: "🐙", cat: "kod" },
     { id: "vscode", name: "VS Code Web", url: "https://vscode.dev", icon: "🧩", cat: "kod" }
   ];
@@ -132,6 +147,23 @@
         a.addEventListener("click", function () { setCategory(s.filterCat); });
       }
       els.sectionsGrid.appendChild(a);
+    });
+  }
+
+  /* ---------- Yapay Zeka bölümü ---------- */
+  function renderAiSection() {
+    els.aiGrid.innerHTML = "";
+    AI_TOOLS.forEach(function (tool) {
+      var a = document.createElement("a");
+      a.className = "ai-card";
+      a.href = tool.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.innerHTML =
+        '<span class="ai-badge">' + aiBadgeSvg(tool.key) + "</span>" +
+        '<span class="ai-name">' + escapeHtml(tool.name) + "</span>" +
+        '<span class="ai-desc">' + escapeHtml(tool.desc) + "</span>";
+      els.aiGrid.appendChild(a);
     });
   }
 
@@ -315,7 +347,7 @@
       var b = document.createElement("button");
       b.type = "button";
       b.className = "tool-ai-link";
-      b.textContent = tool.icon + " " + tool.name;
+      b.innerHTML = '<span class="tool-ai-badge">' + aiBadgeSvg(tool.key) + "</span>" + escapeHtml(tool.name);
       b.addEventListener("click", function () {
         var text = micState.transcript.trim();
         if (text && navigator.clipboard) {
@@ -518,6 +550,7 @@
   function init() {
     els.quicknav = $("quicknav");
     els.sectionsGrid = $("sectionsGrid");
+    els.aiGrid = $("aiGrid");
     els.linksGrid = $("linksGrid");
     els.linksEmptyHint = $("linksEmptyHint");
     els.catFilters = $("catFilters");
@@ -536,6 +569,7 @@
 
     applyThemeUI();
     renderSections();
+    renderAiSection();
     renderQuicknav();
     renderCatFilters();
     renderLinks();
