@@ -185,10 +185,38 @@
 
   /* ---------- Gerçek AI Sohbet (kendi API anahtarınla, BYOK) ---------- */
   var CHAT_PROVIDERS = [
-    { key: "claude", name: "Claude", defaultModel: "claude-sonnet-5", chatCapable: true, keyPlaceholder: "sk-ant-...", keyHelp: "Anahtarını console.anthropic.com üzerinden alabilirsin." },
-    { key: "chatgpt", name: "ChatGPT", defaultModel: "gpt-4o-mini", chatCapable: true, keyPlaceholder: "sk-...", keyHelp: "Anahtarını platform.openai.com üzerinden alabilirsin. Not: OpenAI bazı tarayıcı isteklerini (CORS) engelleyebilir — çalışmazsa bu, anahtarınla ilgili değildir." },
-    { key: "gemini", name: "Gemini", defaultModel: "gemini-flash-latest", chatCapable: true, keyPlaceholder: "AIza...", keyHelp: "Anahtarını aistudio.google.com üzerinden alabilirsin." },
-    { key: "deepseek", name: "DeepSeek", defaultModel: "deepseek-chat", chatCapable: true, keyPlaceholder: "sk-...", keyHelp: "Anahtarını platform.deepseek.com üzerinden alabilirsin. Not: bazı tarayıcılarda doğrudan bağlantı çalışmayabilir." },
+    {
+      key: "claude", name: "Claude", defaultModel: "claude-sonnet-5", chatCapable: true,
+      keyPlaceholder: "sk-ant-...",
+      keyHelp: "Anahtarını console.anthropic.com üzerinden alabilirsin.",
+      keyUrl: "https://console.anthropic.com/settings/keys",
+      freeNote: "Ücretsiz kotası yok, hesaba en az birkaç dolarlık kredi yüklemen gerekir.",
+      consumerUrl: "https://claude.ai"
+    },
+    {
+      key: "chatgpt", name: "ChatGPT", defaultModel: "gpt-4o-mini", chatCapable: true,
+      keyPlaceholder: "sk-...",
+      keyHelp: "Anahtarını platform.openai.com üzerinden alabilirsin. Not: OpenAI bazı tarayıcı isteklerini (CORS) engelleyebilir — çalışmazsa bu, anahtarınla ilgili değildir.",
+      keyUrl: "https://platform.openai.com/api-keys",
+      freeNote: "Ücretsiz kotası yok, ödeme yöntemi eklemen gerekir.",
+      consumerUrl: "https://chatgpt.com"
+    },
+    {
+      key: "gemini", name: "Gemini", defaultModel: "gemini-flash-latest", chatCapable: true,
+      keyPlaceholder: "AIza...",
+      keyHelp: "Anahtarını aistudio.google.com üzerinden alabilirsin.",
+      keyUrl: "https://aistudio.google.com/apikey",
+      freeNote: "Google AI Studio’dan kredi kartı istenmeden, tamamen ücretsiz bir anahtar alabilirsin (sınırlı kotayla).",
+      consumerUrl: "https://gemini.google.com"
+    },
+    {
+      key: "deepseek", name: "DeepSeek", defaultModel: "deepseek-chat", chatCapable: true,
+      keyPlaceholder: "sk-...",
+      keyHelp: "Anahtarını platform.deepseek.com üzerinden alabilirsin. Not: bazı tarayıcılarda doğrudan bağlantı çalışmayabilir.",
+      keyUrl: "https://platform.deepseek.com/api_keys",
+      freeNote: "Çok ucuz ama ücretsiz kotası yok, ödeme yöntemi eklemen gerekebilir.",
+      consumerUrl: "https://chat.deepseek.com"
+    },
     { key: "kumru", name: "Kumru", chatCapable: false }
   ];
 
@@ -261,6 +289,11 @@
     wrap.className = "chat-setup";
     wrap.innerHTML =
       '<p class="chat-setup-info">' + escapeHtml(provider.name) + " ile sohbet etmek için kendi API anahtarını gir. " + escapeHtml(provider.keyHelp || "") + "</p>" +
+      (provider.freeNote ? '<p class="chat-free-note">💡 ' + escapeHtml(provider.freeNote) + "</p>" : "") +
+      '<div class="chat-setup-links">' +
+        (provider.keyUrl ? '<a class="btn btn-outline btn-sm" href="' + provider.keyUrl + '" target="_blank" rel="noopener">🔑 Anahtar Al</a>' : "") +
+        (provider.consumerUrl ? '<a class="btn btn-outline btn-sm" href="' + provider.consumerUrl + '" target="_blank" rel="noopener">Anahtarsız, ' + escapeHtml(provider.name) + '’ın sitesine git ↗</a>' : "") +
+      "</div>" +
       '<label class="field"><span>API Anahtarı</span><input type="password" id="chatKeyInput" autocomplete="off" placeholder="' + escapeHtml(provider.keyPlaceholder || "API anahtarını yapıştır") + '"></label>' +
       '<label class="field"><span>Model (istersen değiştir)</span><input type="text" id="chatModelInput"></label>' +
       '<div class="chat-setup-actions"><button type="button" class="btn btn-primary" id="chatSaveKeyBtn">Kaydet ve Sohbete Başla</button></div>';
