@@ -5,17 +5,35 @@
   var LS_THEME = "omrflix.theme";
 
   var DEFAULT_SECTIONS = [
-    { id: "ev", title: "Ev", desc: "Başlangıç ekranın", emoji: "🏠", href: "#top", grad: "linear-gradient(135deg,#1e3a5f,#0b1526)" },
-    { id: "oyun", title: "Oyun", desc: "Atari Salonu'na git", emoji: "🕹️", href: "../atari-salonu/index.html", grad: "linear-gradient(135deg,#3b1f5f,#0b1526)" },
-    { id: "yapayzeka", title: "Yapay Zeka", desc: "Claude, ChatGPT, Gemini...", emoji: "🤖", href: "#baglantilar", filterCat: "ai", grad: "linear-gradient(135deg,#1f3d5f,#0b1526)" },
-    { id: "kod", title: "Kod", desc: "Geliştirme araçların", emoji: "💻", href: "#baglantilar", filterCat: "kod", grad: "linear-gradient(135deg,#243a2e,#0b1526)" },
-    { id: "gorsel", title: "Görsel Oluşturma", desc: "Yapay zekayla görsel üret", emoji: "🎨", href: "#baglantilar", filterCat: "gorsel", grad: "linear-gradient(135deg,#5f2a1f,#0b1526)" },
-    { id: "mikrofon", title: "Mikrofon", desc: "Sesle yaz, soru sor", emoji: "🎙️", action: "mikrofon", grad: "linear-gradient(135deg,#4a1f5f,#0b1526)" },
-    { id: "kamera", title: "Kamera", desc: "Anlık fotoğraf çek", emoji: "📷", action: "kamera", grad: "linear-gradient(135deg,#1f5f5a,#0b1526)" },
-    { id: "video", title: "Video", desc: "İzleme listesi", emoji: "🎬", href: "#baglantilar", grad: "linear-gradient(135deg,#1f5f4a,#0b1526)" },
-    { id: "blog", title: "Blog", desc: "Notlar ve yazılar", emoji: "📝", href: "#baglantilar", grad: "linear-gradient(135deg,#5f3a1f,#0b1526)" },
-    { id: "projeler", title: "Projeler", desc: "Kişisel projelerin", emoji: "🗂️", href: "#baglantilar", grad: "linear-gradient(135deg,#5f1f3d,#0b1526)" }
+    { id: "ev", title: "Ev", desc: "Başlangıç ekranın", icon: "home", href: "#top", grad: "linear-gradient(135deg,#1e3a5f,#0b1526)" },
+    { id: "oyun", title: "Oyun", desc: "Atari Salonu'na git", icon: "gamepad", href: "../atari-salonu/index.html", grad: "linear-gradient(135deg,#3b1f5f,#0b1526)" },
+    { id: "yapayzeka", title: "Yapay Zeka", desc: "Claude, ChatGPT, Gemini...", icon: "ai", href: "#baglantilar", filterCat: "ai", grad: "linear-gradient(135deg,#1f3d5f,#0b1526)" },
+    { id: "kod", title: "Kod", desc: "Geliştirme araçların", icon: "code", href: "#baglantilar", filterCat: "kod", grad: "linear-gradient(135deg,#243a2e,#0b1526)" },
+    { id: "gorsel", title: "Görsel Oluşturma", desc: "Yapay zekayla görsel üret", icon: "image", href: "#baglantilar", filterCat: "gorsel", grad: "linear-gradient(135deg,#5f2a1f,#0b1526)" },
+    { id: "mikrofon", title: "Mikrofon", desc: "Sesle yaz, soru sor", icon: "mic", action: "mikrofon", grad: "linear-gradient(135deg,#4a1f5f,#0b1526)" },
+    { id: "kamera", title: "Kamera", desc: "Anlık fotoğraf çek", icon: "camera", action: "kamera", grad: "linear-gradient(135deg,#1f5f5a,#0b1526)" },
+    { id: "video", title: "Video", desc: "İzleme listesi", icon: "video", href: "#baglantilar", grad: "linear-gradient(135deg,#1f5f4a,#0b1526)" },
+    { id: "blog", title: "Blog", desc: "Notlar ve yazılar", icon: "pen", href: "#baglantilar", grad: "linear-gradient(135deg,#5f3a1f,#0b1526)" },
+    { id: "projeler", title: "Projeler", desc: "Kişisel projelerin", icon: "folder", href: "#baglantilar", grad: "linear-gradient(135deg,#5f1f3d,#0b1526)" }
   ];
+
+  var SC_ICONS = {
+    home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
+    gamepad: '<rect x="2" y="7" width="20" height="10" rx="4"/><path d="M7 10v4M5 12h4"/><circle cx="16" cy="10.3" r="1"/><circle cx="18.3" cy="13" r="1"/>',
+    ai: '<rect x="5" y="8" width="14" height="10" rx="2"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M12 8V4M9 4h6"/><path d="M3 12h2M19 12h2"/>',
+    code: '<path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/>',
+    image: '<rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="M3 15l5-5 4 4 3-3 6 6"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3M9 21h6"/>',
+    camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/>',
+    video: '<path d="M3 8l3-4h3l-2 4z"/><path d="M9 8l3-4h3l-2 4z"/><path d="M15 8l3-4h3v4z"/><rect x="3" y="8" width="18" height="12" rx="1"/>',
+    pen: '<path d="M4 20l1-5 11-11 4 4-11 11-5 1z"/><path d="M13 6l4 4"/>',
+    folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>'
+  };
+
+  function scIconSvg(key) {
+    var inner = SC_ICONS[key] || SC_ICONS.folder;
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + inner + "</svg>";
+  }
 
   var CATEGORIES = [
     { id: "all", label: "Hepsi" },
@@ -102,7 +120,7 @@
       a.href = s.action ? "#" : s.href;
       a.innerHTML =
         '<span class="sc-bg" style="--sc-grad:' + s.grad + '"></span>' +
-        '<span class="sc-emoji">' + s.emoji + "</span>" +
+        '<span class="sc-emoji">' + scIconSvg(s.icon) + "</span>" +
         '<span class="sc-body"><span class="sc-title">' + escapeHtml(s.title) + '</span>' +
         '<span class="sc-desc">' + escapeHtml(s.desc) + "</span></span>";
       a.style.setProperty("--sc-grad", s.grad);
@@ -115,6 +133,35 @@
       }
       els.sectionsGrid.appendChild(a);
     });
+  }
+
+  /* ---------- Real site logos ---------- */
+  function faviconUrl(url) {
+    try {
+      var host = new URL(url).hostname;
+      return "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(host);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function makeLogoImg(url, emojiFallback, sizeClass) {
+    var favicon = faviconUrl(url);
+    var img = document.createElement("img");
+    img.className = sizeClass;
+    img.alt = "";
+    img.loading = "lazy";
+    if (!favicon) {
+      img.replaceWith(document.createTextNode(emojiFallback || "🔗"));
+      return null;
+    }
+    img.src = favicon;
+    img.onerror = function () {
+      var span = document.createElement("span");
+      span.textContent = emojiFallback || "🔗";
+      img.replaceWith(span);
+    };
+    return img;
   }
 
   /* ---------- Links ---------- */
@@ -132,7 +179,9 @@
       a.href = l.url;
       a.target = "_blank";
       a.rel = "noopener";
-      a.textContent = (l.icon || "🔗") + " " + l.name;
+      var logo = makeLogoImg(l.url, l.icon, "qn-logo");
+      if (logo) a.appendChild(logo);
+      a.appendChild(document.createTextNode(" " + l.name));
       els.quicknav.appendChild(a);
     });
   }
@@ -173,15 +222,31 @@
       a.href = l.url;
       a.target = "_blank";
       a.rel = "noopener";
-      a.innerHTML =
-        '<span class="lc-icon">' + (l.icon || "🔗") + "</span>" +
-        '<span class="lc-name">' + escapeHtml(l.name) + "</span>" +
-        '<button type="button" class="lc-edit" data-id="' + l.id + '" title="Düzenle">✏️</button>';
-      a.querySelector(".lc-edit").addEventListener("click", function (e) {
+
+      var iconSpan = document.createElement("span");
+      iconSpan.className = "lc-icon";
+      var logo = makeLogoImg(l.url, l.icon, "lc-logo");
+      if (logo) iconSpan.appendChild(logo);
+      else iconSpan.textContent = l.icon || "🔗";
+      a.appendChild(iconSpan);
+
+      var nameSpan = document.createElement("span");
+      nameSpan.className = "lc-name";
+      nameSpan.textContent = l.name;
+      a.appendChild(nameSpan);
+
+      var editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "lc-edit";
+      editBtn.title = "Düzenle";
+      editBtn.textContent = "✏️";
+      editBtn.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
         openLinkModal(l);
       });
+      a.appendChild(editBtn);
+
       els.linksGrid.appendChild(a);
     });
   }
