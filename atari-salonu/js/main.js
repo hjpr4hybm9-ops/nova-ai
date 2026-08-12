@@ -21,6 +21,19 @@
   var PLATFORM_MAP = {};
   PLATFORMS.forEach(function (p) { PLATFORM_MAP[p.id] = p; });
 
+  var BUILTIN_PLATFORM = { id: "builtin", label: "Mini Oyun", core: null, emoji: "🎮", grad: "linear-gradient(135deg,#1e5f3a,#150c22)" };
+
+  var BUILTIN_GAMES = [
+    { id: "builtin-snake", title: "Yılan", platform: "builtin", builtin: "snake", romName: "Yerleşik oyun" },
+    { id: "builtin-pong", title: "Pong", platform: "builtin", builtin: "pong", romName: "Yerleşik oyun" },
+    { id: "builtin-breakout", title: "Tuğla Kırma", platform: "builtin", builtin: "breakout", romName: "Yerleşik oyun" },
+    { id: "builtin-2048", title: "2048", platform: "builtin", builtin: "twenty48", romName: "Yerleşik oyun" },
+    { id: "builtin-memory", title: "Hafıza", platform: "builtin", builtin: "memory", romName: "Yerleşik oyun" }
+  ];
+  var BUILTIN_ICONS = {
+    snake: "🐍", pong: "🏓", breakout: "🧱", twenty48: "🔢", memory: "🍀"
+  };
+
   var els = {};
   var state = { games: [], search: "", platform: "all", currentGameId: null };
   var coverUrlCache = {};
@@ -78,7 +91,7 @@
     all.addEventListener("click", function () { state.platform = "all"; renderPlatformFilters(); renderGames(); });
     wrap.appendChild(all);
 
-    PLATFORMS.forEach(function (p) {
+    [BUILTIN_PLATFORM].concat(PLATFORMS).forEach(function (p) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "pf-chip" + (state.platform === p.id ? " active" : "");
@@ -101,27 +114,31 @@
   }
 
   /* ---------- Games grid ---------- */
+  function allGames() { return BUILTIN_GAMES.concat(state.games); }
+
   function renderGames() {
     var q = state.search.trim().toLowerCase();
-    var list = state.games.filter(function (g) {
+    var list = allGames().filter(function (g) {
       if (state.platform !== "all" && g.platform !== state.platform) return false;
       if (q && g.title.toLowerCase().indexOf(q) === -1) return false;
       return true;
     });
 
     els.gamesGrid.innerHTML = "";
-    els.emptyState.classList.toggle("hidden", state.games.length > 0);
-    els.gamesGrid.classList.toggle("hidden", state.games.length === 0);
+    els.emptyState.classList.toggle("hidden", list.length > 0);
+    els.gamesGrid.classList.toggle("hidden", list.length === 0);
 
     list.forEach(function (g) {
-      var p = PLATFORM_MAP[g.platform] || PLATFORMS[0];
+      var isBuiltin = !!g.builtin;
+      var p = isBuiltin ? BUILTIN_PLATFORM : (PLATFORM_MAP[g.platform] || PLATFORMS[0]);
+      var emoji = isBuiltin ? (BUILTIN_ICONS[g.builtin] || "🎮") : p.emoji;
       var card = document.createElement("div");
       card.className = "game-card";
       card.innerHTML =
         '<div class="game-cover" style="--gc-grad:' + p.grad + '">' +
         '<span class="gc-platform-badge">' + escapeHtml(p.label) + "</span>" +
-        '<button type="button" class="gc-delete" title="Sil">🗑️</button>' +
-        '<span class="gc-emoji">' + p.emoji + "</span>" +
+        (isBuiltin ? "" : '<button type="button" class="gc-delete" title="Sil">🗑️</button>') +
+        '<span class="gc-emoji">' + emoji + "</span>" +
         '<button type="button" class="gc-play">▶ OYNA</button>' +
         "</div>" +
         '<div class="game-info">' +
@@ -131,7 +148,8 @@
         "</div>";
 
       card.querySelector(".gc-play").addEventListener("click", function () { playGame(g); });
-      card.querySelector(".gc-delete").addEventListener("click", function () { deleteGame(g); });
+      var delBtn = card.querySelector(".gc-delete");
+      if (delBtn) delBtn.addEventListener("click", function () { deleteGame(g); });
 
       var coverEl = card.querySelector(".game-cover");
       if (g.hasCover) loadCoverImage(g.id, coverEl);
@@ -214,13 +232,26 @@
 
   /* ---------- Play / emulator ---------- */
   var activeObjectUrl = null;
+  var activeMiniGame = null;
 
   function playGame(g) {
     els.coinOverlay.classList.remove("hidden");
     setTimeout(function () {
       els.coinOverlay.classList.add("hidden");
-      launchPlayer(g);
+      if (g.builtin) launchMiniGame(g);
+      else launchPlayer(g);
     }, 700);
+  }
+
+  function launchMiniGame(g) {
+    teardownPlayer();
+    state.currentGameId = g.id;
+    $("playerTitle").textContent = g.title + " · Yerleşik oyun";
+    $("reloadPlayerBtn").classList.add("hidden");
+    els.playerOverlay.classList.remove("hidden");
+    var mod = window.MiniGames && window.MiniGames[g.builtin];
+    if (!mod) { showToast("Bu mini oyun yüklenemedi."); return; }
+    activeMiniGame = mod.start(els.gameContainer);
   }
 
   function launchPlayer(g) {
@@ -231,6 +262,7 @@
 
       state.currentGameId = g.id;
       $("playerTitle").textContent = g.title + " · " + p.label;
+      $("reloadPlayerBtn").classList.remove("hidden");
       els.playerOverlay.classList.remove("hidden");
 
       activeObjectUrl = URL.createObjectURL(blob);
@@ -252,6 +284,7 @@
   }
 
   function teardownPlayer() {
+    if (activeMiniGame) { activeMiniGame.run(); activeMiniGame = null; }
     var oldScript = $("ejsLoaderScript");
     if (oldScript) oldScript.remove();
     els.gameContainer.innerHTML = "";
@@ -270,8 +303,8 @@
 
   function reloadPlayer() {
     if (!state.currentGameId) return;
-    var g = state.games.find(function (x) { return x.id === state.currentGameId; });
-    if (g) launchPlayer(g);
+    var g = allGames().find(function (x) { return x.id === state.currentGameId; });
+    if (g && !g.builtin) launchPlayer(g);
   }
 
   /* ---------- Search / nav ---------- */
