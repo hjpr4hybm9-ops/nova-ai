@@ -1,17 +1,14 @@
 (function () {
   "use strict";
 
-  var LS_LINKS = "ersflix.links";
-  var LS_SECTIONS_HIDDEN = "ersflix.sections.hidden";
-  var LS_SERVER = "ersflix.server";
-  var LS_THEME = "ersflix.theme";
+  var LS_LINKS = "omrflix.links";
+  var LS_THEME = "omrflix.theme";
 
   var DEFAULT_SECTIONS = [
     { id: "ev", title: "Ev", desc: "Başlangıç ekranın", emoji: "🏠", href: "#top", grad: "linear-gradient(135deg,#1e3a5f,#0b1526)" },
     { id: "oyun", title: "Oyun", desc: "Atari Salonu'na git", emoji: "🕹️", href: "../atari-salonu/index.html", grad: "linear-gradient(135deg,#3b1f5f,#0b1526)" },
     { id: "video", title: "Video", desc: "İzleme listesi", emoji: "🎬", href: "#baglantilar", grad: "linear-gradient(135deg,#1f5f4a,#0b1526)" },
     { id: "blog", title: "Blog", desc: "Notlar ve yazılar", emoji: "📝", href: "#baglantilar", grad: "linear-gradient(135deg,#5f3a1f,#0b1526)" },
-    { id: "uzak", title: "Uzak Bağlantı", desc: "Sunucuna eriş", emoji: "🖧", href: "#sunucu", grad: "linear-gradient(135deg,#1f3d5f,#0b1526)" },
     { id: "projeler", title: "Projeler", desc: "Kişisel projelerin", emoji: "🗂️", href: "#baglantilar", grad: "linear-gradient(135deg,#5f1f3d,#0b1526)" }
   ];
 
@@ -187,36 +184,6 @@
     showToast("Bağlantı silindi.");
   }
 
-  /* ---------- Server panel ---------- */
-  function renderServer() {
-    var addr = localStorage.getItem(LS_SERVER) || "";
-    els.serverAddr.textContent = addr || "Henüz ayarlanmadı";
-  }
-  function openServerModal() {
-    $("serverInput").value = localStorage.getItem(LS_SERVER) || "";
-    els.serverModal.classList.remove("hidden");
-    $("serverInput").focus();
-  }
-  function closeServerModal() { els.serverModal.classList.add("hidden"); }
-  function handleServerSubmit(e) {
-    e.preventDefault();
-    var val = $("serverInput").value.trim();
-    if (val) localStorage.setItem(LS_SERVER, val);
-    else localStorage.removeItem(LS_SERVER);
-    renderServer();
-    closeServerModal();
-    showToast("Sunucu adresi kaydedildi.");
-  }
-  function copyServer() {
-    var addr = localStorage.getItem(LS_SERVER) || "";
-    if (!addr) { showToast("Önce bir sunucu adresi ekle."); return; }
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(addr).then(function () { showToast("Kopyalandı."); });
-    } else {
-      showToast(addr);
-    }
-  }
-
   /* ---------- Search / edit mode / nav ---------- */
   function handleSearch(e) {
     state.search = e.target.value;
@@ -241,10 +208,8 @@
     els.sectionsGrid = $("sectionsGrid");
     els.linksGrid = $("linksGrid");
     els.linksEmptyHint = $("linksEmptyHint");
-    els.serverAddr = $("serverAddr");
     els.toast = $("toast");
     els.linkModal = $("linkModal");
-    els.serverModal = $("serverModal");
 
     state.links = loadJSON(LS_LINKS, null) || DEFAULT_LINKS.slice();
     if (!loadJSON(LS_LINKS, null)) saveLinks();
@@ -253,7 +218,6 @@
     renderSections();
     renderQuicknav();
     renderLinks();
-    renderServer();
 
     $("themeToggle").addEventListener("click", toggleTheme);
     $("editModeBtn").addEventListener("click", toggleEditMode);
@@ -264,12 +228,6 @@
     els.linkModal.addEventListener("click", function (e) { if (e.target === els.linkModal) closeLinkModal(); });
     $("linkForm").addEventListener("submit", handleLinkSubmit);
     $("deleteLinkBtn").addEventListener("click", handleDeleteLink);
-
-    $("editServerBtn").addEventListener("click", openServerModal);
-    $("copyServerBtn").addEventListener("click", copyServer);
-    $("serverModalCloseBtn").addEventListener("click", closeServerModal);
-    els.serverModal.addEventListener("click", function (e) { if (e.target === els.serverModal) closeServerModal(); });
-    $("serverForm").addEventListener("submit", handleServerSubmit);
 
     $("year").textContent = new Date().getFullYear();
   }
