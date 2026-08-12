@@ -7,15 +7,15 @@
 <script>
   (function () {
     try {
-      var t = localStorage.getItem("ersflix.theme");
+      var t = localStorage.getItem("omrflix.theme");
       if (t === "light" || t === "dark") {
         document.documentElement.setAttribute("data-theme", t);
       }
     } catch (e) {}
   })();
 </script>
-<meta name="description" content="ERSFLIX — tüm bağlantılarının, bölümlerinin ve favori sitelerinin tek bir ekranda toplandığı kişisel başlangıç sayfan. Kurulum yok, tamamen tarayıcında çalışır.">
-<title>ERSFLIX — Kişisel Başlangıç Sayfası</title>
+<meta name="description" content="ÖMRFLIX — tüm bağlantılarının, bölümlerinin ve favori sitelerinin tek bir ekranda toplandığı kişisel başlangıç sayfan. Kurulum yok, tamamen tarayıcında çalışır.">
+<title>ÖMRFLIX — Kişisel Başlangıç Sayfası</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="css/style.css">
@@ -26,7 +26,7 @@
   <div class="wrap header-inner">
     <a class="brand" href="#top">
       <span class="logo">📺</span>
-      <span class="brand-name">ERS<em>FLIX</em></span>
+      <span class="brand-name">ÖMR<em>FLIX</em></span>
     </a>
     <p class="tagline">Hepsi burada, hepsi senin.</p>
 
@@ -85,21 +85,6 @@
     </div>
   </section>
 
-  <section class="section" id="sunucu">
-    <div class="wrap">
-      <div class="server-panel">
-        <div class="server-info">
-          <h3>🖥️ Ev Sunucusu</h3>
-          <p id="serverAddr" class="server-addr">—</p>
-          <p class="server-hint">Yerel ağındaki sunucunun adresi. Sadece bu tarayıcıda saklanır.</p>
-        </div>
-        <div class="server-actions">
-          <button type="button" class="btn btn-outline btn-sm" id="copyServerBtn">📋 Kopyala</button>
-          <button type="button" class="btn btn-outline btn-sm" id="editServerBtn">✏️ Düzenle</button>
-        </div>
-      </div>
-    </div>
-  </section>
 
 </main>
 
@@ -131,33 +116,15 @@
   </div>
 </div>
 
-<div class="modal-overlay hidden" id="serverModal">
-  <div class="modal-sheet">
-    <div class="modal-header">
-      <h3>Sunucu Adresini Düzenle</h3>
-      <button type="button" class="icon-btn" id="serverModalCloseBtn" aria-label="Kapat">✕</button>
-    </div>
-    <form id="serverForm">
-      <label class="field">
-        <span>IP : Port</span>
-        <input type="text" id="serverInput" placeholder="192.168.1.10:8090">
-      </label>
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary full">Kaydet</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <div class="toast hidden" id="toast"></div>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
       <span class="logo">📺</span>
-      <span class="brand-name">ERSFLIX</span>
+      <span class="brand-name">ÖMRFLIX</span>
     </div>
-    <p class="footer-copy">© <span id="year"></span> ERSFLIX. Tüm veriler yalnızca bu tarayıcıda saklanır.</p>
+    <p class="footer-copy">© <span id="year"></span> ÖMRFLIX. Tüm veriler yalnızca bu tarayıcıda saklanır.</p>
   </div>
 </footer>
 
