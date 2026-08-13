@@ -44,6 +44,9 @@
     if (signOutBtn) signOutBtn.classList.add("hidden");
     if (gateStatus) gateStatus.textContent = message || "Devam etmek için giriş yapın.";
     if (gateSignInBtn) gateSignInBtn.classList.remove("hidden");
+    const openOverlay = document.getElementById("chatOverlay");
+    if (openOverlay) openOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
   }
 
   function initAuthGate() {
@@ -116,6 +119,42 @@
     if (statusText) statusText.textContent = text;
     if (statusDot) statusDot.style.background = color || "#3ce27a";
   }
+
+  // ---- Full-screen chat overlay ----
+  const chatOverlay = document.getElementById("chatOverlay");
+  const chatFab = document.getElementById("chatFab");
+  const chatLauncher = document.getElementById("chatLauncher");
+  const closeChatBtn = document.getElementById("closeChatBtn");
+
+  function openChatOverlay() {
+    if (!chatOverlay) return;
+    chatOverlay.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    if (demoInput) setTimeout(() => demoInput.focus(), 50);
+  }
+
+  function closeChatOverlay() {
+    if (!chatOverlay) return;
+    chatOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  if (chatFab) chatFab.addEventListener("click", openChatOverlay);
+  if (chatLauncher) chatLauncher.addEventListener("click", openChatOverlay);
+  if (closeChatBtn) closeChatBtn.addEventListener("click", closeChatOverlay);
+
+  document.querySelectorAll(".open-chat-btn").forEach(el => {
+    el.addEventListener("click", e => {
+      e.preventDefault();
+      openChatOverlay();
+    });
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && chatOverlay && !chatOverlay.classList.contains("hidden")) {
+      closeChatOverlay();
+    }
+  });
 
   // ---- Chat state ----
   let messages = loadMessages();
@@ -299,7 +338,7 @@
   document.querySelectorAll(".command-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const cmd = chip.getAttribute("data-cmd") || chip.textContent;
-      document.getElementById("demo").scrollIntoView({ behavior: "smooth", block: "start" });
+      openChatOverlay();
       sendMessage(cmd);
     });
   });
