@@ -16,6 +16,18 @@
 
 <div class="scanlines" aria-hidden="true"></div>
 
+<div class="auth-gate" id="authGate">
+  <div class="gate-card">
+    <span class="logo-ring gate-ring"><span class="logo-core"></span></span>
+    <h1>J.A.R.V.I.S.</h1>
+    <p class="gate-status" id="gateStatus">Sistemler başlatılıyor…</p>
+    <button type="button" class="btn btn-primary gate-btn hidden" id="gateSignInBtn">🔐 Puter ile Giriş Yap</button>
+    <p class="gate-note">Devam etmek için ücretsiz bir Puter hesabıyla giriş yapmanız gerekir. Kredi kartı istenmez, saniyeler sürer.</p>
+  </div>
+</div>
+
+<div class="site-shell hidden" id="siteShell">
+
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a class="brand" href="#top">
@@ -26,12 +38,13 @@
     <nav class="nav" id="mainNav">
       <a href="#ozellikler">Özellikler</a>
       <a href="#komutlar">Sesli Komutlar</a>
-      <a href="#demo">Canlı Demo</a>
+      <a href="#demo" class="open-chat-btn">Canlı Demo</a>
       <a href="#sss">SSS</a>
     </nav>
 
     <div class="header-actions">
-      <a class="btn btn-outline" href="#demo">Konuşmaya Başla</a>
+      <button type="button" class="btn btn-ghost hidden" id="signOutBtn">Çıkış Yap</button>
+      <a class="btn btn-outline open-chat-btn" href="#demo">Konuşmaya Başla</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -49,7 +62,7 @@
         <h1>Kendi <span class="grad-text">J.A.R.V.I.S.</span>'iniz<br>artık burada.</h1>
         <p class="hero-sub">Bilim kurgu filmlerindeki asistan arayüzünden ilham alan, sesle konuşabileceğiniz, sorularınızı yanıtlayan ve komutlarınızı dinleyen kişisel yapay zekâ. Kurulum yok, ücret yok — tarayıcınızda çalışır.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#demo" id="heroTryBtn">🎙️ Şimdi Konuş</a>
+          <a class="btn btn-primary open-chat-btn" href="#demo" id="heroTryBtn">🎙️ Şimdi Konuş</a>
           <a class="btn btn-outline" href="#nasil-calisir">Nasıl Çalışır?</a>
         </div>
         <div class="hero-stats">
@@ -169,28 +182,14 @@
         <p>Yazın ya da mikrofonla konuşun — yanıtı ister okuyun, ister sesli dinleyin.</p>
       </div>
 
-      <div class="demo-panel">
-        <div class="demo-toolbar">
-          <span class="status-dot" id="statusDot"></span>
-          <span class="status-text" id="statusText">Sistemler hazır</span>
-          <div class="toolbar-spacer"></div>
-          <button type="button" class="tool-btn" id="newChatBtn">🗑️ Sohbeti temizle</button>
-          <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="false">🔊 Sesli yanıt: Kapalı</button>
-        </div>
-
-        <div class="demo-chat" id="demoChat">
-          <div class="demo-row demo-ai">
-            <div class="demo-bubble">Sistemler çevrimiçi. Merhaba, efendim. Ben J.A.R.V.I.S. Size nasıl yardımcı olabilirim? Yazabilir ya da mikrofon düğmesiyle sesli konuşabilirsiniz.</div>
-          </div>
-        </div>
-
-        <form class="demo-composer" id="demoForm">
-          <button type="button" class="icon-btn" id="micBtn" title="Sesle konuş" aria-pressed="false">🎙️</button>
-          <input id="demoInput" type="text" maxlength="600" autocomplete="off" placeholder="Bir komut yazın ya da mikrofona konuşun...">
-          <button type="submit" id="demoSend">Gönder</button>
-        </form>
-        <p class="demo-hint" id="demoHint">Bu demo, tarayıcınızda çalışan canlı bir yapay zekâ modelini ve tarayıcınızın konuşma tanıma özelliğini kullanır.</p>
-      </div>
+      <button type="button" class="chat-launcher" id="chatLauncher">
+        <span class="launcher-ring"><span class="logo-core"></span></span>
+        <span class="launcher-text">
+          <strong>J.A.R.V.I.S. ile Sohbet Et</strong>
+          <span>Tam ekran sohbeti açmak için dokunun</span>
+        </span>
+        <span class="launcher-arrow">⤢</span>
+      </button>
     </div>
   </section>
 
@@ -232,7 +231,7 @@
     <div class="wrap cta-inner">
       <h2>Sistemler hazır, efendim.</h2>
       <p>J.A.R.V.I.S. ile konuşmaya hemen başlayın.</p>
-      <a class="btn btn-primary" href="#demo">🎙️ Şimdi Konuş</a>
+      <a class="btn btn-primary open-chat-btn" href="#demo" id="ctaTryBtn">🎙️ Şimdi Konuş</a>
     </div>
   </section>
 
@@ -247,6 +246,40 @@
     <p class="footer-copy">© <span id="year"></span> J.A.R.V.I.S. — Kişisel yapay zekâ asistanı. Film ve dizilerdeki asistan arayüzlerinden ilham alınarak yapılmış bağımsız bir hobi projesidir.</p>
   </div>
 </footer>
+
+<button type="button" class="chat-fab" id="chatFab" aria-label="Sohbeti aç">💬</button>
+
+<div class="chat-overlay hidden" id="chatOverlay" role="dialog" aria-modal="true" aria-label="J.A.R.V.I.S. sohbeti">
+  <div class="chat-overlay-header">
+    <div class="chat-overlay-brand">
+      <span class="logo-ring small"><span class="logo-core"></span></span>
+      <div class="chat-overlay-brand-text">
+        <strong>J.A.R.V.I.S.</strong>
+        <span class="status-line"><span class="status-dot" id="statusDot"></span><span class="status-text" id="statusText">Sistemler hazır</span></span>
+      </div>
+    </div>
+    <div class="chat-overlay-actions">
+      <button type="button" class="tool-btn" id="newChatBtn">🗑️ Temizle</button>
+      <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="false">🔊 Sesli yanıt: Kapalı</button>
+      <button type="button" class="icon-btn close-btn" id="closeChatBtn" aria-label="Sohbeti kapat">✕</button>
+    </div>
+  </div>
+
+  <div class="demo-chat chat-overlay-body" id="demoChat">
+    <div class="demo-row demo-ai">
+      <div class="demo-bubble">Sistemler çevrimiçi. Merhaba, efendim. Ben J.A.R.V.I.S. Size nasıl yardımcı olabilirim? Yazabilir ya da mikrofon düğmesiyle sesli konuşabilirsiniz.</div>
+    </div>
+  </div>
+
+  <form class="demo-composer" id="demoForm">
+    <button type="button" class="icon-btn" id="micBtn" title="Sesle konuş" aria-pressed="false">🎙️</button>
+    <input id="demoInput" type="text" maxlength="600" autocomplete="off" placeholder="Bir komut yazın ya da mikrofona konuşun...">
+    <button type="submit" id="demoSend">Gönder</button>
+  </form>
+  <p class="demo-hint" id="demoHint">Bu demo, tarayıcınızda çalışan canlı bir yapay zekâ modelini ve tarayıcınızın konuşma tanıma özelliğini kullanır.</p>
+</div>
+
+</div>
 
 <script src="https://js.puter.com/v2/"></script>
 <script src="js/main.js?v=1"></script>

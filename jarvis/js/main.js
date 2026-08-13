@@ -25,6 +25,75 @@
     });
   }
 
+  // ---- Puter authentication gate ----
+  const authGate = document.getElementById("authGate");
+  const siteShell = document.getElementById("siteShell");
+  const gateStatus = document.getElementById("gateStatus");
+  const gateSignInBtn = document.getElementById("gateSignInBtn");
+  const signOutBtn = document.getElementById("signOutBtn");
+
+  function showSite() {
+    if (authGate) authGate.classList.add("hidden");
+    if (siteShell) siteShell.classList.remove("hidden");
+    if (signOutBtn) signOutBtn.classList.remove("hidden");
+  }
+
+  function showGate(message) {
+    if (siteShell) siteShell.classList.add("hidden");
+    if (authGate) authGate.classList.remove("hidden");
+    if (signOutBtn) signOutBtn.classList.add("hidden");
+    if (gateStatus) gateStatus.textContent = message || "Devam etmek için giriş yapın.";
+    if (gateSignInBtn) gateSignInBtn.classList.remove("hidden");
+    const openOverlay = document.getElementById("chatOverlay");
+    if (openOverlay) openOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  function initAuthGate() {
+    if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.isSignedIn !== "function") {
+      if (gateStatus) gateStatus.textContent = "Giriş sistemi yüklenemedi. Lütfen sayfayı yenileyin.";
+      if (gateSignInBtn) gateSignInBtn.classList.add("hidden");
+      return;
+    }
+    let signedIn = false;
+    try { signedIn = puter.auth.isSignedIn(); } catch (e) {}
+    if (signedIn) {
+      showSite();
+    } else {
+      showGate("Devam etmek için Puter hesabınızla giriş yapın.");
+    }
+  }
+
+  if (gateSignInBtn) {
+    gateSignInBtn.addEventListener("click", async () => {
+      if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.signIn !== "function") {
+        if (gateStatus) gateStatus.textContent = "Giriş sistemi yüklenemedi. Lütfen sayfayı yenileyin.";
+        return;
+      }
+      gateSignInBtn.disabled = true;
+      if (gateStatus) gateStatus.textContent = "Giriş yapılıyor…";
+      try {
+        await puter.auth.signIn();
+        showSite();
+      } catch (err) {
+        if (gateStatus) gateStatus.textContent = "Giriş yapılamadı. Tekrar deneyin.";
+      } finally {
+        gateSignInBtn.disabled = false;
+      }
+    });
+  }
+
+  if (signOutBtn) {
+    signOutBtn.addEventListener("click", async () => {
+      if (typeof puter !== "undefined" && puter.auth && typeof puter.auth.signOut === "function") {
+        try { await puter.auth.signOut(); } catch (e) {}
+      }
+      showGate("Çıkış yapıldı. Devam etmek için tekrar giriş yapın.");
+    });
+  }
+
+  initAuthGate();
+
   // ---- Elements ----
   const demoChat = document.getElementById("demoChat");
   const demoForm = document.getElementById("demoForm");
@@ -50,6 +119,42 @@
     if (statusText) statusText.textContent = text;
     if (statusDot) statusDot.style.background = color || "#3ce27a";
   }
+
+  // ---- Full-screen chat overlay ----
+  const chatOverlay = document.getElementById("chatOverlay");
+  const chatFab = document.getElementById("chatFab");
+  const chatLauncher = document.getElementById("chatLauncher");
+  const closeChatBtn = document.getElementById("closeChatBtn");
+
+  function openChatOverlay() {
+    if (!chatOverlay) return;
+    chatOverlay.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    if (demoInput) setTimeout(() => demoInput.focus(), 50);
+  }
+
+  function closeChatOverlay() {
+    if (!chatOverlay) return;
+    chatOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  if (chatFab) chatFab.addEventListener("click", openChatOverlay);
+  if (chatLauncher) chatLauncher.addEventListener("click", openChatOverlay);
+  if (closeChatBtn) closeChatBtn.addEventListener("click", closeChatOverlay);
+
+  document.querySelectorAll(".open-chat-btn").forEach(el => {
+    el.addEventListener("click", e => {
+      e.preventDefault();
+      openChatOverlay();
+    });
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && chatOverlay && !chatOverlay.classList.contains("hidden")) {
+      closeChatOverlay();
+    }
+  });
 
   // ---- Chat state ----
   let messages = loadMessages();
@@ -233,7 +338,7 @@
   document.querySelectorAll(".command-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const cmd = chip.getAttribute("data-cmd") || chip.textContent;
-      document.getElementById("demo").scrollIntoView({ behavior: "smooth", block: "start" });
+      openChatOverlay();
       sendMessage(cmd);
     });
   });
