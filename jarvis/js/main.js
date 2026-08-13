@@ -27,19 +27,31 @@
 
   // ---- Puter authentication gate ----
   const authGate = document.getElementById("authGate");
+  const bootScreen = document.getElementById("bootScreen");
   const siteShell = document.getElementById("siteShell");
   const gateStatus = document.getElementById("gateStatus");
   const gateSignInBtn = document.getElementById("gateSignInBtn");
   const signOutBtn = document.getElementById("signOutBtn");
 
+  function runBootSequence() {
+    if (bootScreen) bootScreen.classList.remove("hidden");
+    setTimeout(() => {
+      if (bootScreen) bootScreen.classList.add("hidden");
+      if (siteShell) siteShell.classList.remove("hidden");
+      if (signOutBtn) signOutBtn.classList.remove("hidden");
+      openChatOverlay();
+      startAlwaysListening();
+    }, 1400);
+  }
+
   function showSite() {
     if (authGate) authGate.classList.add("hidden");
-    if (siteShell) siteShell.classList.remove("hidden");
-    if (signOutBtn) signOutBtn.classList.remove("hidden");
+    runBootSequence();
   }
 
   function showGate(message) {
     if (siteShell) siteShell.classList.add("hidden");
+    if (bootScreen) bootScreen.classList.add("hidden");
     if (authGate) authGate.classList.remove("hidden");
     if (signOutBtn) signOutBtn.classList.add("hidden");
     if (gateStatus) gateStatus.textContent = message || "Devam etmek için giriş yapın.";
@@ -47,6 +59,7 @@
     const openOverlay = document.getElementById("chatOverlay");
     if (openOverlay) openOverlay.classList.add("hidden");
     document.body.style.overflow = "";
+    stopAlwaysListening();
   }
 
   function initAuthGate() {
@@ -351,6 +364,10 @@
   function speak(text) {
     if (!voiceEnabled || !("speechSynthesis" in window)) return;
     try {
+      ttsSpeaking = true;
+      if (recognizer && recognizing) {
+        try { recognizer.stop(); } catch (e) {}
+      }
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "tr-TR";
@@ -358,9 +375,17 @@
       utter.rate = 1;
       utter.pitch = 1;
       utter.onstart = () => setStatus("Yanıt veriliyor…", "#22d3ee");
-      utter.onend = () => setStatus("Sistemler hazır", "#3ce27a");
+      utter.onend = () => {
+        setStatus("Sistemler hazır", "#3ce27a");
+        ttsSpeaking = false;
+        if (alwaysListening && !recognizing) {
+          try { recognizer.start(); } catch (e) {}
+        }
+      };
       window.speechSynthesis.speak(utter);
-    } catch (e) {}
+    } catch (e) {
+      ttsSpeaking = false;
+    }
   }
 
   if (voiceToggle) {
@@ -427,10 +452,32 @@
     });
   });
 
-  // ---- Speech recognition ----
+  // ---- Speech recognition (her zaman dinleme) ----
   const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognizing = false;
   let recognizer = null;
+  let alwaysListening = false;
+  let ttsSpeaking = false;
+
+  function startAlwaysListening() {
+    if (!recognizer) {
+      showToast("Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.");
+      return;
+    }
+    alwaysListening = true;
+    if (!recognizing && !ttsSpeaking) {
+      try {
+        recognizer.start();
+      } catch (e) {}
+    }
+  }
+
+  function stopAlwaysListening() {
+    alwaysListening = false;
+    if (recognizer && recognizing) {
+      try { recognizer.stop(); } catch (e) {}
+    }
+  }
 
   function toggleListening() {
     if (!recognizer) {
@@ -438,19 +485,16 @@
       return;
     }
     if (recognizing) {
-      recognizer.stop();
+      stopAlwaysListening();
       return;
     }
-    try {
-      recognizer.start();
-    } catch (e) {
-      showToast("Mikrofon başlatılamadı.");
-    }
+    startAlwaysListening();
   }
 
   if (SpeechRecognitionCtor && micBtn) {
     recognizer = new SpeechRecognitionCtor();
     recognizer.lang = "tr-TR";
+    recognizer.continuous = true;
     recognizer.interimResults = false;
     recognizer.maxAlternatives = 1;
 
@@ -461,12 +505,12 @@
       setStatus("Dinleniyor…", "#ff5a5a");
     };
 
-    recognizer.onerror = () => {
-      recognizing = false;
-      micBtn.setAttribute("aria-pressed", "false");
-      if (chatFab) chatFab.classList.remove("listening");
-      setStatus("Sistemler hazır", "#3ce27a");
-      showToast("Mikrofon erişimi alınamadı.");
+    recognizer.onerror = event => {
+      const err = event && event.error;
+      if (err === "not-allowed" || err === "service-not-allowed") {
+        alwaysListening = false;
+        showToast("Mikrofon erişimi reddedildi. Tarayıcı ayarlarından izin verin.");
+      }
     };
 
     recognizer.onend = () => {
@@ -474,13 +518,16 @@
       micBtn.setAttribute("aria-pressed", "false");
       if (chatFab) chatFab.classList.remove("listening");
       if (statusText && statusText.textContent === "Dinleniyor…") setStatus("Sistemler hazır", "#3ce27a");
+      if (alwaysListening && !ttsSpeaking) {
+        try { recognizer.start(); } catch (e) {}
+      }
     };
 
     recognizer.onresult = event => {
-      const transcript = event.results && event.results[0] && event.results[0][0]
-        ? event.results[0][0].transcript
-        : "";
-      if (transcript) {
+      const result = event.results && event.results[event.results.length - 1];
+      if (!result || !result.isFinal) return;
+      const transcript = result[0] ? result[0].transcript : "";
+      if (transcript && transcript.trim()) {
         demoInput.value = transcript;
         sendMessage(transcript);
       }

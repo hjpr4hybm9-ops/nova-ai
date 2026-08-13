@@ -26,6 +26,20 @@
   </div>
 </div>
 
+<div class="boot-screen hidden" id="bootScreen">
+  <div class="boot-core" aria-hidden="true">
+    <div class="core-ring ring-1"></div>
+    <div class="core-ring ring-2"></div>
+    <div class="core-ring ring-3"></div>
+    <div class="core-ticks"></div>
+    <div class="core-center">
+      <span class="core-pulse"></span>
+    </div>
+    <div class="core-sweep"></div>
+  </div>
+  <p class="boot-text" id="bootText">Sistemler başlatılıyor…</p>
+</div>
+
 <div class="site-shell hidden" id="siteShell">
 
 <header class="site-header" id="siteHeader">
@@ -53,37 +67,6 @@
 </header>
 
 <main id="top">
-
-  <section class="hero">
-    <div class="hero-grid" aria-hidden="true"></div>
-    <div class="wrap hero-inner">
-      <div class="hero-text">
-        <span class="eyebrow">◆ SİSTEMLER ÇEVRİMİÇİ</span>
-        <h1>Kendi <span class="grad-text">J.A.R.V.I.S.</span>'iniz<br>artık burada.</h1>
-        <p class="hero-sub">Bilim kurgu filmlerindeki asistan arayüzünden ilham alan, sesle konuşabileceğiniz, sorularınızı yanıtlayan ve komutlarınızı dinleyen kişisel yapay zekâ. Kurulum yok, ücret yok — tarayıcınızda çalışır.</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary open-chat-btn" href="#demo" id="heroTryBtn">🎙️ Şimdi Konuş</a>
-          <a class="btn btn-outline" href="#nasil-calisir">Nasıl Çalışır?</a>
-        </div>
-        <div class="hero-stats">
-          <div><strong>7/24</strong><span>Kesintisiz erişim</span></div>
-          <div><strong>TR</strong><span>Sesli komut desteği</span></div>
-          <div><strong>%100</strong><span>Tarayıcıda çalışır</span></div>
-        </div>
-      </div>
-
-      <div class="hero-core" aria-hidden="true">
-        <div class="core-ring ring-1"></div>
-        <div class="core-ring ring-2"></div>
-        <div class="core-ring ring-3"></div>
-        <div class="core-ticks"></div>
-        <div class="core-center">
-          <span class="core-pulse"></span>
-        </div>
-        <div class="core-sweep"></div>
-      </div>
-    </div>
-  </section>
 
   <section class="section" id="ozellikler">
     <div class="wrap">
@@ -269,7 +252,7 @@
 
   <div class="demo-chat chat-overlay-body" id="demoChat">
     <div class="demo-row demo-ai">
-      <div class="demo-bubble">Sistemler çevrimiçi. Merhaba, efendim. Ben J.A.R.V.I.S. Size nasıl yardımcı olabilirim? Yazabilir ya da mikrofon düğmesiyle sesli konuşabilirsiniz.</div>
+      <div class="demo-bubble">Sistemler çevrimiçi. Merhaba, efendim. Ben J.A.R.V.I.S. Sizi dinliyorum — dilediğiniz an konuşabilirsiniz, ayrıca yazabilirsiniz de.</div>
     </div>
   </div>
 
@@ -278,7 +261,7 @@
     <input id="demoInput" type="text" maxlength="600" autocomplete="off" placeholder="Bir komut yazın ya da mikrofona konuşun...">
     <button type="submit" id="demoSend">Gönder</button>
   </form>
-  <p class="demo-hint" id="demoHint">Bu demo, tarayıcınızda çalışan canlı bir yapay zekâ modelini ve tarayıcınızın konuşma tanıma özelliğini kullanır.</p>
+  <p class="demo-hint" id="demoHint">J.A.R.V.I.S. uygulama açıkken sizi sürekli dinler ve sesli olarak yanıt verir. Dinlemeyi duraklatmak için mikrofon simgesine ya da yeşil orba dokunun.</p>
 </div>
 
 </div>
