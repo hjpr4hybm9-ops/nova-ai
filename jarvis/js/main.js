@@ -139,9 +139,93 @@
     document.body.style.overflow = "";
   }
 
-  if (chatFab) chatFab.addEventListener("click", openChatOverlay);
   if (chatLauncher) chatLauncher.addEventListener("click", openChatOverlay);
   if (closeChatBtn) closeChatBtn.addEventListener("click", closeChatOverlay);
+
+  // ---- Draggable voice orb ----
+  const FAB_POS_KEY = "jarvis_fab_pos";
+  const DRAG_THRESHOLD = 6;
+
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val));
+  }
+
+  function placeFab(left, top) {
+    const size = chatFab.offsetWidth || 88;
+    const maxLeft = window.innerWidth - size - 8;
+    const maxTop = window.innerHeight - size - 8;
+    const clampedLeft = clamp(left, 8, Math.max(8, maxLeft));
+    const clampedTop = clamp(top, 8, Math.max(8, maxTop));
+    chatFab.style.left = clampedLeft + "px";
+    chatFab.style.top = clampedTop + "px";
+    chatFab.style.right = "auto";
+    chatFab.style.bottom = "auto";
+    return { left: clampedLeft, top: clampedTop };
+  }
+
+  function restoreFabPosition() {
+    try {
+      const raw = localStorage.getItem(FAB_POS_KEY);
+      if (raw) {
+        const pos = JSON.parse(raw);
+        if (typeof pos.left === "number" && typeof pos.top === "number") {
+          placeFab(pos.left, pos.top);
+        }
+      }
+    } catch (e) {}
+  }
+
+  if (chatFab) {
+    restoreFabPosition();
+    window.addEventListener("resize", () => {
+      const rect = chatFab.getBoundingClientRect();
+      if (rect.left) placeFab(rect.left, rect.top);
+    });
+
+    let dragging = false;
+    let moved = false;
+    let startX = 0, startY = 0, startLeft = 0, startTop = 0;
+
+    chatFab.addEventListener("pointerdown", e => {
+      const rect = chatFab.getBoundingClientRect();
+      startX = e.clientX;
+      startY = e.clientY;
+      startLeft = rect.left;
+      startTop = rect.top;
+      dragging = true;
+      moved = false;
+      chatFab.setPointerCapture(e.pointerId);
+    });
+
+    chatFab.addEventListener("pointermove", e => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (!moved && Math.hypot(dx, dy) > DRAG_THRESHOLD) {
+        moved = true;
+        chatFab.classList.add("dragging");
+      }
+      if (moved) {
+        placeFab(startLeft + dx, startTop + dy);
+      }
+    });
+
+    chatFab.addEventListener("pointerup", e => {
+      if (!dragging) return;
+      dragging = false;
+      chatFab.classList.remove("dragging");
+      if (moved) {
+        const rect = chatFab.getBoundingClientRect();
+        try {
+          localStorage.setItem(FAB_POS_KEY, JSON.stringify({ left: rect.left, top: rect.top }));
+        } catch (err) {}
+      } else {
+        openChatOverlay();
+        toggleListening();
+      }
+      moved = false;
+    });
+  }
 
   document.querySelectorAll(".open-chat-btn").forEach(el => {
     el.addEventListener("click", e => {
@@ -244,7 +328,7 @@
   }
 
   // ---- Text-to-speech ----
-  let voiceEnabled = localStorage.getItem(VOICE_KEY) === "1";
+  let voiceEnabled = localStorage.getItem(VOICE_KEY) !== "0";
 
   function updateVoiceToggleUI() {
     if (!voiceToggle) return;
@@ -348,6 +432,22 @@
   let recognizing = false;
   let recognizer = null;
 
+  function toggleListening() {
+    if (!recognizer) {
+      showToast("Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.");
+      return;
+    }
+    if (recognizing) {
+      recognizer.stop();
+      return;
+    }
+    try {
+      recognizer.start();
+    } catch (e) {
+      showToast("Mikrofon başlatılamadı.");
+    }
+  }
+
   if (SpeechRecognitionCtor && micBtn) {
     recognizer = new SpeechRecognitionCtor();
     recognizer.lang = "tr-TR";
@@ -357,12 +457,14 @@
     recognizer.onstart = () => {
       recognizing = true;
       micBtn.setAttribute("aria-pressed", "true");
+      if (chatFab) chatFab.classList.add("listening");
       setStatus("Dinleniyor…", "#ff5a5a");
     };
 
     recognizer.onerror = () => {
       recognizing = false;
       micBtn.setAttribute("aria-pressed", "false");
+      if (chatFab) chatFab.classList.remove("listening");
       setStatus("Sistemler hazır", "#3ce27a");
       showToast("Mikrofon erişimi alınamadı.");
     };
@@ -370,6 +472,7 @@
     recognizer.onend = () => {
       recognizing = false;
       micBtn.setAttribute("aria-pressed", "false");
+      if (chatFab) chatFab.classList.remove("listening");
       if (statusText && statusText.textContent === "Dinleniyor…") setStatus("Sistemler hazır", "#3ce27a");
     };
 
@@ -383,17 +486,7 @@
       }
     };
 
-    micBtn.addEventListener("click", () => {
-      if (recognizing) {
-        recognizer.stop();
-        return;
-      }
-      try {
-        recognizer.start();
-      } catch (e) {
-        showToast("Mikrofon başlatılamadı.");
-      }
-    });
+    micBtn.addEventListener("click", toggleListening);
   } else if (micBtn) {
     micBtn.addEventListener("click", () => {
       showToast("Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.");

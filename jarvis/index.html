@@ -247,7 +247,9 @@
   </div>
 </footer>
 
-<button type="button" class="chat-fab" id="chatFab" aria-label="Sohbeti aç">💬</button>
+<button type="button" class="chat-fab" id="chatFab" aria-label="Sesli komut vermek için dokun, taşımak için sürükle">
+  <span class="fab-orb" aria-hidden="true"></span>
+</button>
 
 <div class="chat-overlay hidden" id="chatOverlay" role="dialog" aria-modal="true" aria-label="J.A.R.V.I.S. sohbeti">
   <div class="chat-overlay-header">
@@ -260,7 +262,7 @@
     </div>
     <div class="chat-overlay-actions">
       <button type="button" class="tool-btn" id="newChatBtn">🗑️ Temizle</button>
-      <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="false">🔊 Sesli yanıt: Kapalı</button>
+      <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="true">🔊 Sesli yanıt: Açık</button>
       <button type="button" class="icon-btn close-btn" id="closeChatBtn" aria-label="Sohbeti kapat">✕</button>
     </div>
   </div>
