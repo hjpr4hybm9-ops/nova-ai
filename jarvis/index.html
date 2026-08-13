@@ -16,6 +16,18 @@
 
 <div class="scanlines" aria-hidden="true"></div>
 
+<div class="auth-gate" id="authGate">
+  <div class="gate-card">
+    <span class="logo-ring gate-ring"><span class="logo-core"></span></span>
+    <h1>J.A.R.V.I.S.</h1>
+    <p class="gate-status" id="gateStatus">Sistemler başlatılıyor…</p>
+    <button type="button" class="btn btn-primary gate-btn hidden" id="gateSignInBtn">🔐 Puter ile Giriş Yap</button>
+    <p class="gate-note">Devam etmek için ücretsiz bir Puter hesabıyla giriş yapmanız gerekir. Kredi kartı istenmez, saniyeler sürer.</p>
+  </div>
+</div>
+
+<div class="site-shell hidden" id="siteShell">
+
 <header class="site-header" id="siteHeader">
   <div class="wrap header-inner">
     <a class="brand" href="#top">
@@ -31,6 +43,7 @@
     </nav>
 
     <div class="header-actions">
+      <button type="button" class="btn btn-ghost hidden" id="signOutBtn">Çıkış Yap</button>
       <a class="btn btn-outline" href="#demo">Konuşmaya Başla</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -247,6 +260,8 @@
     <p class="footer-copy">© <span id="year"></span> J.A.R.V.I.S. — Kişisel yapay zekâ asistanı. Film ve dizilerdeki asistan arayüzlerinden ilham alınarak yapılmış bağımsız bir hobi projesidir.</p>
   </div>
 </footer>
+
+</div>
 
 <script src="https://js.puter.com/v2/"></script>
 <script src="js/main.js?v=1"></script>

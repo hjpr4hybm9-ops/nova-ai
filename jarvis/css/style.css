@@ -72,6 +72,24 @@ button{font:inherit;cursor:pointer}
 .btn-ghost:hover{color:var(--text)}
 .btn.full{width:100%}
 
+/* Auth gate */
+.auth-gate{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;position:relative;z-index:1;
+}
+.gate-card{
+  width:min(420px,100%);text-align:center;
+  background:var(--panel);border:1px solid var(--line);border-radius:24px;
+  padding:44px 30px;box-shadow:0 30px 60px rgba(0,0,0,.4);
+}
+.gate-ring{width:60px;height:60px;margin:0 auto 18px;border-width:2px}
+.gate-ring .logo-core{width:13px;height:13px}
+.gate-card h1{margin:0 0 10px;font-size:22px;letter-spacing:.1em}
+.gate-status{color:var(--muted);font-size:14px;margin:0 0 22px;min-height:20px}
+.gate-btn{width:100%;margin-bottom:16px}
+.gate-note{color:var(--muted);font-size:12.5px;margin:0;line-height:1.5}
+
 /* Header */
 .site-header{
   position:sticky;top:0;z-index:100;

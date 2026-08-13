@@ -25,6 +25,72 @@
     });
   }
 
+  // ---- Puter authentication gate ----
+  const authGate = document.getElementById("authGate");
+  const siteShell = document.getElementById("siteShell");
+  const gateStatus = document.getElementById("gateStatus");
+  const gateSignInBtn = document.getElementById("gateSignInBtn");
+  const signOutBtn = document.getElementById("signOutBtn");
+
+  function showSite() {
+    if (authGate) authGate.classList.add("hidden");
+    if (siteShell) siteShell.classList.remove("hidden");
+    if (signOutBtn) signOutBtn.classList.remove("hidden");
+  }
+
+  function showGate(message) {
+    if (siteShell) siteShell.classList.add("hidden");
+    if (authGate) authGate.classList.remove("hidden");
+    if (signOutBtn) signOutBtn.classList.add("hidden");
+    if (gateStatus) gateStatus.textContent = message || "Devam etmek için giriş yapın.";
+    if (gateSignInBtn) gateSignInBtn.classList.remove("hidden");
+  }
+
+  function initAuthGate() {
+    if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.isSignedIn !== "function") {
+      if (gateStatus) gateStatus.textContent = "Giriş sistemi yüklenemedi. Lütfen sayfayı yenileyin.";
+      if (gateSignInBtn) gateSignInBtn.classList.add("hidden");
+      return;
+    }
+    let signedIn = false;
+    try { signedIn = puter.auth.isSignedIn(); } catch (e) {}
+    if (signedIn) {
+      showSite();
+    } else {
+      showGate("Devam etmek için Puter hesabınızla giriş yapın.");
+    }
+  }
+
+  if (gateSignInBtn) {
+    gateSignInBtn.addEventListener("click", async () => {
+      if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.signIn !== "function") {
+        if (gateStatus) gateStatus.textContent = "Giriş sistemi yüklenemedi. Lütfen sayfayı yenileyin.";
+        return;
+      }
+      gateSignInBtn.disabled = true;
+      if (gateStatus) gateStatus.textContent = "Giriş yapılıyor…";
+      try {
+        await puter.auth.signIn();
+        showSite();
+      } catch (err) {
+        if (gateStatus) gateStatus.textContent = "Giriş yapılamadı. Tekrar deneyin.";
+      } finally {
+        gateSignInBtn.disabled = false;
+      }
+    });
+  }
+
+  if (signOutBtn) {
+    signOutBtn.addEventListener("click", async () => {
+      if (typeof puter !== "undefined" && puter.auth && typeof puter.auth.signOut === "function") {
+        try { await puter.auth.signOut(); } catch (e) {}
+      }
+      showGate("Çıkış yapıldı. Devam etmek için tekrar giriş yapın.");
+    });
+  }
+
+  initAuthGate();
+
   // ---- Elements ----
   const demoChat = document.getElementById("demoChat");
   const demoForm = document.getElementById("demoForm");
