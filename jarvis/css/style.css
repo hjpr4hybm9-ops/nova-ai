@@ -110,7 +110,7 @@ input{font-family:inherit}
 
 /* ---- Top bar ---- */
 .topbar{
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
   padding:12px 20px;border-bottom:1px solid var(--line-soft);
 }
 .topbar-brand{
@@ -118,7 +118,12 @@ input{font-family:inherit}
   display:flex;align-items:center;gap:8px;
 }
 .brand-mark{color:var(--accent);text-shadow:0 0 10px var(--accent)}
-.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+@media (max-width:480px){
+  .topbar{padding:10px 14px}
+  .online-pill{display:none}
+  .hud-btn{padding:7px 10px;font-size:10.5px;white-space:nowrap}
+}
 
 /* ---- Dashboard grid ---- */
 .dashboard{
@@ -275,4 +280,5 @@ input{font-family:inherit}
   background:var(--panel-solid);border:1px solid var(--line);color:var(--text);
   padding:12px 18px;border-radius:8px;font-size:12.5px;z-index:200;
   box-shadow:0 14px 30px rgba(0,0,0,.5);
+  max-width:min(360px,90vw);text-align:center;line-height:1.5;
 }

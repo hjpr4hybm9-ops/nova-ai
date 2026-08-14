@@ -9,6 +9,28 @@
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const NO_VOICE_INPUT_MSG = IS_IOS
+    ? "iOS'taki tarayıcılar (Apple kısıtı nedeniyle) sesli komutu desteklemiyor. Metin kutusuna dokunup klavyenizdeki 🎤 simgesiyle sesli yazabilirsiniz."
+    : "Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.";
+
+  // iOS Safari, kullanıcı jesti (dokunma) olmadan tetiklenen speechSynthesis
+  // çağrılarını sessizce yok sayar. Sayfadaki ilk dokunuşta "sessiz" bir
+  // cümle söyleterek konuşma motorunu bir kere açıyoruz; bundan sonra AI
+  // yanıtı geldiğinde (dokunuştan bağımsız, asenkron olarak) çağrılan
+  // gerçek speak() de artık ses çıkarabiliyor.
+  let speechUnlocked = false;
+  function unlockSpeechSynthesis() {
+    if (speechUnlocked || !("speechSynthesis" in window)) return;
+    speechUnlocked = true;
+    try {
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  document.addEventListener("pointerdown", unlockSpeechSynthesis, { once: true, capture: true });
+
   // ---- PWA olarak yükleme (ana ekrana ekleme) ----
   (function setupInstallPrompt() {
     const installBtn = document.getElementById("installBtn");
@@ -158,7 +180,10 @@
   // bir dokunuş bekliyoruz (mikrofon/LIVE düğmesi) — böylece tarayıcının
   // izin isteği düzgün şekilde görünür.
   async function tryAutoStartListening() {
-    if (!recognizer) return;
+    if (!recognizer) {
+      if (IS_IOS) showToast(NO_VOICE_INPUT_MSG);
+      return;
+    }
     if (navigator.permissions && navigator.permissions.query) {
       try {
         const status = await navigator.permissions.query({ name: "microphone" });
@@ -238,6 +263,7 @@
   const demoInput = document.getElementById("demoInput");
   const demoSend = document.getElementById("demoSend");
   const micBtn = document.getElementById("micBtn");
+  if (micBtn && IS_IOS) micBtn.title = "Klavyedeki 🎤 ile sesli yazın";
   const voiceToggle = document.getElementById("voiceToggle");
   const newChatBtn = document.getElementById("newChatBtn");
   const toast = document.getElementById("toast");
@@ -356,7 +382,12 @@
 
   // ---- Reminder tip rotator ----
   const hudTip = document.getElementById("hudTip");
-  const TIPS = [
+  const TIPS = IS_IOS ? [
+    "iOS'ta sesli yazmak için metin kutusuna dokunup klavyedeki 🎤 simgesini kullanın.",
+    "Yanıtları sesli duymak için 🔊 simgesinin açık olduğundan emin olun.",
+    "Sesli yanıtın duyulması için sayfada en az bir kez bir yere dokunmuş olmanız gerekir.",
+    "Apple, Safari'de sürekli sesli dinlemeye izin vermiyor; bu yüzden yazarak konuşuyoruz."
+  ] : [
     "Sesli komut vermek için mikrofona dokunun.",
     "\"LIVE\" durumunda uygulama sizi sürekli dinler.",
     "Yanıtları sesli duymak için sağ üstteki 🔊 simgesini açık tutun.",
@@ -365,6 +396,7 @@
   ];
   let tipIndex = 0;
   if (hudTip) {
+    hudTip.textContent = TIPS[0];
     setInterval(() => {
       tipIndex = (tipIndex + 1) % TIPS.length;
       hudTip.textContent = TIPS[tipIndex];
@@ -425,7 +457,9 @@
   }
   renderStoredMessages();
   if (messages.length === 0) {
-    addLogLine("ai", "Sistemler çevrimiçi. Merhaba, efendim. Sizi dinliyorum — dilediğiniz an konuşabilir, ayrıca yazabilirsiniz de.");
+    addLogLine("ai", IS_IOS
+      ? "Sistemler çevrimiçi. Merhaba, efendim. Bu cihazda yazarak konuşuyoruz — yazmak için klavyenizdeki 🎤 simgesini de kullanabilirsiniz, ben sesli yanıt veririm."
+      : "Sistemler çevrimiçi. Merhaba, efendim. Sizi dinliyorum — dilediğiniz an konuşabilir, ayrıca yazabilirsiniz de.");
   }
 
   function pushMessage(role, text) {
@@ -618,7 +652,8 @@
 
   function startAlwaysListening() {
     if (!recognizer) {
-      showToast("Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.");
+      showToast(NO_VOICE_INPUT_MSG);
+      if (IS_IOS && demoInput) demoInput.focus();
       return;
     }
     alwaysListening = true;
@@ -643,7 +678,8 @@
 
   function toggleListening() {
     if (!recognizer) {
-      showToast("Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.");
+      showToast(NO_VOICE_INPUT_MSG);
+      if (IS_IOS && demoInput) demoInput.focus();
       return;
     }
     if (recognizing) {
@@ -710,7 +746,8 @@
     micBtn.addEventListener("click", toggleListening);
   } else if (micBtn) {
     micBtn.addEventListener("click", () => {
-      showToast("Bu tarayıcı sesli komutu desteklemiyor. Lütfen yazın.");
+      showToast(NO_VOICE_INPUT_MSG);
+      if (demoInput) demoInput.focus();
     });
   }
 })();
