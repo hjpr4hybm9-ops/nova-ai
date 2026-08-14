@@ -103,8 +103,30 @@
       if (bootScreen) bootScreen.classList.add("hidden");
       if (siteShell) siteShell.classList.remove("hidden");
       if (signOutBtn) signOutBtn.classList.remove("hidden");
-      startAlwaysListening();
+      tryAutoStartListening();
     }, 1400);
+  }
+
+  // Tarayıcılar, doğrudan bir kullanıcı dokunuşu olmadan (ör. setTimeout
+  // içinden) yapılan mikrofon isteklerini genelde kullanıcıya hiç
+  // sormadan "not-allowed" ile reddeder. Bu yüzden izin daha önce
+  // verilmişse otomatik başlatıyoruz; verilmemişse kullanıcıdan gerçek
+  // bir dokunuş bekliyoruz (mikrofon/LIVE düğmesi) — böylece tarayıcının
+  // izin isteği düzgün şekilde görünür.
+  async function tryAutoStartListening() {
+    if (!recognizer) return;
+    if (navigator.permissions && navigator.permissions.query) {
+      try {
+        const status = await navigator.permissions.query({ name: "microphone" });
+        if (status.state === "granted") {
+          startAlwaysListening();
+          return;
+        }
+      } catch (e) {}
+    }
+    setAppState("paused");
+    if (micBtn) micBtn.classList.add("invite-pulse");
+    showToast("Sesli dinlemeyi başlatmak için mikrofona ya da LIVE etiketine dokunun.");
   }
 
   function showSite() {
@@ -606,6 +628,7 @@
     recognizer.onstart = () => {
       recognizing = true;
       micBtn.setAttribute("aria-pressed", "true");
+      micBtn.classList.remove("invite-pulse");
       updateListenBar(true);
       if (!ttsSpeaking) setAppState("live");
     };
@@ -615,7 +638,7 @@
       if (err === "not-allowed" || err === "service-not-allowed") {
         alwaysListening = false;
         setAppState("paused");
-        showToast("Mikrofon erişimi reddedildi. Tarayıcı ayarlarından izin verin.");
+        showToast("Mikrofon izni verilmedi. Adres çubuğundaki kilit/site bilgisi simgesinden Mikrofon iznini \"İzin ver\" yapıp sayfayı yenileyin.");
       }
     };
 
@@ -628,11 +651,13 @@
       }
     };
 
+    const WAKE_WORD_RE = /^\s*(hey|hey,|hi)?\s*jarvis[,:.!]?\s*/i;
     recognizer.onresult = event => {
       const result = event.results && event.results[event.results.length - 1];
       if (!result || !result.isFinal) return;
-      const transcript = result[0] ? result[0].transcript : "";
-      if (transcript && transcript.trim()) {
+      let transcript = result[0] ? result[0].transcript : "";
+      transcript = transcript.replace(WAKE_WORD_RE, "").trim();
+      if (transcript) {
         demoInput.value = transcript;
         sendMessage(transcript);
       }
