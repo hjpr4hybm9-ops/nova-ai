@@ -361,31 +361,44 @@
     window.speechSynthesis.onvoiceschanged = () => { trVoice = pickVoice(); };
   }
 
+  function resumeListeningAfterSpeech() {
+    ttsSpeaking = false;
+    if (alwaysListening && !recognizing) {
+      try { recognizer.start(); } catch (e) {}
+    }
+  }
+
   function speak(text) {
     if (!voiceEnabled || !("speechSynthesis" in window)) return;
-    try {
-      ttsSpeaking = true;
-      if (recognizer && recognizing) {
-        try { recognizer.stop(); } catch (e) {}
-      }
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "tr-TR";
-      if (trVoice) utter.voice = trVoice;
-      utter.rate = 1;
-      utter.pitch = 1;
-      utter.onstart = () => setStatus("Yanıt veriliyor…", "#22d3ee");
-      utter.onend = () => {
-        setStatus("Sistemler hazır", "#3ce27a");
-        ttsSpeaking = false;
-        if (alwaysListening && !recognizing) {
-          try { recognizer.start(); } catch (e) {}
-        }
-      };
-      window.speechSynthesis.speak(utter);
-    } catch (e) {
-      ttsSpeaking = false;
+    ttsSpeaking = true;
+    if (recognizer && recognizing) {
+      try { recognizer.stop(); } catch (e) {}
     }
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    // Chrome, cancel() sonrası hemen speak() çağrılırsa bazen sesi sessizce
+    // yutuyor; kısa bir gecikme ve resume() bu sorunu ortadan kaldırıyor.
+    setTimeout(() => {
+      try {
+        window.speechSynthesis.resume();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "tr-TR";
+        if (trVoice) utter.voice = trVoice;
+        utter.rate = 1;
+        utter.pitch = 1;
+        utter.onstart = () => setStatus("Yanıt veriliyor…", "#22d3ee");
+        utter.onend = () => {
+          setStatus("Sistemler hazır", "#3ce27a");
+          resumeListeningAfterSpeech();
+        };
+        utter.onerror = () => {
+          setStatus("Sistemler hazır", "#3ce27a");
+          resumeListeningAfterSpeech();
+        };
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        resumeListeningAfterSpeech();
+      }
+    }, 60);
   }
 
   if (voiceToggle) {
@@ -415,6 +428,7 @@
       typingRow.remove();
       pushMessage("ai", reply);
       speak(reply);
+      notifyReply(reply);
       if (!voiceEnabled) setStatus("Sistemler hazır", "#3ce27a");
     } catch (err) {
       typingRow.remove();
@@ -452,6 +466,37 @@
     });
   });
 
+  // ---- Ekranı uyanık tut (sekme arka plana geçince mikrofon/ses kesilmesin) ----
+  let wakeLock = null;
+  async function requestWakeLock() {
+    if (!("wakeLock" in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+    } catch (e) {}
+  }
+  function releaseWakeLock() {
+    if (wakeLock) {
+      try { wakeLock.release(); } catch (e) {}
+      wakeLock = null;
+    }
+  }
+
+  // ---- Sekme arka plandayken de yanıt: bildirim izni ----
+  function requestNotificationPermission() {
+    if (!("Notification" in window)) return;
+    if (Notification.permission === "default") {
+      try { Notification.requestPermission(); } catch (e) {}
+    }
+  }
+  function notifyReply(text) {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    if (document.visibilityState !== "hidden") return;
+    try {
+      new Notification("J.A.R.V.I.S.", { body: text, icon: "icons/icon-192.png" });
+    } catch (e) {}
+  }
+
   // ---- Speech recognition (her zaman dinleme) ----
   const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognizing = false;
@@ -465,6 +510,8 @@
       return;
     }
     alwaysListening = true;
+    requestWakeLock();
+    requestNotificationPermission();
     if (!recognizing && !ttsSpeaking) {
       try {
         recognizer.start();
@@ -474,6 +521,7 @@
 
   function stopAlwaysListening() {
     alwaysListening = false;
+    releaseWakeLock();
     if (recognizer && recognizing) {
       try { recognizer.stop(); } catch (e) {}
     }
@@ -490,6 +538,15 @@
     }
     startAlwaysListening();
   }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && alwaysListening) {
+      requestWakeLock();
+      if (!recognizing && !ttsSpeaking) {
+        try { recognizer && recognizer.start(); } catch (e) {}
+      }
+    }
+  });
 
   if (SpeechRecognitionCtor && micBtn) {
     recognizer = new SpeechRecognitionCtor();
