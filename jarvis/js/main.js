@@ -9,6 +9,50 @@
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  // ---- PWA olarak yükleme (ana ekrana ekleme) ----
+  (function setupInstallPrompt() {
+    const installBtn = document.getElementById("installBtn");
+    if (!installBtn) return;
+
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    if (isStandalone) return;
+
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    let deferredPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove("hidden");
+    });
+
+    window.addEventListener("appinstalled", () => {
+      installBtn.classList.add("hidden");
+      deferredPrompt = null;
+    });
+
+    if (isIOS) {
+      // iOS Safari "beforeinstallprompt" desteklemez; kullanıcıya elle nasıl
+      // ekleneceğini gösteren bir buton bırakıyoruz.
+      installBtn.classList.remove("hidden");
+    }
+
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        try { await deferredPrompt.userChoice; } catch (e) {}
+        deferredPrompt = null;
+        installBtn.classList.add("hidden");
+        return;
+      }
+      if (isIOS) {
+        showToast("Ana ekrana eklemek için altta/üstte Paylaş 📤 simgesine dokunup \"Ana Ekrana Ekle\"yi seçin.");
+      } else {
+        showToast("Tarayıcı menüsünden \"Uygulamayı yükle\" seçeneğini kullanabilirsiniz.");
+      }
+    });
+  })();
+
   // ---- Radar canvas renderer ----
   function createRadar(canvas) {
     if (!canvas || !canvas.getContext) return { setState() {}, stop() {} };
