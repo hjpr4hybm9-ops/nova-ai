@@ -1,0 +1,11 @@
+{
+  "name": "Transfer 212 — Özel Şoförlü Transfer Hizmeti",
+  "short_name": "Transfer 212",
+  "description": "İstanbul Havalimanı ve Sabiha Gökçen'den özel şoförlü transfer, VIP transfer ve kurumsal taşımacılık.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0e14",
+  "theme_color": "#0a0e14",
+  "icons": []
+}

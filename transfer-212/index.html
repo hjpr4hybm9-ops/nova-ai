@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0e14">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("transfer212.theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) {}
+  })();
+</script>
+<meta name="description" content="Transfer 212 — İstanbul Havalimanı ve Sabiha Gökçen'den özel şoförlü transfer. VIP transfer, kurumsal transfer ve şehirlerarası taşımacılık. Hemen fiyat hesaplayın.">
+<title>Transfer 212 — Özel Şoförlü Transfer Hizmeti</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚘</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="logo">🚘</span>
+      <span class="brand-name">Transfer 212</span>
+    </a>
+
+    <nav class="nav" id="mainNav">
+      <a href="#hizmetler">Hizmetler</a>
+      <a href="#filo">Filo</a>
+      <a href="#hesapla">Fiyat Hesapla</a>
+      <a href="#nasil-calisir">Nasıl Çalışır</a>
+      <a href="#yorumlar">Yorumlar</a>
+      <a href="#sss">SSS</a>
+      <a href="#iletisim">İletişim</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="themeToggle" title="Görünümü değiştir" aria-label="Görünümü değiştir">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="#hesapla" id="headerCtaBtn">Fiyat Hesapla</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="wrap hero-inner">
+      <span class="eyebrow">✦ İstanbul'un özel transfer hizmeti</span>
+      <h1>Havalimanından otelinize,<br><span class="grad-text">şoförünüz kapınızda bekliyor.</span></h1>
+      <p class="hero-sub">İstanbul Havalimanı ve Sabiha Gökçen'den şehrin her noktasına; uçuş takipli karşılama, temiz ve bakımlı araçlar, profesyonel şoförlerle konforlu ve güvenli transfer. Rezervasyon dakikalar içinde.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#hesapla">Fiyat Hesapla</a>
+        <a class="btn btn-outline" href="#" id="heroWhatsappBtn">💬 WhatsApp'tan Rezervasyon</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>7/24</strong><span>Kesintisiz transfer hizmeti</span></div>
+        <div><strong>✈️</strong><span>Canlı uçuş takibiyle karşılama</span></div>
+        <div><strong>%100</strong><span>Sabit fiyat, sürpriz ücret yok</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="logos">
+    <div class="wrap">
+      <p class="logos-label">İstanbul Havalimanı, Sabiha Gökçen ve tüm şehir için</p>
+      <div class="logos-row">
+        <span>✈️ Havalimanı Karşılama</span>
+        <span>🕐 7/24 Hizmet</span>
+        <span>🧑‍✈️ Profesyonel Şoför</span>
+        <span>🚘 Temiz &amp; Bakımlı Filo</span>
+        <span>💳 Nakit / Kart Ödeme</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="hizmetler">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Hizmetler</span>
+        <h2>İhtiyacınıza uygun transfer çözümü</h2>
+        <p>Havalimanından şehir içine, kurumsal seyahatlerden özel günlere kadar her ihtiyaca özel hizmet.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-icon">✈️</div>
+          <h3>Havalimanı Transferi</h3>
+          <p>İstanbul Havalimanı ve Sabiha Gökçen'den şehir merkezine, uçuşunuz takip edilerek zamanında karşılama.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎩</div>
+          <h3>VIP Transfer</h3>
+          <p>Üst düzey konfor ve gizlilik isteyen misafirler için premium araç, özel karşılama ve kişiye özel hizmet.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏙️</div>
+          <h3>Şehirlerarası Transfer</h3>
+          <p>İstanbul dışına, yakın illere konforlu, güvenli ve dakik uzun mesafe yolculuklar.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏢</div>
+          <h3>Kurumsal Transfer</h3>
+          <p>Şirketler için düzenli personel ve misafir taşımacılığı; faturalı, anlaşmalı ve raporlanabilir hizmet.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💍</div>
+          <h3>Düğün &amp; Özel Etkinlik</h3>
+          <p>Özel gününüzde süslenmiş araç, zamanında transfer ve konuklarınız için ek araç desteği.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🕓</div>
+          <h3>Saatlik Şoförlü Araç</h3>
+          <p>Şehir içi randevularınız, alışveriş ya da toplantı turları için saatlik kiralık araç ve şoför.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="filo">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Filo</span>
+        <h2>Yolculuğunuza uygun araç seçin</h2>
+        <p>Tüm araçlarımız düzenli bakımlı, klimalı ve sigortalıdır.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card fleet-card">
+          <div class="card-icon">🚗</div>
+          <h3>Sedan</h3>
+          <p class="fleet-meta">1–3 yolcu · 2 bavul</p>
+          <p>Bireysel ve iş seyahatleri için konforlu, sessiz ve şık binek araç.</p>
+        </div>
+        <div class="card fleet-card">
+          <div class="card-icon">🚐</div>
+          <h3>VIP Minivan</h3>
+          <p class="fleet-meta">1–5 yolcu · 5 bavul</p>
+          <p>Aile ve küçük gruplar için geniş iç hacim ve premium konfor.</p>
+        </div>
+        <div class="card fleet-card">
+          <div class="card-icon">🚌</div>
+          <h3>Sprinter</h3>
+          <p class="fleet-meta">6–14 yolcu · grup bagajı</p>
+          <p>Kalabalık gruplar, kurumsal ekipler ve etkinlik transferleri için ideal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="hesapla">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Fiyat Hesapla</span>
+        <h2>Transfer ücretinizi hemen öğrenin</h2>
+        <p>Güzergahı ve araç tipini seçin, tahmini fiyatı görün; dilerseniz aynı bilgilerle WhatsApp'tan rezervasyon yapın.</p>
+      </div>
+
+      <div class="calc-panel">
+        <form class="calc-form" id="calcForm">
+          <div class="calc-row">
+            <div class="field">
+              <label for="fromSelect">Nereden</label>
+              <select id="fromSelect">
+                <option value="ist">İstanbul Havalimanı (IST)</option>
+                <option value="saw">Sabiha Gökçen Havalimanı (SAW)</option>
+                <option value="city">Şehir İçi</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="toSelect">Nereye</label>
+              <select id="toSelect">
+                <option value="taksim">Taksim</option>
+                <option value="sultanahmet">Sultanahmet</option>
+                <option value="sisli">Şişli</option>
+                <option value="besiktas">Beşiktaş</option>
+                <option value="kadikoy">Kadıköy</option>
+                <option value="bakirkoy">Bakırköy</option>
+                <option value="levent">Levent</option>
+                <option value="saw">Sabiha Gökçen Havalimanı</option>
+                <option value="ist">İstanbul Havalimanı</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div class="field">
+              <label for="vehicleSelect">Araç Tipi</label>
+              <select id="vehicleSelect">
+                <option value="sedan">Sedan (1–3 yolcu)</option>
+                <option value="minivan">VIP Minivan (1–5 yolcu)</option>
+                <option value="sprinter">Sprinter (6–14 yolcu)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="passengerInput">Yolcu Sayısı</label>
+              <input type="number" id="passengerInput" min="1" max="14" value="2">
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div class="field">
+              <label for="dateInput">Tarih</label>
+              <input type="date" id="dateInput">
+            </div>
+            <div class="field">
+              <label for="timeInput">Saat</label>
+              <input type="time" id="timeInput" value="12:00">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary full">Fiyatı Hesapla</button>
+        </form>
+
+        <div class="calc-result hidden" id="calcResult">
+          <p class="calc-result-label">Tahmini transfer ücreti</p>
+          <p class="calc-result-value" id="calcResultValue">0 ₺</p>
+          <p class="calc-result-note">Fiyatlar tahminidir; trafik, gece tarifesi ve ek durak gibi durumlarda değişebilir. Kesin fiyat rezervasyon sırasında teyit edilir.</p>
+          <a class="btn btn-primary full" href="#" id="calcWhatsappBtn">💬 Bu Bilgilerle WhatsApp'tan Rezervasyon Yap</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="nasil-calisir">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Nasıl Çalışır</span>
+        <h2>Üç adımda transferiniz hazır</h2>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Rezervasyon Yapın</h3>
+          <p>WhatsApp, telefon ya da yukarıdaki hesaplayıcı üzerinden güzergahınızı ve saatinizi bildirin.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Sizi Karşılayalım</h3>
+          <p>Havalimanı transferlerinde uçuşunuz takip edilir, şoförünüz isim tabelasıyla karşılama noktasında bekler.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Konforla Varın</h3>
+          <p>Temiz, klimalı ve sessiz bir araçla güvenle ve zamanında varış noktanıza ulaşın.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="yorumlar">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Yorumlar</span>
+        <h2>Misafirlerimiz ne diyor</h2>
+        <p>Örnek yorumlar — kendi müşteri geri bildirimlerinizle güncelleyebilirsiniz.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card testimonial-card">
+          <p class="stars">★★★★★</p>
+          <p class="testimonial-quote">"Uçağımız geciktiği halde şoförümüz bizi bekliyordu, hiç stres yaşamadık. Araç tertemizdi."</p>
+          <p class="testimonial-name">Elif Y. — İstanbul Havalimanı → Taksim</p>
+        </div>
+        <div class="card testimonial-card">
+          <p class="stars">★★★★★</p>
+          <p class="testimonial-quote">"Kurumsal transferlerimizi aylardır Transfer 212 ile yapıyoruz, hiç aksama yaşamadık."</p>
+          <p class="testimonial-name">Murat K. — Kurumsal Müşteri</p>
+        </div>
+        <div class="card testimonial-card">
+          <p class="stars">★★★★★</p>
+          <p class="testimonial-quote">"Sabiha Gökçen'den Kadıköy'e transfer çok konforluydu, fiyat da rezervasyondaki gibi çıktı."</p>
+          <p class="testimonial-name">Ayşe D. — SAW → Kadıköy</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="sss">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">SSS</span>
+        <h2>Sıkça Sorulan Sorular</h2>
+      </div>
+
+      <div class="faq" id="faq">
+        <details class="faq-item">
+          <summary>Uçuşum gecikirse ne olur?</summary>
+          <p>Havalimanı transferlerinde uçuşunuzu takip ediyoruz. Gecikme durumunda şoförünüz sizi bekler, ek ücret alınmaz.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Rezervasyonu nasıl yapabilirim?</summary>
+          <p>Yukarıdaki fiyat hesaplayıcıyı kullanarak ya da doğrudan WhatsApp / telefon üzerinden güzergah, tarih ve saat bilgisiyle rezervasyon yapabilirsiniz.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Ödemeyi nasıl yapabilirim?</summary>
+          <p>Araç içinde nakit veya kredi kartı ile ödeme yapabilir, kurumsal müşteriler için faturalı ödeme seçeneğinden yararlanabilirsiniz.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Bebek koltuğu talep edebilir miyim?</summary>
+          <p>Evet, rezervasyon sırasında belirtmeniz yeterli; bebek/çocuk koltuğu talebinize göre araç hazırlanır.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Rezervasyonumu iptal edebilir miyim?</summary>
+          <p>Planlanan transfer saatinden en az birkaç saat önce bildirim yaparak ücretsiz iptal ya da tarih değişikliği yapabilirsiniz.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="iletisim">
+    <div class="wrap cta-inner">
+      <h2>Transferinizi şimdi ayarlayalım</h2>
+      <p>Aşağıdaki kanallardan bize ulaşın, size en kısa sürede dönüş yapalım.</p>
+      <div class="contact-cards">
+        <a class="contact-card" href="#" id="contactWhatsapp">
+          <span class="contact-icon">💬</span>
+          <span class="contact-label">WhatsApp</span>
+          <span class="contact-value">+90 500 000 00 00</span>
+        </a>
+        <a class="contact-card" href="tel:+905000000000">
+          <span class="contact-icon">📞</span>
+          <span class="contact-label">Telefon</span>
+          <span class="contact-value">+90 500 000 00 00</span>
+        </a>
+        <a class="contact-card" href="mailto:info@transfer212.com">
+          <span class="contact-icon">✉️</span>
+          <span class="contact-label">E-posta</span>
+          <span class="contact-value">info@transfer212.com</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🚘</span>
+      <span class="brand-name">Transfer 212</span>
+    </div>
+    <p class="footer-copy">© <span id="year"></span> Transfer 212. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
