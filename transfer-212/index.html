@@ -33,6 +33,7 @@
       <a href="#hizmetler">Hizmetler</a>
       <a href="#filo">Filo</a>
       <a href="#hesapla">Fiyat Hesapla</a>
+      <a href="#rezervasyon">Rezervasyon</a>
       <a href="#nasil-calisir">Nasıl Çalışır</a>
       <a href="#yorumlar">Yorumlar</a>
       <a href="#sss">SSS</a>
@@ -62,9 +63,9 @@
   <section class="hero">
     <div class="hero-glow"></div>
     <div class="wrap hero-inner">
-      <span class="eyebrow">✦ İstanbul'un özel transfer hizmeti</span>
+      <span class="eyebrow">✦ Türkiye genelinde özel transfer hizmeti</span>
       <h1>Havalimanından otelinize,<br><span class="grad-text">şoförünüz kapınızda bekliyor.</span></h1>
-      <p class="hero-sub">İstanbul Havalimanı ve Sabiha Gökçen'den şehrin her noktasına; uçuş takipli karşılama, temiz ve bakımlı araçlar, profesyonel şoförlerle konforlu ve güvenli transfer. Rezervasyon dakikalar içinde.</p>
+      <p class="hero-sub">İstanbul Havalimanı ve Sabiha Gökçen'den başlayıp Türkiye'nin 81 iline; uçuş takipli karşılama, temiz ve bakımlı araçlar, profesyonel şoförlerle konforlu ve güvenli transfer. Rezervasyon dakikalar içinde.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#hesapla">Fiyat Hesapla</a>
         <a class="btn btn-outline" href="#" id="heroWhatsappBtn">💬 WhatsApp'tan Rezervasyon</a>
@@ -79,7 +80,7 @@
 
   <section class="logos">
     <div class="wrap">
-      <p class="logos-label">İstanbul Havalimanı, Sabiha Gökçen ve tüm şehir için</p>
+      <p class="logos-label">İstanbul Havalimanı, Sabiha Gökçen ve Türkiye'nin 81 ili için</p>
       <div class="logos-row">
         <span>✈️ Havalimanı Karşılama</span>
         <span>🕐 7/24 Hizmet</span>
@@ -95,7 +96,7 @@
       <div class="section-head">
         <span class="eyebrow">Hizmetler</span>
         <h2>İhtiyacınıza uygun transfer çözümü</h2>
-        <p>Havalimanından şehir içine, kurumsal seyahatlerden özel günlere kadar her ihtiyaca özel hizmet.</p>
+        <p>Havalimanından şehir içine, kurumsal seyahatlerden özel günlere kadar Türkiye'nin her noktasında özel hizmet.</p>
       </div>
 
       <div class="grid grid-3">
@@ -112,7 +113,7 @@
         <div class="card">
           <div class="card-icon">🏙️</div>
           <h3>Şehirlerarası Transfer</h3>
-          <p>İstanbul dışına, yakın illere konforlu, güvenli ve dakik uzun mesafe yolculuklar.</p>
+          <p>İstanbul dışına, Türkiye'nin 81 iline konforlu, güvenli ve dakik uzun mesafe yolculuklar.</p>
         </div>
         <div class="card">
           <div class="card-icon">🏢</div>
@@ -169,33 +170,17 @@
       <div class="section-head">
         <span class="eyebrow">Fiyat Hesapla</span>
         <h2>Transfer ücretinizi hemen öğrenin</h2>
-        <p>Güzergahı ve araç tipini seçin, tahmini fiyatı görün; dilerseniz aynı bilgilerle WhatsApp'tan rezervasyon yapın.</p>
+        <p>Güzergahı haritadan ya da listeden seçin, araç tipini belirleyin, tahmini fiyatı görün — İstanbul içi ya da Türkiye'nin herhangi bir iline.</p>
       </div>
 
       <div class="calc-panel">
         <form class="calc-form" id="calcForm">
           <div class="calc-row">
-            <div class="field">
-              <label for="fromSelect">Nereden</label>
-              <select id="fromSelect">
-                <option value="ist">İstanbul Havalimanı (IST)</option>
-                <option value="saw">Sabiha Gökçen Havalimanı (SAW)</option>
-                <option value="city">Şehir İçi</option>
-              </select>
+            <div class="field location-field" data-location-field="calcFrom" data-default="ist-havalimani">
+              <label>Nereden</label>
             </div>
-            <div class="field">
-              <label for="toSelect">Nereye</label>
-              <select id="toSelect">
-                <option value="taksim">Taksim</option>
-                <option value="sultanahmet">Sultanahmet</option>
-                <option value="sisli">Şişli</option>
-                <option value="besiktas">Beşiktaş</option>
-                <option value="kadikoy">Kadıköy</option>
-                <option value="bakirkoy">Bakırköy</option>
-                <option value="levent">Levent</option>
-                <option value="saw">Sabiha Gökçen Havalimanı</option>
-                <option value="ist">İstanbul Havalimanı</option>
-              </select>
+            <div class="field location-field" data-location-field="calcTo" data-default="34">
+              <label>Nereye</label>
             </div>
           </div>
 
@@ -231,14 +216,89 @@
         <div class="calc-result hidden" id="calcResult">
           <p class="calc-result-label">Tahmini transfer ücreti</p>
           <p class="calc-result-value" id="calcResultValue">0 ₺</p>
-          <p class="calc-result-note">Fiyatlar tahminidir; trafik, gece tarifesi ve ek durak gibi durumlarda değişebilir. Kesin fiyat rezervasyon sırasında teyit edilir.</p>
+          <p class="calc-result-distance" id="calcResultDistance"></p>
+          <p class="calc-result-note">Fiyatlar kuş uçuşu mesafeye göre tahmindir; trafik, gerçek yol mesafesi, gece tarifesi ve ek durak gibi durumlarda değişebilir. Kesin fiyat rezervasyon sırasında teyit edilir.</p>
           <a class="btn btn-primary full" href="#" id="calcWhatsappBtn">💬 Bu Bilgilerle WhatsApp'tan Rezervasyon Yap</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section alt" id="nasil-calisir">
+  <section class="section alt" id="rezervasyon">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Rezervasyon</span>
+        <h2>Transferinizi ayırtın</h2>
+        <p>Bilgilerinizi girin, tahmini ücreti görün ve WhatsApp üzerinden rezervasyonunuzu tamamlayın.</p>
+      </div>
+
+      <div class="calc-panel">
+        <form class="calc-form" id="reservationForm">
+          <div class="calc-row">
+            <div class="field">
+              <label for="resNameInput">Ad Soyad</label>
+              <input type="text" id="resNameInput" autocomplete="name" required placeholder="Adınız Soyadınız">
+            </div>
+            <div class="field">
+              <label for="resPhoneInput">Telefon</label>
+              <input type="tel" id="resPhoneInput" autocomplete="tel" required placeholder="05XX XXX XX XX">
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div class="field location-field" data-location-field="resFrom" data-default="ist-havalimani">
+              <label>Nereden</label>
+            </div>
+            <div class="field location-field" data-location-field="resTo" data-default="34">
+              <label>Nereye</label>
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div class="field">
+              <label for="resVehicleSelect">Araç Tipi</label>
+              <select id="resVehicleSelect">
+                <option value="sedan">Sedan (1–3 yolcu)</option>
+                <option value="minivan">VIP Minivan (1–5 yolcu)</option>
+                <option value="sprinter">Sprinter (6–14 yolcu)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="resPassengerInput">Yolcu Sayısı</label>
+              <input type="number" id="resPassengerInput" min="1" max="14" value="2">
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div class="field">
+              <label for="resDateInput">Tarih</label>
+              <input type="date" id="resDateInput">
+            </div>
+            <div class="field">
+              <label for="resTimeInput">Saat</label>
+              <input type="time" id="resTimeInput" value="12:00">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="resNoteInput">Not (opsiyonel)</label>
+            <textarea id="resNoteInput" rows="3" placeholder="Uçuş numarası, bebek koltuğu, ek durak vb."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary full">Rezervasyonu WhatsApp'tan Gönder</button>
+        </form>
+
+        <div class="calc-result hidden" id="resResult">
+          <p class="calc-result-label">Tahmini transfer ücreti</p>
+          <p class="calc-result-value" id="resResultValue">0 ₺</p>
+          <p class="calc-result-distance" id="resResultDistance"></p>
+          <p class="calc-result-note">Rezervasyon talebiniz WhatsApp üzerinden iletilir; kesin fiyat ve onay tarafımızca teyit edilir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="nasil-calisir">
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">Nasıl Çalışır</span>
@@ -265,7 +325,7 @@
     </div>
   </section>
 
-  <section class="section" id="yorumlar">
+  <section class="section alt" id="yorumlar">
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">Yorumlar</span>
@@ -293,7 +353,7 @@
     </div>
   </section>
 
-  <section class="section alt" id="sss">
+  <section class="section" id="sss">
     <div class="wrap">
       <div class="section-head">
         <span class="eyebrow">SSS</span>
@@ -359,10 +419,14 @@
       <span class="logo">🚘</span>
       <span class="brand-name">Transfer 212</span>
     </div>
-    <p class="footer-copy">© <span id="year"></span> Transfer 212. Tüm hakları saklıdır.</p>
+    <div class="footer-legal">
+      <p class="footer-copy">© <span id="year"></span> Transfer 212. Tüm hakları saklıdır.</p>
+      <p class="footer-credit">İl haritası: <a href="https://github.com/dnomak/svg-turkiye-haritasi" target="_blank" rel="noopener">svg-turkiye-haritasi</a> (MIT)</p>
+    </div>
   </div>
 </footer>
 
+<script src="js/tr-map-data.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
