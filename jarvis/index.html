@@ -3,14 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#050810">
-<meta name="description" content="J.A.R.V.I.S. — sesle konuşabileceğiniz, film esintili sci-fi arayüze sahip kişisel yapay zekâ asistanınız. Ücretsiz, tarayıcıda çalışır.">
-<title>J.A.R.V.I.S. — Kişisel Yapay Zekâ Asistanınız</title>
+<meta name="theme-color" content="#040705">
+<meta name="description" content="J.A.R.V.I.S. — sesle konuşabileceğiniz, sürekli dinleyen kişisel yapay zekâ kontrol paneli. Ücretsiz, tarayıcıda çalışır.">
+<title>J.A.R.V.I.S. — Kişisel Yapay Zekâ Kontrol Paneli</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-32.png" sizes="32x32">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<link rel="stylesheet" href="css/style.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 
@@ -18,259 +21,124 @@
 
 <div class="auth-gate" id="authGate">
   <div class="gate-card">
-    <span class="logo-ring gate-ring"><span class="logo-core"></span></span>
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="gate-radar"><canvas id="gateRadarCanvas" width="140" height="140"></canvas></div>
     <h1>J.A.R.V.I.S.</h1>
-    <p class="gate-status" id="gateStatus">Sistemler başlatılıyor…</p>
-    <button type="button" class="btn btn-primary gate-btn hidden" id="gateSignInBtn">🔐 Puter ile Giriş Yap</button>
-    <p class="gate-note">Devam etmek için ücretsiz bir Puter hesabıyla giriş yapmanız gerekir. Kredi kartı istenmez, saniyeler sürer.</p>
+    <p class="gate-tagline">Just A Rather Very Intelligent System</p>
+    <p class="gate-status" id="gateStatus">SİSTEMLER BAŞLATILIYOR…</p>
+    <button type="button" class="hud-btn gate-btn hidden" id="gateSignInBtn">🔐 PUTER İLE GİRİŞ YAP</button>
+    <p class="gate-note">Devam etmek için ücretsiz bir Puter hesabıyla giriş yapmanız gerekir. Kredi kartı istenmez.</p>
   </div>
 </div>
 
 <div class="boot-screen hidden" id="bootScreen">
-  <div class="boot-core" aria-hidden="true">
-    <div class="core-ring ring-1"></div>
-    <div class="core-ring ring-2"></div>
-    <div class="core-ring ring-3"></div>
-    <div class="core-ticks"></div>
-    <div class="core-center">
-      <span class="core-pulse"></span>
-    </div>
-    <div class="core-sweep"></div>
-  </div>
-  <p class="boot-text" id="bootText">Sistemler başlatılıyor…</p>
+  <div class="boot-radar"><canvas id="bootRadarCanvas" width="220" height="220"></canvas></div>
+  <p class="boot-text" id="bootText">SİSTEMLER BAŞLATILIYOR…</p>
 </div>
 
 <div class="site-shell hidden" id="siteShell">
 
-<header class="site-header" id="siteHeader">
-  <div class="wrap header-inner">
-    <a class="brand" href="#top">
-      <span class="logo-ring"><span class="logo-core"></span></span>
-      <span class="brand-name">J.A.R.V.I.S.</span>
-    </a>
-
-    <nav class="nav" id="mainNav">
-      <a href="#ozellikler">Özellikler</a>
-      <a href="#komutlar">Sesli Komutlar</a>
-      <a href="#demo" class="open-chat-btn">Canlı Demo</a>
-      <a href="#sss">SSS</a>
-    </nav>
-
-    <div class="header-actions">
-      <button type="button" class="btn btn-ghost hidden" id="signOutBtn">Çıkış Yap</button>
-      <a class="btn btn-outline open-chat-btn" href="#demo">Konuşmaya Başla</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-mark">◆</span> J.A.R.V.I.S.
     </div>
-  </div>
-</header>
-
-<main id="top">
-
-  <section class="section" id="ozellikler">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">Özellikler</span>
-        <h2>Bir HUD asistanının sahip olması gerekenler</h2>
-        <p>J.A.R.V.I.S., sesinizi dinler, doğal dilde düşünür ve size sesli ya da yazılı yanıt verir.</p>
-      </div>
-
-      <div class="grid grid-3">
-        <div class="card">
-          <div class="card-icon">🎙️</div>
-          <h3>Sesli Komut</h3>
-          <p>Mikrofona konuşun, J.A.R.V.I.S. Türkçe olarak sizi dinlesin ve yazıya döksün.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔊</div>
-          <h3>Sesli Yanıt</h3>
-          <p>Yanıtları sadece okumayın, dinleyin. Sesli yanıt modunu tek tıkla açın.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">🧠</div>
-          <h3>Doğal Sohbet</h3>
-          <p>Gerçek bir yapay zekâ modeliyle akıcı, bağlamı hatırlayan bir sohbet deneyimi.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">⚡</div>
-          <h3>Anında Analiz</h3>
-          <p>Sorularınızı saniyeler içinde işler, net ve işinize yarayan yanıtlar üretir.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔒</div>
-          <h3>Gizlilik Odaklı</h3>
-          <p>Sohbet geçmişiniz cihazınızda saklanır, üçüncü taraflarla paylaşılmaz.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">📲</div>
-          <h3>Her Cihazda</h3>
-          <p>Ana ekranınıza uygulama gibi ekleyin, HUD arayüzü her yerde sizinle olsun.</p>
-        </div>
-      </div>
+    <div class="topbar-right">
+      <span class="online-pill" id="topOnlinePill"><span class="pill-dot"></span>ONLINE</span>
+      <button type="button" class="hud-btn ghost hidden" id="signOutBtn">ÇIKIŞ</button>
     </div>
-  </section>
+  </header>
 
-  <section class="section alt" id="nasil-calisir">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">Nasıl Çalışır</span>
-        <h2>Üç adımda J.A.R.V.I.S. ile konuşun</h2>
+  <main class="dashboard">
+
+    <section class="hud-panel panel-system">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h2 class="panel-title">SYSTEM SETTINGS</h2>
+      <p class="panel-sub">MODEL · Puter AI</p>
+
+      <div class="hud-block">
+        <span class="hud-label">TIME</span>
+        <div class="clock" id="clockTime">--:--</div>
+        <div class="hud-sub" id="clockDate">—</div>
       </div>
 
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h3>🎙️ Konuşun ya da yazın</h3>
-          <p>Mikrofon simgesine dokunup sesli komut verin ya da doğrudan yazın.</p>
+      <div class="hud-block">
+        <span class="hud-label">WEATHER</span>
+        <div class="weather-temp" id="weatherTemp">--°</div>
+        <div class="hud-sub" id="weatherDesc">Konum bekleniyor…</div>
+      </div>
+
+      <div class="hud-block">
+        <span class="hud-label">SYSTEM STATUS</span>
+        <div class="status-bars" id="statusBars">
+          <div class="status-row">
+            <span>BAĞLANTI</span>
+            <div class="bar"><i class="bar-fill ok" id="barSignal" style="width:0%"></i></div>
+            <b id="valSignal">—</b>
+          </div>
+          <div class="status-row">
+            <span>DİNLEME</span>
+            <div class="bar"><i class="bar-fill warn" id="barListen" style="width:0%"></i></div>
+            <b id="valListen">0%</b>
+          </div>
+          <div class="status-row">
+            <span>BELLEK</span>
+            <div class="bar"><i class="bar-fill ok" id="barMemory" style="width:0%"></i></div>
+            <b id="valMemory">—</b>
+          </div>
         </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h3>🧠 J.A.R.V.I.S. düşünsün</h3>
-          <p>İsteğiniz analiz edilir, en uygun yanıt saniyeler içinde hazırlanır.</p>
+      </div>
+
+      <div class="hud-block">
+        <span class="hud-label">HATIRLATICI</span>
+        <p class="hud-tip" id="hudTip">Sesli komut vermek için mikrofona dokunun.</p>
+      </div>
+    </section>
+
+    <section class="hud-panel panel-core">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+
+      <div class="radar-wrap">
+        <canvas id="radarCanvas" width="360" height="360"></canvas>
+      </div>
+
+      <h1 class="core-title">J.A.R.V.I.S.</h1>
+      <p class="core-tagline">Just A Rather Very Intelligent System</p>
+
+      <div class="state-pills" id="statePills">
+        <button type="button" class="state-pill live" id="stateLive">LIVE</button>
+        <button type="button" class="state-pill paused" id="statePaused">PAUSED</button>
+        <button type="button" class="state-pill shutdown" id="stateShutdown">SHUTDOWN</button>
+      </div>
+
+      <form class="core-composer" id="demoForm">
+        <button type="button" class="icon-btn" id="micBtn" title="Sesle konuş" aria-pressed="false">🎙️</button>
+        <input id="demoInput" type="text" maxlength="600" autocomplete="off" placeholder="Bir komut yazın ya da mikrofona konuşun...">
+        <button type="button" class="icon-btn" id="voiceToggle" title="Sesli yanıt" aria-pressed="true">🔊</button>
+        <button type="submit" id="demoSend">GÖNDER</button>
+      </form>
+    </section>
+
+    <section class="hud-panel panel-conversation">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div class="panel-head-row">
+        <h2 class="panel-title">CONVERSATION</h2>
+        <div class="panel-head-actions">
+          <button type="button" class="hud-btn ghost small" id="newChatBtn">TEMİZLE</button>
+          <span class="online-pill small" id="convOnlinePill"><span class="pill-dot"></span>ONLINE</span>
         </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3>🔊 Yanıtı alın</h3>
-          <p>Yanıt ekranda belirir; isterseniz sesli yanıt modunda okunarak da iletilir.</p>
-        </div>
       </div>
-    </div>
-  </section>
+      <div class="conv-log" id="demoChat"></div>
+    </section>
 
-  <section class="section" id="komutlar">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">Sesli Komutlar</span>
-        <h2>Şunları deneyebilirsiniz</h2>
-        <p>Mikrofon simgesine dokunun ve aşağıdaki gibi doğal cümleler kurun.</p>
-      </div>
+  </main>
 
-      <div class="grid grid-2 commands-grid">
-        <button type="button" class="command-chip" data-cmd="Bugün İstanbul'da hava nasıl olabilir, kısaca tahmin eder misin?">"Bugün hava nasıl olabilir?"</button>
-        <button type="button" class="command-chip" data-cmd="Bana kısa ve motive edici bir günaydın mesajı yaz.">"Bana günaydın mesajı yaz."</button>
-        <button type="button" class="command-chip" data-cmd="25 çarpı 48 kaç eder, kısaca hesapla.">"25 çarpı 48 kaç eder?"</button>
-        <button type="button" class="command-chip" data-cmd="Bana verimlilik artırmak için üç pratik öneri ver.">"Verimlilik için öneri ver."</button>
-        <button type="button" class="command-chip" data-cmd="Yapay zekâ nedir, tek paragrafta basitçe anlat.">"Yapay zekâ nedir, anlat."</button>
-        <button type="button" class="command-chip" data-cmd="Bana beş dakikalık kısa bir nefes egzersizi anlat.">"Kısa bir nefes egzersizi anlat."</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="section alt" id="demo">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">Canlı Demo</span>
-        <h2>J.A.R.V.I.S. ile şimdi konuşun</h2>
-        <p>Yazın ya da mikrofonla konuşun — yanıtı ister okuyun, ister sesli dinleyin.</p>
-      </div>
-
-      <button type="button" class="chat-launcher" id="chatLauncher">
-        <span class="launcher-ring"><span class="logo-core"></span></span>
-        <span class="launcher-text">
-          <strong>J.A.R.V.I.S. ile Sohbet Et</strong>
-          <span>Tam ekran sohbeti açmak için dokunun</span>
-        </span>
-        <span class="launcher-arrow">⤢</span>
-      </button>
-    </div>
-  </section>
+  <p class="footer-note">© <span id="year"></span> J.A.R.V.I.S. — bağımsız bir hobi projesi. Film ve dizilerdeki asistan arayüzlerinden ilham alınmıştır; gerçek bir işletim sistemi kontrolü sağlamaz.</p>
 
   <div class="toast hidden" id="toast"></div>
-
-  <section class="section" id="sss">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">SSS</span>
-        <h2>Sıkça Sorulan Sorular</h2>
-      </div>
-
-      <div class="faq" id="faq">
-        <details class="faq-item">
-          <summary>J.A.R.V.I.S. kullanmak ücretli mi?</summary>
-          <p>Hayır, tamamen ücretsizdir. Gizli ücret veya mesaj sınırı yoktur.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Sesli komut hangi tarayıcılarda çalışır?</summary>
-          <p>Konuşma tanıma özelliği Chrome, Edge ve çoğu Chromium tabanlı mobil tarayıcıda çalışır. Desteklenmeyen tarayıcılarda yazarak sohbet edebilirsiniz.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Verilerim güvende mi?</summary>
-          <p>Sohbet geçmişiniz cihazınızda saklanır ve izniniz olmadan üçüncü taraflarla paylaşılmaz.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Gerçek bir akıllı ev sistemine bağlanıyor mu?</summary>
-          <p>Hayır, bu bir sohbet ve sesli yanıt asistanıdır; filmlerdeki gibi cihazları fiziksel olarak kontrol etmez. Sorularınızı yanıtlar, öneriler sunar ve sizinle sesli sohbet eder.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Mobil cihazımda kullanabilir miyim?</summary>
-          <p>Evet, mobil tarayıcılarda çalışır ve ana ekranınıza uygulama gibi eklenebilir.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Sekmeyi arka plana alınca ya da telefon kilitlenince de dinlemeye devam eder mi?</summary>
-          <p>J.A.R.V.I.S. bu sekme açık ve ekran uyanıkken sürekli dinler; izin verirseniz ekranın kapanmasını da geciktirir. Ancak bir web sitesi olduğu için telefon tamamen kilitlendiğinde ya da başka bir uygulamaya tamamen geçildiğinde tarayıcılar mikrofonu güvenlik gereği durdurur — bu durumda, bildirim izni verdiyseniz yanıtlarınızı bildirim olarak alırsınız; sekmeye döndüğünüzde dinleme otomatik devam eder.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-band" id="iletisim">
-    <div class="wrap cta-inner">
-      <h2>Sistemler hazır, efendim.</h2>
-      <p>J.A.R.V.I.S. ile konuşmaya hemen başlayın.</p>
-      <a class="btn btn-primary open-chat-btn" href="#demo" id="ctaTryBtn">🎙️ Şimdi Konuş</a>
-    </div>
-  </section>
-
-</main>
-
-<footer class="site-footer">
-  <div class="wrap footer-inner">
-    <div class="footer-brand">
-      <span class="logo-ring small"><span class="logo-core"></span></span>
-      <span class="brand-name">J.A.R.V.I.S.</span>
-    </div>
-    <p class="footer-copy">© <span id="year"></span> J.A.R.V.I.S. — Kişisel yapay zekâ asistanı. Film ve dizilerdeki asistan arayüzlerinden ilham alınarak yapılmış bağımsız bir hobi projesidir.</p>
-  </div>
-</footer>
-
-<button type="button" class="chat-fab" id="chatFab" aria-label="Sesli komut vermek için dokun, taşımak için sürükle">
-  <span class="fab-orb" aria-hidden="true"></span>
-</button>
-
-<div class="chat-overlay hidden" id="chatOverlay" role="dialog" aria-modal="true" aria-label="J.A.R.V.I.S. sohbeti">
-  <div class="chat-overlay-header">
-    <div class="chat-overlay-brand">
-      <span class="logo-ring small"><span class="logo-core"></span></span>
-      <div class="chat-overlay-brand-text">
-        <strong>J.A.R.V.I.S.</strong>
-        <span class="status-line"><span class="status-dot" id="statusDot"></span><span class="status-text" id="statusText">Sistemler hazır</span></span>
-      </div>
-    </div>
-    <div class="chat-overlay-actions">
-      <button type="button" class="tool-btn" id="newChatBtn">🗑️ Temizle</button>
-      <button type="button" class="tool-btn" id="voiceToggle" aria-pressed="true">🔊 Sesli yanıt: Açık</button>
-      <button type="button" class="icon-btn close-btn" id="closeChatBtn" aria-label="Sohbeti kapat">✕</button>
-    </div>
-  </div>
-
-  <div class="demo-chat chat-overlay-body" id="demoChat">
-    <div class="demo-row demo-ai">
-      <div class="demo-bubble">Sistemler çevrimiçi. Merhaba, efendim. Ben J.A.R.V.I.S. Sizi dinliyorum — dilediğiniz an konuşabilirsiniz, ayrıca yazabilirsiniz de.</div>
-    </div>
-  </div>
-
-  <form class="demo-composer" id="demoForm">
-    <button type="button" class="icon-btn" id="micBtn" title="Sesle konuş" aria-pressed="false">🎙️</button>
-    <input id="demoInput" type="text" maxlength="600" autocomplete="off" placeholder="Bir komut yazın ya da mikrofona konuşun...">
-    <button type="submit" id="demoSend">Gönder</button>
-  </form>
-  <p class="demo-hint" id="demoHint">J.A.R.V.I.S. uygulama açıkken sizi sürekli dinler ve sesli olarak yanıt verir. Dinlemeyi duraklatmak için mikrofon simgesine ya da yeşil orba dokunun.</p>
-</div>
 
 </div>
 
 <script src="https://js.puter.com/v2/"></script>
-<script src="js/main.js?v=1"></script>
+<script src="js/main.js?v=2"></script>
 </body>
 </html>

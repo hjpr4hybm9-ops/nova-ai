@@ -9,21 +9,85 @@
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ---- Nav toggle ----
-  const navToggle = document.getElementById("navToggle");
-  const mainNav = document.getElementById("mainNav");
-  if (navToggle && mainNav) {
-    navToggle.addEventListener("click", () => {
-      const open = mainNav.classList.toggle("open");
-      navToggle.setAttribute("aria-expanded", String(open));
-    });
-    mainNav.querySelectorAll("a").forEach(a => {
-      a.addEventListener("click", () => {
-        mainNav.classList.remove("open");
-        navToggle.setAttribute("aria-expanded", "false");
+  // ---- Radar canvas renderer ----
+  function createRadar(canvas) {
+    if (!canvas || !canvas.getContext) return { setState() {}, stop() {} };
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const R = Math.min(w, h) / 2 - 4;
+    const particles = Array.from({ length: 46 }, () => ({
+      r: Math.random() * R * 0.92,
+      a: Math.random() * Math.PI * 2,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.15 + Math.random() * 0.3
+    }));
+    const colors = {
+      live: { ring: "rgba(94,255,192,.35)", dot: "rgba(94,255,192,.9)", glow: "rgba(94,255,192,.10)" },
+      thinking: { ring: "rgba(255,180,84,.4)", dot: "rgba(255,180,84,.95)", glow: "rgba(255,180,84,.12)" },
+      speaking: { ring: "rgba(168,255,224,.5)", dot: "rgba(168,255,224,.95)", glow: "rgba(94,255,192,.14)" },
+      paused: { ring: "rgba(150,170,165,.3)", dot: "rgba(150,170,165,.7)", glow: "rgba(150,170,165,.06)" },
+      shutdown: { ring: "rgba(255,92,92,.4)", dot: "rgba(255,92,92,.9)", glow: "rgba(255,92,92,.12)" }
+    };
+    let state = "live";
+    let sweep = 0;
+    let rafId = null;
+
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      const c = colors[state] || colors.live;
+
+      ctx.strokeStyle = c.ring;
+      ctx.lineWidth = 1;
+      [0.94, 0.64].forEach(f => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * f, 0, Math.PI * 2);
+        ctx.stroke();
       });
-    });
+
+      sweep += state === "thinking" ? 0.05 : 0.015;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, R * 0.94, sweep, sweep + 0.6);
+      ctx.closePath();
+      ctx.fillStyle = c.glow;
+      ctx.fill();
+      ctx.restore();
+
+      particles.forEach(p => {
+        const twinkle = 0.35 + 0.65 * Math.abs(Math.sin(t * 0.001 * p.speed + p.phase));
+        const x = cx + Math.cos(p.a) * p.r;
+        const y = cy + Math.sin(p.a) * p.r;
+        ctx.beginPath();
+        ctx.fillStyle = c.dot;
+        ctx.globalAlpha = twinkle;
+        ctx.arc(x, y, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.18);
+      g.addColorStop(0, c.dot);
+      g.addColorStop(1, "transparent");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+
+      rafId = requestAnimationFrame(draw);
+    }
+    rafId = requestAnimationFrame(draw);
+
+    return {
+      setState(s) { if (colors[s]) state = s; },
+      stop() { if (rafId) cancelAnimationFrame(rafId); }
+    };
   }
+
+  const gateRadar = createRadar(document.getElementById("gateRadarCanvas"));
+  const bootRadar = createRadar(document.getElementById("bootRadarCanvas"));
+  const coreRadar = createRadar(document.getElementById("radarCanvas"));
 
   // ---- Puter authentication gate ----
   const authGate = document.getElementById("authGate");
@@ -39,7 +103,6 @@
       if (bootScreen) bootScreen.classList.add("hidden");
       if (siteShell) siteShell.classList.remove("hidden");
       if (signOutBtn) signOutBtn.classList.remove("hidden");
-      openChatOverlay();
       startAlwaysListening();
     }, 1400);
   }
@@ -54,17 +117,14 @@
     if (bootScreen) bootScreen.classList.add("hidden");
     if (authGate) authGate.classList.remove("hidden");
     if (signOutBtn) signOutBtn.classList.add("hidden");
-    if (gateStatus) gateStatus.textContent = message || "Devam etmek için giriş yapın.";
+    if (gateStatus) gateStatus.textContent = message || "DEVAM ETMEK İÇİN GİRİŞ YAPIN";
     if (gateSignInBtn) gateSignInBtn.classList.remove("hidden");
-    const openOverlay = document.getElementById("chatOverlay");
-    if (openOverlay) openOverlay.classList.add("hidden");
-    document.body.style.overflow = "";
     stopAlwaysListening();
   }
 
   function initAuthGate() {
     if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.isSignedIn !== "function") {
-      if (gateStatus) gateStatus.textContent = "Giriş sistemi yüklenemedi. Lütfen sayfayı yenileyin.";
+      if (gateStatus) gateStatus.textContent = "GİRİŞ SİSTEMİ YÜKLENEMEDİ — SAYFAYI YENİLEYİN";
       if (gateSignInBtn) gateSignInBtn.classList.add("hidden");
       return;
     }
@@ -73,37 +133,36 @@
     if (signedIn) {
       showSite();
     } else {
-      showGate("Devam etmek için Puter hesabınızla giriş yapın.");
+      showGate("DEVAM ETMEK İÇİN PUTER HESABINIZLA GİRİŞ YAPIN");
     }
   }
 
   if (gateSignInBtn) {
     gateSignInBtn.addEventListener("click", async () => {
       if (typeof puter === "undefined" || !puter.auth || typeof puter.auth.signIn !== "function") {
-        if (gateStatus) gateStatus.textContent = "Giriş sistemi yüklenemedi. Lütfen sayfayı yenileyin.";
+        if (gateStatus) gateStatus.textContent = "GİRİŞ SİSTEMİ YÜKLENEMEDİ — SAYFAYI YENİLEYİN";
         return;
       }
       gateSignInBtn.disabled = true;
-      if (gateStatus) gateStatus.textContent = "Giriş yapılıyor…";
+      if (gateStatus) gateStatus.textContent = "GİRİŞ YAPILIYOR…";
       try {
         await puter.auth.signIn();
         showSite();
       } catch (err) {
-        if (gateStatus) gateStatus.textContent = "Giriş yapılamadı. Tekrar deneyin.";
+        if (gateStatus) gateStatus.textContent = "GİRİŞ YAPILAMADI — TEKRAR DENEYİN";
       } finally {
         gateSignInBtn.disabled = false;
       }
     });
   }
 
-  if (signOutBtn) {
-    signOutBtn.addEventListener("click", async () => {
-      if (typeof puter !== "undefined" && puter.auth && typeof puter.auth.signOut === "function") {
-        try { await puter.auth.signOut(); } catch (e) {}
-      }
-      showGate("Çıkış yapıldı. Devam etmek için tekrar giriş yapın.");
-    });
+  async function doSignOut() {
+    if (typeof puter !== "undefined" && puter.auth && typeof puter.auth.signOut === "function") {
+      try { await puter.auth.signOut(); } catch (e) {}
+    }
+    showGate("ÇIKIŞ YAPILDI — DEVAM ETMEK İÇİN TEKRAR GİRİŞ YAPIN");
   }
+  if (signOutBtn) signOutBtn.addEventListener("click", doSignOut);
 
   initAuthGate();
 
@@ -115,9 +174,10 @@
   const micBtn = document.getElementById("micBtn");
   const voiceToggle = document.getElementById("voiceToggle");
   const newChatBtn = document.getElementById("newChatBtn");
-  const statusDot = document.getElementById("statusDot");
-  const statusText = document.getElementById("statusText");
   const toast = document.getElementById("toast");
+  const stateLive = document.getElementById("stateLive");
+  const statePaused = document.getElementById("statePaused");
+  const stateShutdown = document.getElementById("stateShutdown");
 
   let toastTimer = null;
   function showToast(msg) {
@@ -128,130 +188,122 @@
     toastTimer = setTimeout(() => toast.classList.add("hidden"), 3200);
   }
 
-  function setStatus(text, color) {
-    if (statusText) statusText.textContent = text;
-    if (statusDot) statusDot.style.background = color || "#3ce27a";
+  // ---- App state (radar + pills) ----
+  function setAppState(state) {
+    coreRadar.setState(state);
+    if (stateLive) stateLive.classList.toggle("active", state === "live" || state === "thinking" || state === "speaking");
+    if (statePaused) statePaused.classList.toggle("active", state === "paused");
   }
+  setAppState("paused");
 
-  // ---- Full-screen chat overlay ----
-  const chatOverlay = document.getElementById("chatOverlay");
-  const chatFab = document.getElementById("chatFab");
-  const chatLauncher = document.getElementById("chatLauncher");
-  const closeChatBtn = document.getElementById("closeChatBtn");
+  if (stateLive) stateLive.addEventListener("click", () => startAlwaysListening());
+  if (statePaused) statePaused.addEventListener("click", () => stopAlwaysListening());
+  if (stateShutdown) stateShutdown.addEventListener("click", () => doSignOut());
 
-  function openChatOverlay() {
-    if (!chatOverlay) return;
-    chatOverlay.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-    if (demoInput) setTimeout(() => demoInput.focus(), 50);
+  // ---- Clock ----
+  const clockTime = document.getElementById("clockTime");
+  const clockDate = document.getElementById("clockDate");
+  function tickClock() {
+    const now = new Date();
+    if (clockTime) clockTime.textContent = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+    if (clockDate) clockDate.textContent = now.toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
   }
+  tickClock();
+  setInterval(tickClock, 1000 * 15);
 
-  function closeChatOverlay() {
-    if (!chatOverlay) return;
-    chatOverlay.classList.add("hidden");
-    document.body.style.overflow = "";
-  }
-
-  if (chatLauncher) chatLauncher.addEventListener("click", openChatOverlay);
-  if (closeChatBtn) closeChatBtn.addEventListener("click", closeChatOverlay);
-
-  // ---- Draggable voice orb ----
-  const FAB_POS_KEY = "jarvis_fab_pos";
-  const DRAG_THRESHOLD = 6;
-
-  function clamp(val, min, max) {
-    return Math.max(min, Math.min(max, val));
-  }
-
-  function placeFab(left, top) {
-    const size = chatFab.offsetWidth || 88;
-    const maxLeft = window.innerWidth - size - 8;
-    const maxTop = window.innerHeight - size - 8;
-    const clampedLeft = clamp(left, 8, Math.max(8, maxLeft));
-    const clampedTop = clamp(top, 8, Math.max(8, maxTop));
-    chatFab.style.left = clampedLeft + "px";
-    chatFab.style.top = clampedTop + "px";
-    chatFab.style.right = "auto";
-    chatFab.style.bottom = "auto";
-    return { left: clampedLeft, top: clampedTop };
-  }
-
-  function restoreFabPosition() {
-    try {
-      const raw = localStorage.getItem(FAB_POS_KEY);
-      if (raw) {
-        const pos = JSON.parse(raw);
-        if (typeof pos.left === "number" && typeof pos.top === "number") {
-          placeFab(pos.left, pos.top);
-        }
-      }
-    } catch (e) {}
-  }
-
-  if (chatFab) {
-    restoreFabPosition();
-    window.addEventListener("resize", () => {
-      const rect = chatFab.getBoundingClientRect();
-      if (rect.left) placeFab(rect.left, rect.top);
-    });
-
-    let dragging = false;
-    let moved = false;
-    let startX = 0, startY = 0, startLeft = 0, startTop = 0;
-
-    chatFab.addEventListener("pointerdown", e => {
-      const rect = chatFab.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
-      startLeft = rect.left;
-      startTop = rect.top;
-      dragging = true;
-      moved = false;
-      chatFab.setPointerCapture(e.pointerId);
-    });
-
-    chatFab.addEventListener("pointermove", e => {
-      if (!dragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      if (!moved && Math.hypot(dx, dy) > DRAG_THRESHOLD) {
-        moved = true;
-        chatFab.classList.add("dragging");
-      }
-      if (moved) {
-        placeFab(startLeft + dx, startTop + dy);
-      }
-    });
-
-    chatFab.addEventListener("pointerup", e => {
-      if (!dragging) return;
-      dragging = false;
-      chatFab.classList.remove("dragging");
-      if (moved) {
-        const rect = chatFab.getBoundingClientRect();
-        try {
-          localStorage.setItem(FAB_POS_KEY, JSON.stringify({ left: rect.left, top: rect.top }));
-        } catch (err) {}
-      } else {
-        openChatOverlay();
-        toggleListening();
-      }
-      moved = false;
-    });
-  }
-
-  document.querySelectorAll(".open-chat-btn").forEach(el => {
-    el.addEventListener("click", e => {
-      e.preventDefault();
-      openChatOverlay();
-    });
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && chatOverlay && !chatOverlay.classList.contains("hidden")) {
-      closeChatOverlay();
+  // ---- Weather (Open-Meteo, konum izniyle) ----
+  const weatherTemp = document.getElementById("weatherTemp");
+  const weatherDesc = document.getElementById("weatherDesc");
+  const WEATHER_CODES = {
+    0: "Açık", 1: "Az bulutlu", 2: "Parçalı bulutlu", 3: "Kapalı",
+    45: "Sisli", 48: "Kırağı sisi", 51: "Çisenti", 53: "Çisenti", 55: "Yoğun çisenti",
+    61: "Hafif yağmur", 63: "Yağmurlu", 65: "Şiddetli yağmur",
+    71: "Hafif kar", 73: "Karlı", 75: "Yoğun kar",
+    80: "Sağanak", 81: "Sağanak", 82: "Kuvvetli sağanak", 95: "Fırtınalı"
+  };
+  function loadWeather() {
+    if (!navigator.geolocation) {
+      if (weatherDesc) weatherDesc.textContent = "Konum desteklenmiyor";
+      return;
     }
-  });
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude, longitude } = pos.coords;
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code`)
+          .then(r => r.json())
+          .then(data => {
+            const cur = data && data.current;
+            if (!cur) throw new Error("no data");
+            if (weatherTemp) weatherTemp.textContent = Math.round(cur.temperature_2m) + "°";
+            const desc = WEATHER_CODES[cur.weather_code] || "Bilinmiyor";
+            if (weatherDesc) weatherDesc.textContent = `${desc} · nem %${Math.round(cur.relative_humidity_2m)}`;
+          })
+          .catch(() => { if (weatherDesc) weatherDesc.textContent = "Hava durumu alınamadı"; });
+      },
+      () => { if (weatherDesc) weatherDesc.textContent = "Konum izni verilmedi"; },
+      { timeout: 8000 }
+    );
+  }
+  loadWeather();
+
+  // ---- System status bars ----
+  const barSignal = document.getElementById("barSignal");
+  const valSignal = document.getElementById("valSignal");
+  const barListen = document.getElementById("barListen");
+  const valListen = document.getElementById("valListen");
+  const barMemory = document.getElementById("barMemory");
+  const valMemory = document.getElementById("valMemory");
+
+  function updateSignalBar() {
+    const conn = navigator.connection;
+    let pct = navigator.onLine ? 70 : 4;
+    let label = navigator.onLine ? "ÇEVRİMİÇİ" : "ÇEVRİMDIŞI";
+    if (conn && typeof conn.downlink === "number") {
+      pct = Math.max(4, Math.min(100, Math.round((conn.downlink / 10) * 100)));
+      label = (conn.effectiveType || "").toUpperCase() || label;
+    }
+    if (barSignal) barSignal.style.width = pct + "%";
+    if (valSignal) valSignal.textContent = label;
+  }
+  updateSignalBar();
+  window.addEventListener("online", updateSignalBar);
+  window.addEventListener("offline", updateSignalBar);
+  if (navigator.connection) navigator.connection.addEventListener("change", updateSignalBar);
+
+  function updateListenBar(active) {
+    if (barListen) barListen.style.width = (active ? 92 : 6) + "%";
+    if (valListen) valListen.textContent = active ? "AKTİF" : "PASİF";
+  }
+  updateListenBar(false);
+
+  (function updateMemoryBar() {
+    const mem = navigator.deviceMemory;
+    if (mem) {
+      const pct = Math.min(100, Math.round((mem / 16) * 100));
+      if (barMemory) barMemory.style.width = pct + "%";
+      if (valMemory) valMemory.textContent = mem + " GB";
+    } else {
+      if (barMemory) barMemory.style.width = "40%";
+      if (valMemory) valMemory.textContent = "—";
+    }
+  })();
+
+  // ---- Reminder tip rotator ----
+  const hudTip = document.getElementById("hudTip");
+  const TIPS = [
+    "Sesli komut vermek için mikrofona dokunun.",
+    "\"LIVE\" durumunda uygulama sizi sürekli dinler.",
+    "Yanıtları sesli duymak için sağ üstteki 🔊 simgesini açık tutun.",
+    "Sekmeyi arka plana alırsanız dinleme geçici olarak duraklar.",
+    "\"PAUSED\" durumuna geçmek için mikrofona ya da PAUSED etiketine dokunun."
+  ];
+  let tipIndex = 0;
+  if (hudTip) {
+    setInterval(() => {
+      tipIndex = (tipIndex + 1) % TIPS.length;
+      hudTip.textContent = TIPS[tipIndex];
+    }, 9000);
+  }
 
   // ---- Chat state ----
   let messages = loadMessages();
@@ -270,39 +322,48 @@
     } catch (e) {}
   }
 
-  function addBubble(role, text, isError) {
+  function addLogLine(role, text, isError) {
     const row = document.createElement("div");
-    row.className = "demo-row " + (role === "user" ? "demo-user" : "demo-ai");
+    row.className = "conv-row " + (role === "user" ? "conv-user" : "conv-ai") + (isError ? " conv-error" : "");
 
-    const bubble = document.createElement("div");
-    bubble.className = "demo-bubble" + (isError ? " error" : "");
-    bubble.textContent = text;
+    const prefix = document.createElement("span");
+    prefix.className = "conv-prefix";
+    prefix.textContent = (role === "user" ? "SİZ" : "JARVIS") + ": ";
 
-    row.appendChild(bubble);
+    const body = document.createElement("span");
+    body.className = "conv-text";
+    body.textContent = text;
+
+    row.appendChild(prefix);
+    row.appendChild(body);
     demoChat.appendChild(row);
     demoChat.scrollTop = demoChat.scrollHeight;
-    return bubble;
+    return row;
   }
 
   function addTyping() {
     const row = document.createElement("div");
-    row.className = "demo-row demo-ai";
-    const bubble = document.createElement("div");
-    bubble.className = "demo-bubble";
-    bubble.innerHTML = '<span class="demo-typing"><span></span><span></span><span></span></span>';
-    row.appendChild(bubble);
+    row.className = "conv-row conv-ai";
+    const prefix = document.createElement("span");
+    prefix.className = "conv-prefix";
+    prefix.textContent = "JARVIS: ";
+    row.appendChild(prefix);
+    row.insertAdjacentHTML("beforeend", '<span class="conv-typing"><span></span><span></span><span></span></span>');
     demoChat.appendChild(row);
     demoChat.scrollTop = demoChat.scrollHeight;
     return row;
   }
 
   function renderStoredMessages() {
-    messages.forEach(m => addBubble(m.role, m.text));
+    messages.forEach(m => addLogLine(m.role, m.text));
   }
   renderStoredMessages();
+  if (messages.length === 0) {
+    addLogLine("ai", "Sistemler çevrimiçi. Merhaba, efendim. Sizi dinliyorum — dilediğiniz an konuşabilir, ayrıca yazabilirsiniz de.");
+  }
 
   function pushMessage(role, text) {
-    addBubble(role, text);
+    addLogLine(role, text);
     messages.push({ role, text });
     saveMessages();
   }
@@ -346,7 +407,7 @@
   function updateVoiceToggleUI() {
     if (!voiceToggle) return;
     voiceToggle.setAttribute("aria-pressed", String(voiceEnabled));
-    voiceToggle.textContent = voiceEnabled ? "🔊 Sesli yanıt: Açık" : "🔊 Sesli yanıt: Kapalı";
+    voiceToggle.title = voiceEnabled ? "Sesli yanıt: Açık" : "Sesli yanıt: Kapalı";
   }
   updateVoiceToggleUI();
 
@@ -363,6 +424,7 @@
 
   function resumeListeningAfterSpeech() {
     ttsSpeaking = false;
+    setAppState(alwaysListening ? "live" : "paused");
     if (alwaysListening && !recognizing) {
       try { recognizer.start(); } catch (e) {}
     }
@@ -371,12 +433,11 @@
   function speak(text) {
     if (!voiceEnabled || !("speechSynthesis" in window)) return;
     ttsSpeaking = true;
+    setAppState("speaking");
     if (recognizer && recognizing) {
       try { recognizer.stop(); } catch (e) {}
     }
     try { window.speechSynthesis.cancel(); } catch (e) {}
-    // Chrome, cancel() sonrası hemen speak() çağrılırsa bazen sesi sessizce
-    // yutuyor; kısa bir gecikme ve resume() bu sorunu ortadan kaldırıyor.
     setTimeout(() => {
       try {
         window.speechSynthesis.resume();
@@ -385,15 +446,8 @@
         if (trVoice) utter.voice = trVoice;
         utter.rate = 1;
         utter.pitch = 1;
-        utter.onstart = () => setStatus("Yanıt veriliyor…", "#22d3ee");
-        utter.onend = () => {
-          setStatus("Sistemler hazır", "#3ce27a");
-          resumeListeningAfterSpeech();
-        };
-        utter.onerror = () => {
-          setStatus("Sistemler hazır", "#3ce27a");
-          resumeListeningAfterSpeech();
-        };
+        utter.onend = resumeListeningAfterSpeech;
+        utter.onerror = resumeListeningAfterSpeech;
         window.speechSynthesis.speak(utter);
       } catch (e) {
         resumeListeningAfterSpeech();
@@ -410,6 +464,37 @@
     });
   }
 
+  // ---- Sekme arka plandayken de yanıt: bildirim izni ----
+  function requestNotificationPermission() {
+    if (!("Notification" in window)) return;
+    if (Notification.permission === "default") {
+      try { Notification.requestPermission(); } catch (e) {}
+    }
+  }
+  function notifyReply(text) {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    if (document.visibilityState !== "hidden") return;
+    try {
+      new Notification("J.A.R.V.I.S.", { body: text, icon: "icons/icon-192.png" });
+    } catch (e) {}
+  }
+
+  // ---- Ekranı uyanık tut ----
+  let wakeLock = null;
+  async function requestWakeLock() {
+    if (!("wakeLock" in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+    } catch (e) {}
+  }
+  function releaseWakeLock() {
+    if (wakeLock) {
+      try { wakeLock.release(); } catch (e) {}
+      wakeLock = null;
+    }
+  }
+
   // ---- Send flow ----
   let busy = false;
   async function sendMessage(text) {
@@ -420,7 +505,7 @@
 
     pushMessage("user", trimmed);
     demoInput.value = "";
-    setStatus("Düşünüyor…", "#ffb454");
+    setAppState("thinking");
     const typingRow = addTyping();
 
     try {
@@ -429,12 +514,12 @@
       pushMessage("ai", reply);
       speak(reply);
       notifyReply(reply);
-      if (!voiceEnabled) setStatus("Sistemler hazır", "#3ce27a");
+      if (!voiceEnabled) setAppState(alwaysListening ? "live" : "paused");
     } catch (err) {
       typingRow.remove();
       const msg = err && err.message ? err.message : "Bir sorun oluştu.";
-      addBubble("ai", "Üzgünüm efendim, bir sorunla karşılaştım: " + msg, true);
-      setStatus("Bağlantı hatası", "#ff5a5a");
+      addLogLine("ai", "Üzgünüm efendim, bir sorunla karşılaştım: " + msg, true);
+      setAppState(alwaysListening ? "live" : "paused");
     } finally {
       busy = false;
       demoSend.disabled = false;
@@ -453,48 +538,9 @@
       messages = [];
       saveMessages();
       demoChat.innerHTML = "";
-      addBubble("ai", "Sohbet temizlendi, efendim. Nasıl yardımcı olabilirim?");
+      addLogLine("ai", "Sohbet temizlendi, efendim. Nasıl yardımcı olabilirim?");
       showToast("Sohbet temizlendi.");
     });
-  }
-
-  document.querySelectorAll(".command-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const cmd = chip.getAttribute("data-cmd") || chip.textContent;
-      openChatOverlay();
-      sendMessage(cmd);
-    });
-  });
-
-  // ---- Ekranı uyanık tut (sekme arka plana geçince mikrofon/ses kesilmesin) ----
-  let wakeLock = null;
-  async function requestWakeLock() {
-    if (!("wakeLock" in navigator)) return;
-    try {
-      wakeLock = await navigator.wakeLock.request("screen");
-      wakeLock.addEventListener("release", () => { wakeLock = null; });
-    } catch (e) {}
-  }
-  function releaseWakeLock() {
-    if (wakeLock) {
-      try { wakeLock.release(); } catch (e) {}
-      wakeLock = null;
-    }
-  }
-
-  // ---- Sekme arka plandayken de yanıt: bildirim izni ----
-  function requestNotificationPermission() {
-    if (!("Notification" in window)) return;
-    if (Notification.permission === "default") {
-      try { Notification.requestPermission(); } catch (e) {}
-    }
-  }
-  function notifyReply(text) {
-    if (!("Notification" in window) || Notification.permission !== "granted") return;
-    if (document.visibilityState !== "hidden") return;
-    try {
-      new Notification("J.A.R.V.I.S.", { body: text, icon: "icons/icon-192.png" });
-    } catch (e) {}
   }
 
   // ---- Speech recognition (her zaman dinleme) ----
@@ -512,6 +558,7 @@
     alwaysListening = true;
     requestWakeLock();
     requestNotificationPermission();
+    setAppState("live");
     if (!recognizing && !ttsSpeaking) {
       try {
         recognizer.start();
@@ -522,6 +569,7 @@
   function stopAlwaysListening() {
     alwaysListening = false;
     releaseWakeLock();
+    setAppState("paused");
     if (recognizer && recognizing) {
       try { recognizer.stop(); } catch (e) {}
     }
@@ -558,14 +606,15 @@
     recognizer.onstart = () => {
       recognizing = true;
       micBtn.setAttribute("aria-pressed", "true");
-      if (chatFab) chatFab.classList.add("listening");
-      setStatus("Dinleniyor…", "#ff5a5a");
+      updateListenBar(true);
+      if (!ttsSpeaking) setAppState("live");
     };
 
     recognizer.onerror = event => {
       const err = event && event.error;
       if (err === "not-allowed" || err === "service-not-allowed") {
         alwaysListening = false;
+        setAppState("paused");
         showToast("Mikrofon erişimi reddedildi. Tarayıcı ayarlarından izin verin.");
       }
     };
@@ -573,8 +622,7 @@
     recognizer.onend = () => {
       recognizing = false;
       micBtn.setAttribute("aria-pressed", "false");
-      if (chatFab) chatFab.classList.remove("listening");
-      if (statusText && statusText.textContent === "Dinleniyor…") setStatus("Sistemler hazır", "#3ce27a");
+      updateListenBar(false);
       if (alwaysListening && !ttsSpeaking) {
         try { recognizer.start(); } catch (e) {}
       }
