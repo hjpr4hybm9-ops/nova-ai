@@ -348,7 +348,8 @@ a { color: inherit; }
 }
 .field label { font-size: 13px; font-weight: 600; color: var(--text-dim); }
 .field select,
-.field input {
+.field input,
+.field textarea {
   padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -356,9 +357,12 @@ a { color: inherit; }
   color: var(--text);
   font-size: 14.5px;
   font-weight: 600;
+  font-family: inherit;
 }
+.field textarea { font-weight: 500; resize: vertical; }
 .field select:focus,
-.field input:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+.field input:focus,
+.field textarea:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
 
 .calc-result {
   margin-top: 22px;
@@ -367,8 +371,53 @@ a { color: inherit; }
   text-align: center;
 }
 .calc-result-label { margin: 0; font-size: 13px; color: var(--text-dim); }
-.calc-result-value { margin: 4px 0 10px; font-size: 32px; font-weight: 800; color: var(--brand); }
+.calc-result-value { margin: 4px 0 2px; font-size: 32px; font-weight: 800; color: var(--brand); }
+.calc-result-distance { margin: 0 0 10px; font-size: 13px; color: var(--text-dim); }
 .calc-result-note { margin: 0 0 18px; font-size: 12.5px; color: var(--text-dim); }
+
+/* Location picker (Turkey map + select) */
+.location-field { gap: 10px; }
+.location-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+.tr-map-wrap {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+.tr-map {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.tr-region {
+  fill: var(--border);
+  stroke: var(--bg);
+  stroke-width: 0.6;
+  cursor: pointer;
+  transition: fill .12s ease;
+}
+.tr-region:hover { fill: var(--accent); }
+.tr-region:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.tr-region.active { fill: var(--brand); }
+
+.location-select {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+}
+.location-select:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
 
 /* Testimonials */
 .testimonial-card { display: flex; flex-direction: column; gap: 10px; }
@@ -468,7 +517,11 @@ a { color: inherit; }
   gap: 8px;
   font-weight: 700;
 }
+.footer-legal { text-align: right; }
 .footer-copy { color: var(--text-dim); font-size: 13px; margin: 0; }
+.footer-credit { color: var(--text-dim); font-size: 11.5px; margin: 4px 0 0; }
+.footer-credit a { color: var(--text-dim); text-decoration: underline; }
+.footer-credit a:hover { color: var(--brand); }
 
 /* Responsive */
 @media (max-width: 720px) {
