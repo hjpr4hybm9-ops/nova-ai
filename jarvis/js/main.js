@@ -508,6 +508,7 @@
     if (!voiceToggle) return;
     voiceToggle.setAttribute("aria-pressed", String(voiceEnabled));
     voiceToggle.title = voiceEnabled ? "Sesli yanıt: Açık" : "Sesli yanıt: Kapalı";
+    voiceToggle.textContent = voiceEnabled ? "🔊" : "🔇";
   }
   updateVoiceToggleUI();
 
@@ -531,13 +532,20 @@
   }
 
   function speak(text) {
-    if (!voiceEnabled || !("speechSynthesis" in window)) return;
+    if (!voiceEnabled) return;
+    if (!("speechSynthesis" in window)) {
+      showToast("Bu tarayıcı sesli yanıtı desteklemiyor.");
+      return;
+    }
     ttsSpeaking = true;
     setAppState("speaking");
     if (recognizer && recognizing) {
       try { recognizer.stop(); } catch (e) {}
     }
     try { window.speechSynthesis.cancel(); } catch (e) {}
+    // Mikrofonun tamamen kapanması ve tarayıcının bazı Android
+    // cihazlarda mikrofon aktifken sesi kısması (audio ducking) ihtimaline
+    // karşı, konuşmadan önce biraz daha bekliyoruz.
     setTimeout(() => {
       try {
         window.speechSynthesis.resume();
@@ -547,12 +555,19 @@
         utter.rate = 1;
         utter.pitch = 1;
         utter.onend = resumeListeningAfterSpeech;
-        utter.onerror = resumeListeningAfterSpeech;
+        utter.onerror = event => {
+          const err = event && event.error;
+          if (err && err !== "canceled" && err !== "interrupted") {
+            showToast("Sesli yanıt oynatılamadı (" + err + ").");
+          }
+          resumeListeningAfterSpeech();
+        };
         window.speechSynthesis.speak(utter);
       } catch (e) {
+        showToast("Sesli yanıt oynatılamadı.");
         resumeListeningAfterSpeech();
       }
-    }, 60);
+    }, 150);
   }
 
   if (voiceToggle) {
@@ -560,7 +575,9 @@
       voiceEnabled = !voiceEnabled;
       localStorage.setItem(VOICE_KEY, voiceEnabled ? "1" : "0");
       updateVoiceToggleUI();
+      showToast(voiceEnabled ? "🔊 Sesli yanıt açıldı." : "🔇 Sesli yanıt kapatıldı.");
       if (!voiceEnabled && "speechSynthesis" in window) window.speechSynthesis.cancel();
+      else if (voiceEnabled) speak("Sesli yanıt açık, efendim.");
     });
   }
 
