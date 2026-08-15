@@ -537,13 +537,37 @@
     window.speechSynthesis.onvoiceschanged = () => { trVoice = pickVoice(); };
   }
 
+  // Bazı tarayıcılarda speechSynthesis olayları (onend/onerror) hiç
+  // tetiklenmeyebiliyor; bu durumda uygulama sonsuza dek "konuşuyor"
+  // sanıp dinlemeyi bir daha hiç başlatmıyordu — "sadece 1 kez
+  // konuşabiliyorum" şikâyetinin en olası nedeni budur. Aşağıdaki
+  // zamanlayıcılar bu duruma karşı bir güvenlik ağı kuruyor.
+  let ttsWatchdog = null;
+  let speechKeepAlive = null;
+
+  function stopSpeechTimers() {
+    if (ttsWatchdog) { clearTimeout(ttsWatchdog); ttsWatchdog = null; }
+    if (speechKeepAlive) { clearInterval(speechKeepAlive); speechKeepAlive = null; }
+  }
+
   function resumeListeningAfterSpeech() {
+    if (!ttsSpeaking) return;
+    stopSpeechTimers();
     ttsSpeaking = false;
     setAppState(alwaysListening ? "live" : "paused");
     if (alwaysListening && !recognizing) {
       try { recognizer.start(); } catch (e) {}
     }
   }
+
+  // Dinleme "açık" olması gerektiği halde bir tarayıcı tuhaflığı yüzünden
+  // durursa (olay tetiklenmedi, tanıma sessizce sonlandı vb.) birkaç
+  // saniyede bir kendini toparlasın.
+  setInterval(() => {
+    if (alwaysListening && !recognizing && !ttsSpeaking && recognizer) {
+      try { recognizer.start(); } catch (e) {}
+    }
+  }, 4000);
 
   function speak(text) {
     if (!voiceEnabled) return;
@@ -559,6 +583,9 @@
       try { recognizer.stop(); } catch (e) {}
     }
     try { window.speechSynthesis.cancel(); } catch (e) {}
+    // Metin uzunluğuna göre makul bir üst sınır: onend/onerror hiç
+    // tetiklenmezse bile dinleme sonsuza dek kilitli kalmasın.
+    const maxWaitMs = Math.min(25000, Math.max(6000, spoken.length * 110));
     // Mikrofonun tamamen kapanması ve tarayıcının bazı Android
     // cihazlarda mikrofon aktifken sesi kısması (audio ducking) ihtimaline
     // karşı, konuşmadan önce biraz daha bekliyoruz.
@@ -580,6 +607,12 @@
           resumeListeningAfterSpeech();
         };
         window.speechSynthesis.speak(utter);
+        // Chrome'un uzun cümlelerde ~15 saniye sonra konuşmayı kendiliğinden
+        // kesmesi bilinen bir hata; periyodik duraklat/devam ettir bunu önler.
+        speechKeepAlive = setInterval(() => {
+          try { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } catch (e) {}
+        }, 9000);
+        ttsWatchdog = setTimeout(resumeListeningAfterSpeech, maxWaitMs);
       } catch (e) {
         showToast("Sesli yanıt oynatılamadı.");
         resumeListeningAfterSpeech();
