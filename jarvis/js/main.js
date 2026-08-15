@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const SYSTEM_PROMPT = "Sen J.A.R.V.I.S. adında, bilim kurgu filmlerindeki asistan arayüzlerinden ilham alan kişisel bir yapay zekâ asistanısın. Türkçe konuşursun. Kullanıcıya kibarca ve zaman zaman 'efendim' diyerek hitap edebilirsin, ama abartmadan. Yanıtların kısa, net, yardımsever ve doğal olsun; gereksiz uzatma. Gerçek bir akıllı ev veya donanım sistemine bağlı olmadığını, sadece sohbet ve bilgi asistanı olduğunu unutma; fiziksel cihazları kontrol edebileceğini iddia etme.";
+  const SYSTEM_PROMPT = "Sen J.A.R.V.I.S. adında, bilim kurgu filmlerindeki asistan arayüzlerinden ilham alan kişisel bir yapay zekâ asistanısın. Türkçe konuşursun. Kullanıcıya kibarca ve zaman zaman 'efendim' diyerek hitap edebilirsin, ama abartmadan. Sakin, ölçülü, resmi ve öz bir üslubun var; gereksiz uzatma, gereksiz heyecan gösterme. Yanıtlarında ASLA emoji kullanma — sözlerin sadece düz metin olsun. Gerçek bir akıllı ev veya donanım sistemine bağlı olmadığını, sadece sohbet ve bilgi asistanı olduğunu unutma; fiziksel cihazları kontrol edebileceğini iddia etme.";
   const STORAGE_KEY = "jarvis_chat_v1";
   const VOICE_KEY = "jarvis_voice_enabled";
   const AI_TIMEOUT_MS = 30000;
@@ -512,11 +512,25 @@
   }
   updateVoiceToggleUI();
 
+  // Emoji ve benzeri sembolleri sesli yanıttan temizle (bazı TTS motorları
+  // bunları harfi harfine okumaya/isimlendirmeye çalışıyor).
+  const EMOJI_RE = /[\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}\u{2190}-\u{21FF}]/gu;
+  function stripEmoji(text) {
+    return text.replace(EMOJI_RE, "").replace(/[ \t]{2,}/g, " ").trim();
+  }
+
   let trVoice = null;
+  const MALE_VOICE_HINTS = /ahmet|kerem|cem\b|erkek|male/i;
+  const FEMALE_VOICE_HINTS = /female|kadın|yelda|filiz|sevgi/i;
   function pickVoice() {
     if (!("speechSynthesis" in window)) return null;
     const voices = window.speechSynthesis.getVoices();
-    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith("tr")) || null;
+    const trVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("tr"));
+    if (!trVoices.length) return null;
+    // J.A.R.V.I.S.'e daha yakın, sakin ve resmi bir ton için erkek sesi
+    // varsa onu tercih ediyoruz; yoksa bulunan ilk Türkçe sese düşüyoruz.
+    const male = trVoices.find(v => MALE_VOICE_HINTS.test(v.name) && !FEMALE_VOICE_HINTS.test(v.name));
+    return male || trVoices[0];
   }
   if ("speechSynthesis" in window) {
     trVoice = pickVoice();
@@ -537,6 +551,8 @@
       showToast("Bu tarayıcı sesli yanıtı desteklemiyor.");
       return;
     }
+    const spoken = stripEmoji(text);
+    if (!spoken) return;
     ttsSpeaking = true;
     setAppState("speaking");
     if (recognizer && recognizing) {
@@ -549,11 +565,12 @@
     setTimeout(() => {
       try {
         window.speechSynthesis.resume();
-        const utter = new SpeechSynthesisUtterance(text);
+        const utter = new SpeechSynthesisUtterance(spoken);
         utter.lang = "tr-TR";
         if (trVoice) utter.voice = trVoice;
-        utter.rate = 1;
-        utter.pitch = 1;
+        // Gerçek J.A.R.V.I.S.'teki gibi sakin ve biraz daha derin bir ton.
+        utter.rate = 0.96;
+        utter.pitch = 0.88;
         utter.onend = resumeListeningAfterSpeech;
         utter.onerror = event => {
           const err = event && event.error;
