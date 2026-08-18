@@ -1,0 +1,11 @@
+{
+  "name": "Dondurmacı Oyunu — Kandır, Ver, Skoru Katla!",
+  "short_name": "Dondurmacı",
+  "description": "Klasik Türk dondurmacısının kandırmaca numarasını tarayıcında oyna: zamanla, kandır, kombonu büyüt ve tam vaktinde teslim et.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2b1305",
+  "theme_color": "#2b1305",
+  "icons": []
+}
